@@ -1,5 +1,7 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
+import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -19,7 +21,6 @@ export default [
     "plugin:react/jsx-runtime"
   ),
 
-  // Custom config
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     ignores: ["dist", "eslint.config.mjs"],
@@ -37,7 +38,7 @@ export default [
       },
     },
     plugins: {
-      "react-refresh": require("eslint-plugin-react-refresh"),
+      "react-refresh": reactRefreshPlugin,
     },
     rules: {
       "react/prop-types": "off",

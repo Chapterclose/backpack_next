@@ -19,7 +19,10 @@ npm install --save-dev eslint eslint-plugin-react eslint-plugin-react-hooks esli
 - Create a `eslint.config.mjs` file in the project root and enter the below contents:
 
 ```js
+/* eslint-disable import/no-anonymous-default-export */
 import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
+import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -28,18 +31,17 @@ const __dirname = dirname(__filename);
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
 });
 
 export default [
-  // Convert extends
-  ...compat.extends([
+  ...compat.extends(
     "next/core-web-vitals",
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react/jsx-runtime",
-  ]),
+    "plugin:react/jsx-runtime"
+  ),
 
-  // Custom config
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     ignores: ["dist", "eslint.config.mjs"],
@@ -57,7 +59,7 @@ export default [
       },
     },
     plugins: {
-      "react-refresh": require("eslint-plugin-react-refresh"),
+      "react-refresh": reactRefreshPlugin,
     },
     rules: {
       "react/prop-types": "off",
@@ -66,4 +68,62 @@ export default [
     },
   },
 ];
+```
+
+- make a directory .vscode with filename settings.json
+
+```json
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.tslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "eslint.run": "onSave",
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "path-autocomplete.extensionOnImport": true,
+  "path-autocomplete.excludedItems": {
+    "*/.js": {
+      "when": "**"
+    },
+    "*/.jsx": {
+      "when": "**"
+    }
+  },
+  "javascript.validate.enable": false,
+  "typescript.validate.enable": false,
+
+  // extra
+  "editor.fontFamily": "Fira Code, Operator Mono",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.cursorBlinking": "expand",
+  "editor.cursorStyle": "line",
+  "editor.cursorWidth": 2,
+  "editor.fontLigatures": true,
+  "editor.fontSize": 16.5,
+  "editor.lineHeight": 24,
+  "editor.detectIndentation": true,
+  "editor.wordWrap": "on",
+
+  // terminal
+  // "terminal.integrated.fontFamily": "Fira Code, Operator Mono",
+  "terminal.integrated.fontSize": 15,
+
+  // file exclude for run node js project in smooth position
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/tmp": true,
+    "**/node_modules": true,
+    "**/dist": true
+  }
+}
 ```

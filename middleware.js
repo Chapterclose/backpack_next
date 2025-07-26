@@ -3,7 +3,7 @@ import Negotiator from "negotiator";
 import { NextResponse } from "next/server";
 
 let defaultLocale = "en";
-let locales = ["en", "bn"];
+let locales = ["en"];
 
 function getLocale(request) {
   const acceptedLanguage = request.headers.get("accept-language") ?? undefined;
