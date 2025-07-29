@@ -20,9 +20,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} antialiased bg-primary text-t-primary px-5`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className={`${poppins.variable} antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
           <Context>
             <Header />
             {children}
