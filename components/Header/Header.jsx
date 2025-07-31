@@ -1,6 +1,6 @@
 "use client";
 
-import { contextProvider } from "@/contexts/AuthContext";
+import { contextProvider } from "@/contexts/Context";
 import {
   Activity,
   BadgeInfo,
@@ -38,8 +38,8 @@ const Header = () => {
     { href: '/en/primary-certification', icon: ShieldCheck, label: 'Primary Certification' },
     { href: '/en/real-name-authentication', icon:CircleUserRound, label: 'Real-name Authentication' },
     { href: '/en/bind-card-bank', icon:CreditCard, label: 'Bind Bank Card' },
-    { href: '/en/set-fund-password', icon:FileLock, label: 'Set Fund Password' },
-    { href: '/en/set-login-password', icon:Lock, label: 'Set Login Password' },
+    { href: '/en/set-fund-password', icon:FileLock, label: 'Set Password' },
+    // { href: '/en/set-login-password', icon:Lock, label: 'Set Login Password' },
     { href: '/en/email-authentication', icon:Mail, label: 'Email Authenticaion' },
     { href: '/en/service-terms', icon:Layers, label: 'Service Terms' },
     { href: '/en/help-center', icon:BadgeInfo, label: 'Help Center' },
@@ -55,7 +55,7 @@ const Header = () => {
           <div className="flex items-center">
             <div className="logo mr-10">
               <Link href="/">
-                <h3 className="text-primary-100 font-semibold">
+                <h3 className="text-primary-200 font-semibold">
                   <span className="text-xl font-bold">B</span>ack
                   <span className="text-xl font-bold">P</span>ack{" "}
                   <span className="text-xl font-bold">E</span>xchange

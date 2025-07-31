@@ -4,8 +4,10 @@
 @theme{
     --color-primary: #fcd535;
     --color-primary-100: #c99400;
+    --color-primary-200: #F0B90B;
     --color-grey:#34393E;
     --color-grey-100:#2E2E2E;
+    --color-black:#202630;
 }
 @custom-variant dark (&:where(.dark, .dark *));
 @layer{
