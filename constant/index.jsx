@@ -342,22 +342,22 @@ export const footerUrls = [
       url: "/labs",
     },
     {
-      id: 5,
+      id: 6,
       title: "BackPack Exchange Verify",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 7,
       title: "Trading Rules",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 8,
       title: "BackPack Exchange Airdrop Portal",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 9,
       title: "Law Enforcement Requests",
       url: "/labs",
     },

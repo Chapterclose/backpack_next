@@ -21,9 +21,9 @@ const MobileFooterLinks = () => {
           id={item.id}
           key={i}
           className={cn(
-            "group rounded-xl p-5 mb-1 hover:bg-black-100 duration-300 md:hidden",
+            "group rounded-xl p-5 mb-1 duration-300 md:hidden",
             //   i === 0 && "!pt-0",
-            activeCollapse === i && "bg-black-100"
+            // activeCollapse === i && ""
           )}
         >
           <h5
@@ -42,8 +42,8 @@ const MobileFooterLinks = () => {
               {activeCollapse === i ? (
                 <FaMinus
                   className={cn(
-                    "text-white group-hover:text-yellow-300",
-                    activeCollapse === i && "text-yellow-300"
+                    "text-black ",
+                    // activeCollapse === i && ""
                   )}
                   activeCollapse={activeCollapse}
                   i={i}
@@ -51,8 +51,8 @@ const MobileFooterLinks = () => {
               ) : (
                 <FaPlus
                   className={cn(
-                    "text-white group-hover:text-yellow-300",
-                    activeCollapse === i && "text-yellow-300"
+                    "text-black",
+                    // activeCollapse === i && "text-yellow-300"
                   )}
                 />
               )}

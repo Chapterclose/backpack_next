@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
-import Context from "@/contexts/AuthContext";
+import Context from "@/contexts/Context";
 import { ThemeProvider } from "next-themes";
 import { Poppins } from "next/font/google";
 import "./globals.css";
@@ -20,9 +20,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} antialiased bg-primary text-t-primary px-5`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className={`${poppins.variable} antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
           <Context>
             <Header />
             {children}

@@ -1,16 +1,48 @@
-import { marketsDataArr } from "@/constant/marketsdata";
+"use client"
+import { marketData } from "@/constant/marketArr";
+import { contextProvider } from "@/contexts/Context";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import Image from "next/image";
+import { useContext, useEffect } from "react";
 const homePageTabs = [{ title: "Popular" }, { title: "New Listing" }];
 
 const HeroSectionTab = () => {
+  const { markets, setMarkets } = useContext(contextProvider);
+  
+  useEffect(() => {
+      // Extract only the symbols for the WebSocket connection
+      const watchedSymbols = marketData.map((data) => data.symbol);
+  
+      const ws = new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+  
+      ws.onmessage = (event) => {
+        const updates = JSON.parse(event.data);
+  
+        const filtered = updates.filter((ticker) =>
+          watchedSymbols.includes(ticker.s)
+        );
+  
+        setMarkets((prev) => {
+          const updated = { ...prev };
+          filtered.forEach((ticker) => {
+            updated[ticker.s] = {
+              price: parseFloat(ticker.c).toFixed(2),
+              change: parseFloat(ticker.P).toFixed(2),
+            };
+          });
+          return updated;
+        });
+      };
+  
+      return () => ws.close();
+    }, [setMarkets]);
   return (
     <TabGroup manual defaultIndex={0}>
       <TabList className="mb-5">
         {homePageTabs?.map((item) => (
           <Tab
             key={item.title}
-            className="data-[selected]:text-t-primary relative text-secondary font-semibold mr-5 focus:outline-none data-[selected]:before:absolute data-[selected]:before:bottom-[-5px] data-[selected]:before:left-1/2 data-[selected]:before:-translate-x-1/2 data-[selected]:before:bg-yellow-300 data-[selected]:before:w-4 data-[selected]:before:h-[2px]"
+            className="data-[selected]:text-black relative text-gray-500 font-semibold mr-5 focus:outline-none data-[selected]:before:absolute data-[selected]:before:bottom-[-5px] data-[selected]:before:left-1/2 data-[selected]:before:-translate-x-1/2 data-[selected]:before:bg-primary data-[selected]:before:w-6 data-[selected]:before:h-[3px] text-xl cursor-pointer"
           >
             {item.title}
           </Tab>
@@ -20,40 +52,66 @@ const HeroSectionTab = () => {
         <TabPanel>
           <table>
             <tbody>
-              {marketsDataArr?.slice(0, 4).map((item) => (
-                <tr key={item.id}>
-                  <td className="pr-7">
+              {marketData?.slice(0, 4).map((item) =>{
+                const symbol = item.symbol;
+              const iconSrc = item.icon;
+              const data = markets[symbol];
+
+              // Determine if the change is positive
+              const isPositiveChange = data?.change && parseFloat(data.change) >= 0;
+                return (
+                <tr key={item.symbol}>
+                  <td className="pr-10">
                     <div className="flex items-center gap-x-3 mb-2">
-                      <Image src={item?.img} width={30} height={30} alt="icon" />
-                      <span className="text-t-primary">
-                        {item.title} <span className="text-xs text-secondary">{item.subTitle}</span>{" "}
+                      <Image src={item?.icon} width={30} height={30} alt="icon" />
+                      <span className="text-black font-semibold">
+                        {item.symbol}
                       </span>
                     </div>
                   </td>
-                  <td className="px-7 text-t-primary">${item.price}</td>
-                  <td className="pl-7 text-green-500 font-semibold">+{item.changeRate}%</td>
+                  <td className="px-7 text-black font-semibold">{data?.price ? `$${data.price}` : "Loading..."}</td>
+                  <td className={`font-semibold ${
+                    isPositiveChange
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }`}>{isPositiveChange && <span>+</span>} 
+                  {data?.change ? `${data.change}%` : "--"}</td>
                 </tr>
-              ))}
+              )
+              })}
             </tbody>
           </table>
         </TabPanel>
         <TabPanel>
           <table>
             <tbody>
-              {marketsDataArr?.slice(5, 9).map((item) => (
-                <tr key={item.id}>
-                  <td className="pr-7">
+              {marketData?.slice(4,8).map((item) =>{
+                const symbol = item.symbol;
+              const iconSrc = item.icon;
+              const data = markets[symbol];
+
+              // Determine if the change is positive
+              const isPositiveChange = data?.change && parseFloat(data.change) >= 0;
+                return (
+                <tr key={item.symbol}>
+                  <td className="pr-10">
                     <div className="flex items-center gap-x-3 mb-2">
-                      <Image src={item?.img} width={30} height={30} alt="icon" />
-                      <span>
-                        {item.title} <span className="text-xs text-secondary">{item.subTitle}</span>{" "}
+                      <Image src={item?.icon} width={30} height={30} alt="icon" />
+                      <span className="text-black font-semibold">
+                        {item.symbol}
                       </span>
                     </div>
                   </td>
-                  <td className="px-7">${item.price}</td>
-                  <td className="pl-7 text-green-500 font-semibold">+{item.changeRate}%</td>
+                  <td className="px-7 text-black font-semibold">{data?.price ? `$${data.price}` : "Loading..."}</td>
+                  <td className={`font-semibold ${
+                    isPositiveChange
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }`}>{isPositiveChange && <span>+</span>} 
+                  {data?.change ? `${data.change}%` : "--"}</td>
                 </tr>
-              ))}
+              )
+              })}
             </tbody>
           </table>
         </TabPanel>

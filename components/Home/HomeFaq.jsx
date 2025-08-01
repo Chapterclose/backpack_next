@@ -15,8 +15,8 @@ const HomeFaq = () => {
   };
 
   return (
-    <>
-      <h3 className="text-4xl text-center font-semibold py-[80px] text-t-primary">
+    <div className="container pb-[60px]">
+      <h3 className="text-4xl text-center font-semibold py-[50px] text-t-primary">
         Frequently Asked Questions
       </h3>
       {homeFaqData.map(({ title, url, id }, i) => (
@@ -25,14 +25,14 @@ const HomeFaq = () => {
             id={id}
             key={i}
             className={cn(
-              "group rounded-xl p-5 mb-1 hover:bg-black-100 duration-300",
+              "group rounded-xl p-5 mb-1 hover:text-black duration-300",
               //   i === 0 && "!pt-0",
               activeCollapse === i && "bg-black-100"
             )}
           >
             <h5
               className={cn(
-                "group-hover:text-white cursor-pointer text-[14px] lg:text-[16px] xll:text-[20px] leading-[145%] font-medium text-heading flex justify-between items-center duration-300"
+                "dark:group-hover:text-white cursor-pointer text-[14px] lg:text-[16px] xll:text-[20px] leading-[145%] font-medium text-heading flex justify-between items-center duration-300"
                 // activeCollapse === i ? "p-0" : "p-5"
               )}
               onClick={() => handleCollapse(i)}
@@ -42,12 +42,12 @@ const HomeFaq = () => {
                 <span className="border border-gray-700 px-2 py-1 rounded mr-3 ">{id}</span> {title}
               </span>
 
-              <span className="text-xl text-black/20">
+              <span className="text-lg text-black/20">
                 {activeCollapse === i ? (
                   <FaMinus
                     className={cn(
-                      "text-white group-hover:text-yellow-300",
-                      activeCollapse === i && "text-yellow-300"
+                      "text-black",
+                      activeCollapse === i && "bg-primary w-8 h-8 p-2 rounded-full"
                     )}
                     activeCollapse={activeCollapse}
                     i={i}
@@ -55,8 +55,8 @@ const HomeFaq = () => {
                 ) : (
                   <FaPlus
                     className={cn(
-                      "text-white group-hover:text-yellow-300",
-                      activeCollapse === i && "text-yellow-300"
+                      "text-black",
+                      // activeCollapse === i && "text-yellow-300"
                     )}
                   />
                 )}
@@ -70,7 +70,7 @@ const HomeFaq = () => {
           </div>
         </React.Fragment>
       ))}
-    </>
+    </div>
   );
 };
 
