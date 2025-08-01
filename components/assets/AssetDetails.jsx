@@ -18,20 +18,20 @@ function AssetDetails() {
                 </div>
                 <div className="grid grid-cols-3">
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                 </div>
             </div>
-            <div className="my-5">
+            <div className="my-5 border-t border-b border-primary-100 py-5">
                 <div className="flex items-center gap-x-3 mb-2">
                     <Image
                     src={img}
@@ -43,16 +43,16 @@ function AssetDetails() {
                 </div>
                 <div className="grid grid-cols-3">
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                 </div>
             </div>
@@ -68,16 +68,16 @@ function AssetDetails() {
                 </div>
                 <div className="grid grid-cols-3">
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                     <div>
-                        <h4>Available</h4>
-                        <h4>0.0000</h4>
+                        <h4 className="text-black">Available</h4>
+                        <h4 className="font-medium">0.0000</h4>
                     </div>
                 </div>
             </div>

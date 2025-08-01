@@ -1,4 +1,5 @@
 import { BadgeDollarSign, CloudDownload, CloudUpload, Eye, EyeClosed, FolderSync, RefreshCw } from "lucide-react";
+import Link from "next/link";
 
 function AccountBalance() {
     return ( 
@@ -13,10 +14,10 @@ function AccountBalance() {
             <h3 className="text-3xl font-semibold text-black mt-2">0.00</h3>
 
             <div className="flex items-center text-center gap-x-5 mt-10">
-                <div className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
+                <Link href="/recharge-deposit" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
                     <CloudUpload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
                     <h4 className="font-medium text-black mt-1">Deposit</h4>
-                </div>
+                </Link>
                 <div className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
                     <CloudDownload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
                     <h4 className="font-medium text-black mt-1">Withdraw</h4>
