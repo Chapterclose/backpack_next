@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <body className={`${poppins.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem enableColorScheme>
           <Context>
             <Header />
             {children}

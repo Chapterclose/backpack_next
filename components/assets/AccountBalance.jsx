@@ -18,18 +18,18 @@ function AccountBalance() {
                     <CloudUpload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
                     <h4 className="font-medium text-black mt-1">Deposit</h4>
                 </Link>
-                <div className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
+                <Link href="/withdraw" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
                     <CloudDownload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
                     <h4 className="font-medium text-black mt-1">Withdraw</h4>
-                </div>
-                <div className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
+                </Link>
+                <Link href="/convert" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
                     <FolderSync className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
                     <h4 className="font-medium text-black mt-1">Convert</h4>
-                </div>
-                <div className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
+                </Link>
+                <Link href="/transfer" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer">
                     <BadgeDollarSign className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
                     <h4 className="font-medium text-black mt-1">Transfer</h4>
-                </div>
+                </Link>
             </div>
         </div>
      );

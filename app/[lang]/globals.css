@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+body{
+  color: #202630;
+}
 
 @theme{
     --color-primary: #fcd535;
@@ -16,3 +19,15 @@
     }
 }
 
+
+/* Hide number input arrows for Chrome, Safari, Edge, Opera */
+.hide-number-controls::-webkit-outer-spin-button,
+.hide-number-controls::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide number input arrows for Firefox */
+.hide-number-controls {
+  -moz-appearance: textfield;
+}

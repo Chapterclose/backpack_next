@@ -3,8 +3,9 @@
 import qr from "@/assets/qr-code.png";
 import Button from "@/components/Form/Button";
 import FormInput from "@/components/Form/FormInput";
-import { Camera, Copy } from "lucide-react";
+import { ArrowLeft, BookMarked, Camera, Copy } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 function RechargeApply({searchParams}) {
     const {coin} = searchParams;
@@ -21,7 +22,13 @@ function RechargeApply({searchParams}) {
   };
     return ( 
         <div className="container py-[60px]">
-            <h4 className="text-3xl font-semibold text-black mb-4">Recharge ETH{coin}</h4>
+            <div className="flex items-center justify-between mb-5">
+                <h4 className="text-3xl font-semibold text-black mb-4 flex gap-x-3">
+                    <button onClick={()=>window.history.back()}> <ArrowLeft className="pt-1 cursor-pointer"/> </button>
+                    Recharge ETH{coin}</h4>
+
+                <Link href="/recharge-order" className="flex items-center gap-x-1 text-xl font-semibold border border-primary-100 p-[5px_15px] rounded hover:border-primary-200 duration-300">History <BookMarked className="mt-1"/></Link>
+            </div>
 
             <Image
             src={qr}
@@ -38,13 +45,13 @@ function RechargeApply({searchParams}) {
             <FormInput
             label="Recharge Amount"
             placeholder="Please enter"
-            className="max-w-[375px] mb-5"
+            className="md:max-w-[375px] mb-5"
             />
 
             <div className="mb-5">
                 <h4 className="text-lg mb-2 block font-medium">Upload Screenshot or payment details</h4>
                 <div
-                    className="border border-gray-600 rounded-md h-36 flex items-center justify-center cursor-pointer hover:border-gray-400 transition max-w-[375px]"
+                    className="border border-gray-600 rounded-md h-36 flex items-center justify-center cursor-pointer hover:border-gray-400 transition md:max-w-[375px]"
                     onClick={handleClick}
                 >
                     <Camera className="w-8 h-8 text-gray-400" />
