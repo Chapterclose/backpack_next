@@ -15,7 +15,7 @@ export default function ThemeSwitcher() {
   return (
     <span className="hidden lg:block">
       {resolvedTheme === "light" && (
-        <BiMoon onClick={() => setTheme("dark")} className="cursor-pointer text-xl" />
+        <BiMoon onClick={() => setTheme("light")} className="cursor-pointer text-xl" />
       )}
       {resolvedTheme === "dark" && (
         <BiSolidSun

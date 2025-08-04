@@ -44,9 +44,9 @@ const MobileNav = () => {
   ];
 
   return (
-    <div className="lg:hidden">
+    <div className="lg:hidden shadow">
       {/* Header */}
-      <header className="py-3 flex items-center justify-between px-5">
+      <header className="py-4 flex items-center justify-between px-5">
         <div className="logo mr-10">
           <Link href="/">
             <h3 className="text-primary-100 font-semibold">
