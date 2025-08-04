@@ -1,7 +1,7 @@
+import img from "@/assets/markets/1.png";
 import Image from "next/image";
-import img from "@/assets/markets/1.png"
 
-function AssetDetails() {
+function AssetDetails({showBalance}) {
     return ( 
         <div className="pt-[50px]">
             <h4 className="text-2xl text-black font-medium mb-3">Asset Details</h4>
@@ -19,15 +19,15 @@ function AssetDetails() {
                 <div className="grid grid-cols-3">
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                 </div>
             </div>
@@ -44,15 +44,15 @@ function AssetDetails() {
                 <div className="grid grid-cols-3">
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                 </div>
             </div>
@@ -69,15 +69,15 @@ function AssetDetails() {
                 <div className="grid grid-cols-3">
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                     <div>
                         <h4 className="text-black">Available</h4>
-                        <h4 className="font-medium">0.0000</h4>
+                        <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
                     </div>
                 </div>
             </div>

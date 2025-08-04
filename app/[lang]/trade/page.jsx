@@ -177,11 +177,11 @@ export default function TradePage() {
   // The TradingView widget has its own built-in timeframe and indicator selection.
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4 font-inter">
-      <h1 className="text-3xl font-bold mb-6 text-blue-400">BTC/USDT Trading Page</h1>
+    <div className="min-h-screen flex flex-col items-center px-5 py-[60px] font-inter">
+      <h1 className="text-3xl font-bold mb-6">Overview of BTCUSDT</h1>
 
       {/* Real-time price information section */}
-      <div className="w-full max-w-5xl bg-gray-800 rounded-lg shadow-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-center">
+      <div className="w-full max-w-5xl rounded-lg shadow-lg p-4 mb-6 flex flex-col sm:flex-row justify-between items-center">
         <div className="flex flex-col items-center sm:items-start mb-4 sm:mb-0">
           <span className="text-5xl font-bold" style={{ color: priceChangePercentage >= 0 ? '#4CAF50' : '#EF5350' }}>
             {currentPrice}
