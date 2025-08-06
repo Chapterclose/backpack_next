@@ -39,7 +39,7 @@ export default function BinanceMarkets() {
 
   return (
     <div className="container py-[40px] lg:py-[80px]">
-      <h2 className="text-4xl lg:text-6xl font-semibold mb-8 text-black">Crypto Currencies</h2>
+      <h2 className="text-4xl lg:text-6xl font-semibold mb-8 text-black dark:text-white">Crypto Currencies</h2>
 
       <MarketTable ss={0} se={25}/>
     </div>

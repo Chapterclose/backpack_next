@@ -10,9 +10,9 @@ const FooterCommunity = () => {
         <h4 className="flex gap-x-2 items-center font-semibold">
           <BiGlobe /> English
         </h4>
-        <h4 className="flex gap-x-2 items-center font-semibold">
+        {/* <h4 className="flex gap-x-2 items-center font-semibold">
           Theme <BiMoon />
-        </h4>
+        </h4> */}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ function PrimaryCertificationPage() {
         <div className="container py-[40px] lg:py-[80px]">
             <div className="text-center mb-10">
                <h2 className="text-4xl font-semibold mb-3 text-gray-700 dark:text-white">Primary Certification</h2>
-               <p>In order to ensure a safe account experience, please bind your personal identity information</p>
+               <p className="dark:text-white">In order to ensure a safe account experience, please bind your personal identity information</p>
             </div>
 
             <div>

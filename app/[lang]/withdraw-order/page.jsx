@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '@/components/Form/Button';
+import Heading from '@/components/common/Heading';
 
 export default function RechargeOrder() {
   const [activeTab, setActiveTab] = useState('Whole');
@@ -18,9 +20,9 @@ export default function RechargeOrder() {
   return (
     <div className="min-h-screen container py-[40px] lg:py-[60px] font-inter antialiased">
         <div>
-            <h4 className="text-3xl lg:text-center font-semibold text-black mb-5 lg:mb-10">Withdrawal Records</h4>
+            <Heading text="Withdrawal Records" />
         </div>
-      <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg">
+      <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg dark:shadow-2xl border border-transparent dark:border-gray-800">
         
         {/* The tab navigation bar */}
         <div className="relative flex">
@@ -30,7 +32,7 @@ export default function RechargeOrder() {
               onClick={() => setActiveTab(tab.id)}
               className={`
                 relative px-6 py-4 text-center text-sm font-medium transition-colors duration-300
-                ${activeTab === tab.id ? 'text-primary-200' : 'text-gray-900 hover:text-primary-200'}
+                ${activeTab === tab.id ? 'text-primary-200' : 'text-gray-900 dark:text-white hover:text-primary-200'}
                 focus:outline-none
               `}
             >
@@ -68,7 +70,7 @@ export default function RechargeOrder() {
                 >
                   <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zM31.5 491.5C9.9 499.3-5.3 479.9 2.5 458.3l37.8-100.8c5.4-14.4 18.8-24.8 34.6-26.6 65.6-7.5 129.5-7.5 195.1 0 15.8 1.8 29.2 12.2 34.6 26.6l37.8 100.8c7.8 21.6-7.4 41-29 48.8-5.3 1.9-10.9 2.8-16.5 2.8-14.8 0-28.5-7.7-36.2-20.5l-20.6-34.4c-2.3-3.8-6.1-6.1-10.4-6.4-15.6-1.2-31.2-1.2-46.8 0-4.3 .3-8.1 2.6-10.4 6.4l-20.6 34.4c-7.7 12.8-21.4 20.5-36.2 20.5-5.6 0-11.2-.9-16.5-2.8z"/>
                 </svg>
-                <div className="text-xl text-gray-900 font-semibold mb-2">
+                <div className="text-xl text-gray-900 dark:text-white font-semibold mb-2">
                   {/* The content for the active tab */}
                   {activeTabItem.content}
                 </div>

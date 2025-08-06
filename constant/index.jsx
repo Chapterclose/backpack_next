@@ -273,17 +273,17 @@ export const footerUrls = [
       url: "/labs",
     },
     {
-      id: 5,
+      id: 6,
       title: "Bitcoin Price Prediction",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 7,
       title: "Ethereum Price Prediction",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 8,
       title: "Buy Bitcoin",
       url: "/labs",
     },

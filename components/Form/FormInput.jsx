@@ -2,19 +2,25 @@ import { twMerge } from "tailwind-merge";
 
 function FormInput({ label, type, placeholder, className, disabled, ...props }) {
   return (
-    <div>
-      {label !== "" && <label className="text-lg mb-2 block font-medium">{label}</label>}
+    <div className="mb-4">
+      {label && (
+        <label className="text-lg font-medium text-gray-900 dark:text-white mb-2 block"> 
+          {label}
+        </label>
+      )}
       <input
         value={props.value}
-        type={type ? type : "text"}
+        type={type || "text"} 
         placeholder={placeholder}
         className={twMerge(
-          "w-full h-14 rounded border border-gray-900 dark:border-white focus:outline-none pl-4 dark:placeholder:text-white",
+          "w-full px-3 py-3 border border-gray-300 dark:border-white rounded-md shadow-sm", 
+          "focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent", 
+          "dark:bg-gray-800 dark:text-white dark:placeholder-white",
           type === "number" && "hide-number-controls",
-          disabled && "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-800", // Styling for disabled state
+          disabled && "opacity-60 bg-gray-100 dark:bg-gray-800 cursor-not-allowed",
           className
         )}
-        disabled={disabled} // Add the disabled attribute
+        disabled={disabled}
         {...props}
       />
     </div>

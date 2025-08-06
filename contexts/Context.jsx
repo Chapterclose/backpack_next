@@ -7,12 +7,15 @@ export const contextProvider = createContext();
 const Context = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [markets, setMarkets] = useState({})
+  const [primaryCertified, setPrimaryCertified] = useState(false)
 
   const values = {
     isLoggedIn,
     setIsLoggedIn,
     markets,
-    setMarkets
+    setMarkets,
+    primaryCertified,
+    setPrimaryCertified
   };
 
   return <contextProvider.Provider value={values}>{children}</contextProvider.Provider>;
