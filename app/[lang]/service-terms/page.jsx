@@ -1,11 +1,11 @@
 function ServiceTerms() {
     return ( 
         <div className="container">
-            <div class="x-4 py-8 bg-white shadow-lg rounded-lg my-8">
+            <div class="x-4 py-8 bg-white dark:bg-dark dark:text-white my-8">
         <h1 class="text-center">Backpack Exchange - Terms of Service</h1>
         <p class="text-center text-gray-500 mb-8 text-sm">Effective Date: July 31, 2025</p>
 
-        <p>These Terms of Service ("Terms") govern your access to and use of the services provided by Backpack Exchange (<strong class="text-gray-700">[Your Company Name/Entity, e.g., operated by 200ms Labs, Inc.]</strong>), including but not limited to its website, mobile application, APIs, and any associated products or services (collectively, the "Services"). By accessing, using, or registering for an account on Backpack Exchange, you agree to be bound by these Terms and all terms incorporated by reference. If you do not agree to these Terms, you must not use our Services.</p>
+        <p>These Terms of Service ("Terms") govern your access to and use of the services provided by Backpack Exchange (<strong class="text-gray-700">BackPack Exchange</strong>), including but not limited to its website, mobile application, APIs, and any associated products or services (collectively, the "Services"). By accessing, using, or registering for an account on Backpack Exchange, you agree to be bound by these Terms and all terms incorporated by reference. If you do not agree to these Terms, you must not use our Services.</p>
 
         <h2 id="acceptance-of-terms">1. Acceptance of Terms</h2>
         <ul>

@@ -1,7 +1,9 @@
 "use client"
 
+import Heading from '@/components/common/Heading';
 import Button from '@/components/Form/Button';
 import React, { useState, useEffect, useCallback } from 'react';
+import { twMerge } from 'tailwind-merge'; // Import twMerge
 
 const ConvertPage = () => {
   // State for the currency inputs and selected currencies
@@ -13,6 +15,29 @@ const ConvertPage = () => {
   // State to manage the visibility of the currency dropdowns
   const [isFromDropdownOpen, setIsFromDropdownOpen] = useState(false);
   const [isToDropdownOpen, setIsToDropdownOpen] = useState(false);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isFromDropdownOpen &&
+        !event.target.closest('.from-dropdown-container')
+      ) {
+        setIsFromDropdownOpen(false);
+      }
+      if (
+        isToDropdownOpen &&
+        !event.target.closest('.to-dropdown-container')
+      ) {
+        setIsToDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isFromDropdownOpen, isToDropdownOpen]);
+
 
   const availableBalances = {
     TRX: '15,345.54',
@@ -38,7 +63,13 @@ const ConvertPage = () => {
       ETH: 0.00024,
       XRP: 1.98,
     },
+    // Add other exchange rates as needed for all currencies
+    DOGE: { TRX: 0.195, USDT: 0.064, BTC: 0.0000009, ETH: 0.000015, XRP: 0.12 },
+    BTC: { TRX: 200000, USDT: 65000, DOGE: 10000000, ETH: 15, XRP: 120000 },
+    ETH: { TRX: 12000, USDT: 4000, DOGE: 65000, BTC: 0.065, XRP: 7500 },
+    XRP: { TRX: 1.5, USDT: 0.5, DOGE: 8, BTC: 0.000008, ETH: 0.00013 },
   };
+
 
   const currencies = [
     { name: 'TRX', symbol: '💎' },
@@ -49,15 +80,16 @@ const ConvertPage = () => {
     { name: 'XRP', symbol: ' XRP' },
   ];
 
+  // Modified calculateConversion to use actual exchange rates
   const calculateConversion = useCallback(() => {
-    if (fromValue) {
-      const randomMultiplier = Math.random() * 100;
-      const newToValue = parseFloat(fromValue) * randomMultiplier;
+    if (fromValue && exchangeRates[fromCurrency] && exchangeRates[fromCurrency][toCurrency]) {
+      const rate = exchangeRates[fromCurrency][toCurrency];
+      const newToValue = parseFloat(fromValue) * rate;
       setToValue(newToValue.toFixed(8));
     } else {
       setToValue('');
     }
-  }, [fromValue]);
+  }, [fromValue, fromCurrency, toCurrency, exchangeRates]);
 
   useEffect(() => {
     calculateConversion();
@@ -65,11 +97,20 @@ const ConvertPage = () => {
 
   // Function to handle the "Swap" button click
   const handleSwap = () => {
+    // Swap currencies
+    const tempCurrency = fromCurrency;
     setFromCurrency(toCurrency);
-    setToCurrency(fromCurrency);
+    setToCurrency(tempCurrency);
+
+    // Swap values and then recalculate
+    const tempValue = fromValue;
     setFromValue(toValue);
-    setToValue(fromValue);
+    setToValue(tempValue);
+
+    // Recalculate after swap
+    // This will be handled by the useEffect watching fromValue, fromCurrency, toCurrency
   };
+
 
   // Function to handle currency selection from dropdown
   const handleSelectCurrency = (currency, type) => {
@@ -80,32 +121,43 @@ const ConvertPage = () => {
       setToCurrency(currency);
       setIsToDropdownOpen(false);
     }
+    // Recalculate after currency change
+    // This will be handled by the useEffect watching fromValue, fromCurrency, toCurrency
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-50 py-10 px-5 font-inter">
-      <div className="w-full max-w-xl bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-200">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Convert</h1>
+    <div className="flex justify-center items-center bg-gray-50 dark:bg-dark min-h-screen py-10 px-5 font-inter">
+      <div className="w-full max-w-xl bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <Heading text={"Convert"} />
 
         {/* Available Balance Display */}
         <div className="text-center mb-6">
-          <p className="text-5xl font-bold text-gray-900 mb-2">{availableBalances[fromCurrency]}</p>
-          <p className="text-sm text-gray-500">Available balance({fromCurrency})</p>
+          <p className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2">{availableBalances[fromCurrency]}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Available balance ({fromCurrency})</p>
         </div>
 
         {/* "From" currency input section */}
-        <div className="relative mb-4">
-          <div className="flex items-center justify-between bg-gray-100 rounded-xl p-4 shadow-sm border border-gray-200">
+        <div className="relative mb-5 from-dropdown-container"> {/* Increased mb and added container class */}
+          <div className={twMerge(
+            "flex items-center justify-between px-4 py-3", // Matched FormInput padding
+            "border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm", // Matched FormInput border, rounded, shadow
+            "bg-gray-100 dark:bg-gray-700", // Background color for the container
+            "focus-within:outline-none focus-within:ring-1 focus-within:ring-primary focus-within:border-primary", // Focus style for the whole input group
+            "transition-all duration-200 ease-in-out" // Smooth transitions
+          )}>
             <input
               type="number"
               placeholder="Please enter"
-              className="bg-transparent text-xl font-medium w-full outline-none focus:outline-none placeholder-gray-400 text-gray-900"
+              className={twMerge(
+                "bg-transparent text-xl font-medium w-full outline-none",
+                "placeholder-gray-400 text-gray-900 dark:text-gray-100 dark:placeholder-gray-500" // Matched placeholder/text color
+              )}
               value={fromValue}
               onChange={(e) => setFromValue(e.target.value)}
             />
             <div className="flex items-center space-x-2">
               <button
-                className="text-xs text-green-500 font-semibold uppercase"
+                className="text-xs text-green-500 font-semibold uppercase hover:text-green-600 transition-colors"
                 onClick={() => setFromValue(availableBalances[fromCurrency].replace(/,/g, ''))}
               >
                 Max
@@ -114,8 +166,8 @@ const ConvertPage = () => {
                 className="flex items-center cursor-pointer space-x-1"
                 onClick={() => setIsFromDropdownOpen(!isFromDropdownOpen)}
               >
-                <span className="text-lg font-bold text-gray-900">{fromCurrency}</span>
-                <span className="text-sm">{currencies.find(c => c.name === fromCurrency)?.symbol}</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{fromCurrency}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">{currencies.find(c => c.name === fromCurrency)?.symbol}</span> {/* Symbol color */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${isFromDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
@@ -130,15 +182,15 @@ const ConvertPage = () => {
           </div>
           {/* "From" currency dropdown */}
           {isFromDropdownOpen && (
-            <div className="absolute z-10 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
+            <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
               {currencies.filter(c => c.name !== toCurrency).map((currency) => (
                 <div
                   key={currency.name}
-                  className="flex items-center p-3 cursor-pointer hover:bg-gray-50"
+                  className="flex items-center p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                   onClick={() => handleSelectCurrency(currency.name, 'from')}
                 >
                   <span className="mr-3 text-lg">{currency.symbol}</span>
-                  <span className="font-medium text-gray-800">{currency.name}</span>
+                  <span className="font-medium text-gray-800 dark:text-gray-200">{currency.name}</span>
                 </div>
               ))}
             </div>
@@ -149,11 +201,11 @@ const ConvertPage = () => {
         <div className="flex justify-center my-4">
           <button
             onClick={handleSwap}
-            className="w-12 h-12 bg-white rounded-full border border-gray-300 shadow-md flex items-center justify-center transform transition-transform hover:scale-110 active:scale-95"
+            className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full border border-gray-300 dark:border-gray-600 shadow-md flex items-center justify-center transform transition-transform hover:scale-110 active:scale-95 hover:border-blue-400 hover:ring-1 hover:ring-blue-400" // Added hover effects
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-600"
+              className="h-6 w-6 text-gray-600 dark:text-gray-300" // Dark mode text color
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -164,20 +216,29 @@ const ConvertPage = () => {
         </div>
 
         {/* "To" currency output section */}
-        <div className="relative">
-          <div className="flex items-center justify-between bg-gray-100 rounded-xl p-4 shadow-sm border border-gray-200">
+        <div className="relative to-dropdown-container"> {/* Added container class */}
+          <div className={twMerge(
+            "flex items-center justify-between px-4 py-3", // Matched FormInput padding
+            "border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm", // Matched FormInput border, rounded, shadow
+            "bg-gray-100 dark:bg-gray-700", // Background color for the container
+            "focus-within:outline-none focus-within:ring-1 focus-within:ring-primary focus-within:border-primary", // Focus style for the whole input group
+            "transition-all duration-200 ease-in-out" // Smooth transitions
+          )}>
             <input
               type="text"
               readOnly
-              className="bg-transparent text-xl font-medium w-full outline-none focus:outline-none placeholder-gray-400 text-gray-900"
+              className={twMerge(
+                "bg-transparent text-xl font-medium w-full outline-none",
+                "placeholder-gray-400 text-gray-900 dark:text-gray-100 dark:placeholder-gray-500" // Matched placeholder/text color
+              )}
               value={toValue}
             />
             <div
               className="flex items-center cursor-pointer space-x-1"
               onClick={() => setIsToDropdownOpen(!isToDropdownOpen)}
             >
-              <span className="text-lg font-bold text-gray-900">{toCurrency}</span>
-              <span className="text-sm">{currencies.find(c => c.name === toCurrency)?.symbol}</span>
+              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{toCurrency}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">{currencies.find(c => c.name === toCurrency)?.symbol}</span> {/* Symbol color */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${isToDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
@@ -191,15 +252,15 @@ const ConvertPage = () => {
           </div>
           {/* "To" currency dropdown */}
           {isToDropdownOpen && (
-            <div className="absolute z-10 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
+            <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
               {currencies.filter(c => c.name !== fromCurrency).map((currency) => (
                 <div
                   key={currency.name}
-                  className="flex items-center p-3 cursor-pointer hover:bg-gray-50"
+                  className="flex items-center p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                   onClick={() => handleSelectCurrency(currency.name, 'to')}
                 >
                   <span className="mr-3 text-lg">{currency.symbol}</span>
-                  <span className="font-medium text-gray-800">{currency.name}</span>
+                  <span className="font-medium text-gray-800 dark:text-gray-200">{currency.name}</span>
                 </div>
               ))}
             </div>
@@ -207,14 +268,14 @@ const ConvertPage = () => {
         </div>
 
         {/* Exchange rate display */}
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
           Today's exchange rate: 1{fromCurrency} = {exchangeRates[fromCurrency]?.[toCurrency]?.toFixed(8) || 'N/A'}{toCurrency}
         </div>
 
 
         <Button
-        text={"Confirm"}
-        className={"w-full mt-10"}
+          text={"Confirm"}
+          className={"w-full mt-10"}
         />
       </div>
     </div>

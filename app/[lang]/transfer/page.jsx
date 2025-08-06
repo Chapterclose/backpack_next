@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ArrowUpDown, Check } from 'lucide-react'; // Using lucide-react for icons
 import Button from '@/components/Form/Button';
+import Heading from '@/components/common/Heading';
 
 // The main App component for the Transfer system
 const TransferPage = () => {
@@ -54,9 +55,9 @@ const TransferPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-50 py-10 px-5 font-inter">
-      <div className="w-full max-w-xl bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-200">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Transfer</h1>
+    <div className="flex justify-center items-center bg-gray-50 dark:bg-dark py-10 px-5 font-inter">
+      <div className="w-full max-w-xl bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <Heading text={"Transfer"} />
 
         {/* From and To asset selection section with swap icon on the right */}
         <div className="relative flex items-center space-x-4 mb-6">
@@ -132,8 +133,8 @@ const TransferPage = () => {
 
         {/* Transfer amount input section */}
         <div className="mb-6">
-          <p className="text-sm font-medium text-gray-500 mb-2">Transfer amount</p>
-          <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4 shadow-inner border border-gray-200">
+          <p className="text-sm font-medium dark:text-white text-gray-500 mb-2">Transfer amount</p>
+          <div className="flex items-center justify-between bg-gray-50 rounded-xl p-3 shadow-inner border border-gray-200">
             <input
               type="number"
               placeholder="0"
@@ -155,8 +156,8 @@ const TransferPage = () => {
         </div>
 
         {/* Available balance display */}
-        <div className="text-sm text-gray-500">
-          Available balance: <span className="font-bold text-gray-800">{availableBalances[fromAsset]}</span>
+        <div className="text-sm text-gray-500 dark:text-white">
+          Available balance: <span className="font-bold dark:text-white text-gray-800">{availableBalances[fromAsset]}</span>
         </div>
 
         {/* Confirm button */}

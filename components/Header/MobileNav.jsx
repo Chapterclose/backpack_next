@@ -1,5 +1,6 @@
 'use client';
 
+import { contextProvider } from '@/contexts/Context';
 import {
   Activity,
   BadgeInfo,
@@ -10,7 +11,6 @@ import {
   FileLock,
   Home,
   Layers,
-  Lock,
   Mail,
   ShieldCheck,
   UserCircle,
@@ -18,42 +18,62 @@ import {
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+import Logo from "@/assets/backpack-logo.png";
+import Image from 'next/image';
+import toast, { Toaster } from 'react-hot-toast'; // Import toast and Toaster
 
 const MobileNav = () => {
   const { setTheme, resolvedTheme } = useTheme();
+  const { primaryCertified, setPrimaryCertified } =
+    useContext(contextProvider);
   const pathname = usePathname();
+  const router = useRouter();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { href: '/en', icon: Home, label: 'Home' },
     { href: '/en/markets', icon: ChartNoAxesCombined, label: 'Markets' },
-    { href: '/en/trade', icon: Activity, label: 'Trade' },
+    { href: '/en/trade?symbol=btc', icon: Activity, label: 'Trade' },
     { href: '/en/assets', icon: BookA, label: 'Assets' },
     { href: '/en/primary-certification', icon: ShieldCheck, label: 'Primary Certification' },
-    { href: '/en/real-name-authentication', icon:CircleUserRound, label: 'Real-name Authentication' },
-    { href: '/en/bind-card-bank', icon:CreditCard, label: 'Bind Bank Card' },
-    { href: '/en/set-fund-password', icon:FileLock, label: 'Set Password' },
+    { href: '/en/real-name-authentication', icon: CircleUserRound, label: 'Real-name Authentication', protected: true },
+    { href: '/en/bind-card-bank', icon: CreditCard, label: 'Bind Bank Card' },
+    { href: '/en/set-fund-password', icon: FileLock, label: 'Set Password' },
     // { href: '/en/set-login-password', icon:Lock, label: 'Set Login Password' },
-    { href: '/en/email-authentication', icon:Mail, label: 'Email Authenticaion' },
-    { href: '/en/service-terms', icon:Layers, label: 'Service Terms' },
-    { href: '/en/help-center', icon:BadgeInfo, label: 'Help Center' },
+    { href: '/en/email-authentication', icon: Mail, label: 'Email Authenticaion' },
+    { href: '/en/service-terms', icon: Layers, label: 'Service Terms' },
+    { href: '/en/help-center', icon: BadgeInfo, label: 'Help Center' },
     // { href: '/en/e', icon:Globe, label: 'English' },
   ];
 
+  const handleNavItemClick = (item) => {
+    // Check if the item is 'protected' AND primaryCertification is not complete
+    if (item.protected && !primaryCertified) {
+      toast.error("Please complete primary certification first."); // This will now work
+      // setMobileMenuOpen(false); // You might want to keep the menu open or close it based on UX
+    } else {
+      router.push(item.href);
+      setMobileMenuOpen(false);
+    }
+  };
+
   return (
-    <div className="lg:hidden shadow">
+    <div className="lg:hidden shadow dark:shadow-2xl">
+      <Toaster position="top-center" reverseOrder={false} /> {/* Add Toaster component here */}
+
       {/* Header */}
-      <header className="py-4 flex items-center justify-between px-5">
+      <header className="py-3 flex items-center justify-between px-5">
         <div className="logo mr-10">
           <Link href="/">
-            <h3 className="text-primary-100 font-semibold">
-              <span className="text-xl font-bold">B</span>ack
-              <span className="text-xl font-bold">P</span>ack{' '}
-              <span className="text-xl font-bold">E</span>xchange
-            </h3>
+            <Image
+              src={Logo}
+              alt="logo"
+              className="w-[140px] h-[50px]"
+            />
           </Link>
         </div>
         <div>
@@ -101,7 +121,7 @@ const MobileNav = () => {
             <X/>
           </button>
         </div>
-        {/* User info  */}
+        {/* User info */}
         <div className='px-6 mb-3'>
           <h4 className='text-xl font-medium'>Email: Ofg4349535dretd3423dssfasdtCgegd</h4>
           <h4 className='text-xl font-medium'>UID: 5295</h4>
@@ -115,22 +135,21 @@ const MobileNav = () => {
               const Icon = item.icon;
             return(
               <li key={item.label}>
-                <Link
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`text-lg font-semibold flex gap-x-3 ${
-                    pathname === item.href
-                      ? 'text-yellow-400'
-                      : 'hover:text-yellow-300'
-                  }`}
-                >
-                  {Icon && <Icon/>}
-                   {item.label}
-                </Link>
+                <button
+                    onClick={() => handleNavItemClick(item)}
+                    className={twMerge(
+                      "text-lg font-semibold flex gap-x-3 items-center w-full text-left",
+                      pathname === item.href
+                        ? "text-yellow-400"
+                        : "hover:text-yellow-300"
+                    )}
+                  >
+                    {Icon && <Icon />}
+                    {item.label}
+                  </button>
               </li>
             )
-            }
-            )}
+            })}
           </ul>
         </div>
       </div>

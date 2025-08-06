@@ -3,27 +3,28 @@
 import { marketData } from "@/constant/marketArr";
 import { contextProvider } from "@/contexts/Context";
 import Image from "next/image";
+import Link from "next/link";
 import { useContext } from "react";
 
 function MarketTable({ss,se}) {
     const {markets} = useContext(contextProvider)
     return ( 
-        <div className="overflow-x-auto bg-white">
+        <div className="overflow-x-auto bg-white dark:bg-dark">
                 <table className="min-w-full">
                     <thead className="">
                     <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-1 md:px-2 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Name
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-1 md:px-2 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Price
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-1 md:px-2 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         24h Change
                         </th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white">
+                    <tbody className="bg-white dark:bg-dark">
                     {marketData.slice(ss, se).map((item, index) => {
                         const symbol = item.symbol;
                         const iconSrc = item.icon;
@@ -32,20 +33,20 @@ function MarketTable({ss,se}) {
                         // Determine if the change is positive
                         const isPositiveChange = data?.change && parseFloat(data.change) >= 0;
                         return (
-                            <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center">
-                                    <Image src={item?.icon} width={30} height={30} alt="icon" />
+                            <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="px-1 md:px-2 lg:px-6 py-4 whitespace-nowrap">
+                                <Link href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`} className="flex items-center">
+                                    <Image src={item?.icon} alt="icon" className="w-[20px] h-[20px] lg:w-[30px] lg:h-[30px]" />
                                     <div className="ml-4">
-                                    <div className="text-lg font-medium text-black">{item.symbol}</div>
-                                </div>
-                                </div>
+                                        <div className="text-base lg:text-lg font-medium text-black dark:text-white">{item.symbol}</div>
+                                    </div>
+                                </Link>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black font-semibold">
+                            <td className="px-1 md:px-2 lg:px-6 py-4 whitespace-nowrap text-sm text-black dark:text-white font-semibold">
                                 {data?.price ? `$${data.price}` : "Loading..."}
                             </td>
                             <td
-                               className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${
+                               className={`px-1 md:px-2 lg:px-6 py-4 whitespace-nowrap text-sm font-semibold ${
                                     isPositiveChange
                                     ? "text-green-600"
                                     : "text-red-500"

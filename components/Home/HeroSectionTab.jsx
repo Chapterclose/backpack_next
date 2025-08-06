@@ -3,6 +3,7 @@ import { marketData } from "@/constant/marketArr";
 import { contextProvider } from "@/contexts/Context";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useContext, useEffect } from "react";
 const homePageTabs = [{ title: "Popular" }, { title: "New Listing" }];
 
@@ -37,12 +38,12 @@ const HeroSectionTab = () => {
       return () => ws.close();
     }, [setMarkets]);
   return (
-    <TabGroup manual defaultIndex={0}>
+    <TabGroup manual defaultIndex={0} className={"shadow-2xl p-3 lg:py-3 lg:px-5 rounded-lg"}>
       <TabList className="mb-5">
         {homePageTabs?.map((item) => (
           <Tab
             key={item.title}
-            className="data-[selected]:text-black relative text-gray-500 font-semibold mr-5 focus:outline-none data-[selected]:before:absolute data-[selected]:before:bottom-[-5px] data-[selected]:before:left-1/2 data-[selected]:before:-translate-x-1/2 data-[selected]:before:bg-primary data-[selected]:before:w-6 data-[selected]:before:h-[3px] text-xl cursor-pointer"
+            className="data-[selected]:text-black dark:data-[selected]:text-primary relative dark:text-white text-gray-500 font-semibold mr-5 focus:outline-none data-[selected]:before:absolute data-[selected]:before:bottom-[-5px] data-[selected]:before:left-1/2 data-[selected]:before:-translate-x-1/2 data-[selected]:before:bg-primary data-[selected]:before:w-6 data-[selected]:before:h-[3px] text-[16px] lg:text-xl cursor-pointer"
           >
             {item.title}
           </Tab>
@@ -62,14 +63,14 @@ const HeroSectionTab = () => {
                 return (
                 <tr key={item.symbol}>
                   <td className="pr-10">
-                    <div className="flex items-center gap-x-3 mb-2">
-                      <Image src={item?.icon} width={30} height={30} alt="icon" />
-                      <span className="text-black font-semibold">
+                    <Link href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`} className="flex items-center gap-x-3 mb-2">
+                      <Image src={item?.icon} alt="icon" className="w-[20px] h-[20px] lg:w-[30px] lg:h-[30px]" />
+                      <span className="text-black dark:text-white font-semibold text-[14px] lg:text-[16px]">
                         {item.symbol}
                       </span>
-                    </div>
+                    </Link>
                   </td>
-                  <td className="px-7 text-black font-semibold">{data?.price ? `$${data.price}` : "Loading..."}</td>
+                  <td className="px-7 text-black dark:text-white font-semibold">{data?.price ? `$${data.price}` : "Loading..."}</td>
                   <td className={`font-semibold ${
                     isPositiveChange
                       ? "text-green-600"
@@ -95,14 +96,14 @@ const HeroSectionTab = () => {
                 return (
                 <tr key={item.symbol}>
                   <td className="pr-10">
-                    <div className="flex items-center gap-x-3 mb-2">
-                      <Image src={item?.icon} width={30} height={30} alt="icon" />
-                      <span className="text-black font-semibold">
+                    <Link href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`} className="flex items-center gap-x-3 mb-2">
+                      <Image src={item?.icon} alt="icon" className="w-[20px] h-[20px] lg:w-[30px] lg:h-[30px]" />
+                      <span className="text-black dark:text-white font-semibold text-[14px] lg:text-[16px]">
                         {item.symbol}
                       </span>
-                    </div>
+                    </Link>
                   </td>
-                  <td className="px-7 text-black font-semibold">{data?.price ? `$${data.price}` : "Loading..."}</td>
+                  <td className="px-7 text-black dark:text-white font-semibold">{data?.price ? `$${data.price}` : "Loading..."}</td>
                   <td className={`font-semibold ${
                     isPositiveChange
                       ? "text-green-600"

@@ -42,7 +42,7 @@ const MobileFooterLinks = () => {
               {activeCollapse === i ? (
                 <FaMinus
                   className={cn(
-                    "text-black ",
+                    "text-black dark:text-white",
                     // activeCollapse === i && ""
                   )}
                   activeCollapse={activeCollapse}
@@ -51,7 +51,7 @@ const MobileFooterLinks = () => {
               ) : (
                 <FaPlus
                   className={cn(
-                    "text-black",
+                    "text-black dark:text-white",
                     // activeCollapse === i && "text-yellow-300"
                   )}
                 />

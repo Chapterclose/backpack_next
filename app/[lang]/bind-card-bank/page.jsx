@@ -57,7 +57,7 @@ function BindCardBack() {
                </div> :
                <div className="text-center">
                   <Banknote className="w-[150px] h-[150px] mx-auto mt-[100px] text-green-500"/>
-                  <h4 className="text-gray-700 text-xl mb-8">Unbound Bank Card</h4>
+                  <h4 className="text-gray-700 dark:text-white text-xl mb-8">Unbound Bank Card</h4>
                   <Button
                   text="Add Bank Card"
                   handleFunc={()=>setIsBankCard(true)}

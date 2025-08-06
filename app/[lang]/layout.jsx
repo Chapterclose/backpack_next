@@ -4,6 +4,7 @@ import Context from "@/contexts/Context";
 import { ThemeProvider } from "next-themes";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import ClientLayout from "./ClientLayout";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,13 +21,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${poppins.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem enableColorScheme>
+    <html lang="en" suppressHydrationWarning className="dark:bg-dark dark:text-white">
+      <body className={`${poppins.variable} antialiased`} suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
           <Context>
-            <Header />
-            {children}
-            <Footer />
+            <ClientLayout>
+              {children}
+            </ClientLayout>
           </Context>
         </ThemeProvider>
       </body>

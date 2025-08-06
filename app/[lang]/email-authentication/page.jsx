@@ -24,7 +24,7 @@ function EmailAuthenticationPage() {
                         placeholder="Please enter"
                         type="code"
                         />
-                        <Button text="Send" className="absolute right-2 bottom-[6px] text-xs p-[5_15px]" />
+                        <Button text="Send" className="absolute right-2 bottom-[10px] text-xs p-[5_15px]" />
                      </div>
 
                      <Button

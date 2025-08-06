@@ -1,3 +1,4 @@
+import { BadgeInfo, CircleUserRound, CreditCard, FileLock, Layers, Mail, ShieldCheck } from "lucide-react";
 import { AiOutlineCloseSquare, AiOutlineSetting } from "react-icons/ai";
 import {
   BiBarChart,
@@ -11,6 +12,25 @@ import {
 import { FaHandHoldingUsd } from "react-icons/fa";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import { TbHexagons } from "react-icons/tb";
+
+export const navItems = [
+    {
+      href: "/en/primary-certification",
+      icon: ShieldCheck,
+      label: "Primary Certification",
+    },
+    {
+      href: "/en/real-name-authentication",
+      icon: CircleUserRound,
+      label: "Real-name Authentication",
+      protected: true,
+    },
+    { href: "/en/bind-card-bank", icon: CreditCard, label: "Bind Bank Card" },
+    { href: "/en/set-fund-password", icon: FileLock, label: "Set Password" },
+    { href: "/en/email-authentication", icon: Mail, label: "Email Authentication" },
+    { href: "/en/service-terms", icon: Layers, label: "Service Terms" },
+    { href: "/en/help-center", icon: BadgeInfo, label: "Help Center" },
+  ];
 
 // User Dashboard Menus
 export const userDashboardMenus = [
@@ -273,17 +293,17 @@ export const footerUrls = [
       url: "/labs",
     },
     {
-      id: 5,
+      id: 6,
       title: "Bitcoin Price Prediction",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 7,
       title: "Ethereum Price Prediction",
       url: "/labs",
     },
     {
-      id: 5,
+      id: 8,
       title: "Buy Bitcoin",
       url: "/labs",
     },

@@ -11,6 +11,7 @@ body{
     --color-grey:#34393E;
     --color-grey-100:#2E2E2E;
     --color-black:#202630;
+    --color-dark:#181A20;
 }
 @custom-variant dark (&:where(.dark, .dark *));
 @layer{
@@ -18,7 +19,6 @@ body{
         @apply max-w-[1240px] px-6 mx-auto;
     }
 }
-
 
 /* Hide number input arrows for Chrome, Safari, Edge, Opera */
 .hide-number-controls::-webkit-outer-spin-button,

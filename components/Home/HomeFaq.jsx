@@ -16,7 +16,7 @@ const HomeFaq = () => {
 
   return (
     <div className="container pb-[60px]">
-      <h3 className="text-4xl text-center font-semibold py-[50px] text-t-primary">
+      <h3 className="text-4xl text-center font-semibold py-[50px] dark:text-white text-t-primary">
         Frequently Asked Questions
       </h3>
       {homeFaqData.map(({ title, url, id }, i) => (
@@ -25,7 +25,7 @@ const HomeFaq = () => {
             id={id}
             key={i}
             className={cn(
-              "group rounded-xl p-5 mb-1 hover:text-black duration-300",
+              "group rounded-xl p-5 mb-1 hover:text-black dark:text-white duration-300",
               //   i === 0 && "!pt-0",
               activeCollapse === i && "bg-black-100"
             )}
@@ -55,7 +55,7 @@ const HomeFaq = () => {
                 ) : (
                   <FaPlus
                     className={cn(
-                      "text-black",
+                      "text-black dark:text-white",
                       // activeCollapse === i && "text-yellow-300"
                     )}
                   />
@@ -63,7 +63,7 @@ const HomeFaq = () => {
               </span>
             </h5>
             <Collapsible trigger="" open={i === activeCollapse} transitionTime={200}>
-              <p className="text-[12px] md:text-[10px] lg:text-[14px] xxl:text-[16px] leading-[160%] text-body pr-[20px] xll:mt-[20px] lg:mt-[7px] mt-[12px] text-secondary">
+              <p className="text-[12px] md:text-[10px] lg:text-[14px] xxl:text-[16px] leading-[160%] text-body pr-[20px] xll:mt-[20px] lg:mt-[7px] mt-[12px] text-secondary dark:text-white">
                 {url}
               </p>
             </Collapsible>
