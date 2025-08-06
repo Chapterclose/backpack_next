@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { use, useRef } from "react";
 import { twMerge } from "tailwind-merge";
+import darkqr from "@/assets/dark-qr.png"
 function RechargeApply() {
     const searchParams = useSearchParams()
     const coin = searchParams.get("coin")
@@ -34,10 +35,16 @@ function RechargeApply() {
             </div>
 
             <Image
-            src={qr}
-            width={200}
-            height={200}
-            className="mx-auto"
+                src={qr}
+                width={200}
+                height={200}
+                className="mx-auto dark:hidden"
+            />
+            <Image
+                src={darkqr}
+                width={200}
+                height={200}
+                className="mx-auto hidden dark:block"
             />
 
             <div className="mt-5 mb-5">
