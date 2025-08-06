@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import { contextProvider } from '@/contexts/Context';
+import { useContext, useState } from 'react';
+import Button from '../Form/Button';
 
 function BuySell({coin}) {
     const [activePopup, setActivePopup] = useState(null);
     const [selectedPeriod, setSelectedPeriod] = useState(null);
     const [purchaseVolume, setPurchaseVolume] = useState('');
+    const {walletAddress, connectWallet} = useContext(contextProvider)
 
     const closePopup = () => {
         setActivePopup(null);
@@ -31,19 +34,21 @@ function BuySell({coin}) {
 
     return (
         <div> 
-            <div className='mt-10 lg:mt-14 flex justify-center gap-4'>
-                <button
-                    className="px-14 py-3 cursor-pointer bg-green-500 text-white font-bold rounded hover:bg-green-600 transition-colors"
-                    onClick={() => setActivePopup('buy')}
-                >
-                    Buy
-                </button>
-                <button
-                    className="px-14 py-3 cursor-pointer bg-red-500 text-white font-bold rounded hover:bg-red-600 transition-colors"
-                    onClick={() => setActivePopup('sell')}
-                >
-                    Sell
-                </button>
+            <div className='mt-10 lg:mt-14'>
+                {walletAddress === "" ? <div className='text-center'><Button handleFunc={connectWallet} text={"Connect"}/></div>  : <div className='flex justify-center gap-x-4'>
+                    <button
+                        className="px-14 py-3 cursor-pointer bg-green-500 text-white font-bold rounded hover:bg-green-600 transition-colors"
+                        onClick={() => setActivePopup('buy')}
+                    >
+                        Buy
+                    </button>
+                    <button
+                        className="px-14 py-3 cursor-pointer bg-red-500 text-white font-bold rounded hover:bg-red-600 transition-colors"
+                        onClick={() => setActivePopup('sell')}
+                    >
+                        Sell
+                    </button>
+                </div>}
             </div>
 
             {/* Buy Pop-up */}
