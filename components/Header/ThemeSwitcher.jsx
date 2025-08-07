@@ -13,7 +13,7 @@ export default function ThemeSwitcher() {
 
   if (!mounted) return;
   return (
-    <span className="hidden lg:block">
+    <span className="">
       {resolvedTheme === "light" && (
         <BiSolidSun onClick={() => setTheme("dark")} className="cursor-pointer text-xl" />
       )}

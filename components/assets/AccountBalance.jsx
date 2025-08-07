@@ -1,9 +1,19 @@
-
+"use client"
 import { BadgeDollarSign, CloudDownload, CloudUpload, Eye, EyeOff, FolderSync, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react"; // Import useState hook
 
-function AccountBalance({showBalance,toggleBalanceVisibility}) {
-    return ( 
+function AccountBalance({ showBalance, toggleBalanceVisibility }) {
+    const [isLoading, setIsLoading] = useState(false); // State for loading
+
+    const handleRefresh = () => {
+        setIsLoading(true); 
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1500); 
+    };
+
+    return (
         <div>
             <div className="flex items-center gap-x-5">
                 <h4 className="text-xl lg:text-4xl font-semibold text-black dark:text-white">Account Balance(USDT)</h4>
@@ -13,12 +23,21 @@ function AccountBalance({showBalance,toggleBalanceVisibility}) {
                     ) : (
                         <EyeOff onClick={toggleBalanceVisibility} className="cursor-pointer" />
                     )}
-                    <RefreshCw className="cursor-pointer" />
+                    <RefreshCw
+                        className={`cursor-pointer ${isLoading ? 'animate-spin' : ''}`} 
+                        onClick={handleRefresh}
+                    />
                 </div>
             </div>
             <h3 className="text-3xl font-semibold text-black dark:text-white mt-2">
                 {showBalance ? "0.00" : "****"}
             </h3>
+
+            {isLoading && (
+                <div className="fixed inset-0 bg-black/20 bg-opacity-10 flex items-center justify-center z-50">
+                    <div className="w-20 h-20 border-4 border-t-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            )}
 
             <div className="flex items-center text-center gap-x-5 mt-10">
                 <Link href="/recharge-deposit" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800">
@@ -39,7 +58,7 @@ function AccountBalance({showBalance,toggleBalanceVisibility}) {
                 </Link>
             </div>
         </div>
-      );
+    );
 }
 
 export default AccountBalance;

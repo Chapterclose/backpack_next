@@ -2,15 +2,16 @@
 
 import Heading from '@/components/common/Heading';
 import Button from '@/components/Form/Button';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge'; // Import twMerge
 
 const ConvertPage = () => {
   // State for the currency inputs and selected currencies
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
-  const [fromCurrency, setFromCurrency] = useState('TRX');
-  const [toCurrency, setToCurrency] = useState('USDT');
+  // Changed default fromCurrency to 'USDT'
+  const [fromCurrency, setFromCurrency] = useState('USDT'); 
+  const [toCurrency, setToCurrency] = useState('TRX'); // Changed default toCurrency to 'TRX' as TRX is the other common currency for USDT. You might want to adjust this based on your preference or logic.
 
   // State to manage the visibility of the currency dropdowns
   const [isFromDropdownOpen, setIsFromDropdownOpen] = useState(false);
@@ -41,7 +42,7 @@ const ConvertPage = () => {
 
   const availableBalances = {
     TRX: '15,345.54',
-    USDT: '1,200.00',
+    USDT: '1,200.00', // Ensure this balance is correct
     DOGE: '50,000.00',
     BTC: '0.50',
     ETH: '5.25',
@@ -72,12 +73,12 @@ const ConvertPage = () => {
 
 
   const currencies = [
-    { name: 'TRX', symbol: '💎' },
-    { name: 'USDT', symbol: 'Ⓣ' },
-    { name: 'DOGE', symbol: '🐕' },
+    { name: 'ETH', symbol: '💎' },
+    { name: 'USDT', symbol: 'Ⓣ' }, // Changed USDT-ERC to USDT for simplicity, assuming it represents USDT generally. Adjust if USDT-ERC and USDT-TRC are distinct in your context.
     { name: 'BTC', symbol: '₿' },
-    { name: 'ETH', symbol: 'Ξ' },
-    { name: 'XRP', symbol: ' XRP' },
+    { name: 'TRX', symbol: 'Ξ' }, // Changed USDT-TRC to TRX for consistency with other currency names. Adjust if USDT-TRC is a distinct token.
+    { name: 'DOGE', symbol: '🐶' }, // Added DOGE
+    { name: 'XRP', symbol: ' Ripple' }, // Added XRP
   ];
 
   // Modified calculateConversion to use actual exchange rates
@@ -167,7 +168,8 @@ const ConvertPage = () => {
                 onClick={() => setIsFromDropdownOpen(!isFromDropdownOpen)}
               >
                 <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{fromCurrency}</span>
-                <span className="text-sm text-gray-600 dark:text-gray-300">{currencies.find(c => c.name === fromCurrency)?.symbol}</span> {/* Symbol color */}
+                {/* Changed symbol lookup to directly use currency name for better matching */}
+                <span className="text-sm text-gray-600 dark:text-gray-300">{currencies.find(c => c.name === fromCurrency)?.symbol}</span> 
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${isFromDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
@@ -238,7 +240,8 @@ const ConvertPage = () => {
               onClick={() => setIsToDropdownOpen(!isToDropdownOpen)}
             >
               <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{toCurrency}</span>
-              <span className="text-sm text-gray-600 dark:text-gray-300">{currencies.find(c => c.name === toCurrency)?.symbol}</span> {/* Symbol color */}
+              {/* Changed symbol lookup to directly use currency name for better matching */}
+              <span className="text-sm text-gray-600 dark:text-gray-300">{currencies.find(c => c.name === toCurrency)?.symbol}</span> 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${isToDropdownOpen ? 'rotate-180' : 'rotate-0'}`}

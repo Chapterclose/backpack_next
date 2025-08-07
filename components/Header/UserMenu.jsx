@@ -1,9 +1,12 @@
-import { X } from "lucide-react";
+import { contextProvider } from "@/contexts/Context";
+import { LogOut, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useContext } from "react";
 import { twMerge } from "tailwind-merge";
 
 function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLoggedIn, setIsLoggedIn, navItems, error}) {
     const pathname = usePathname();
+    const {handleLogout} = useContext(contextProvider)
     return ( 
        <div
         className={`fixed inset-0 z-[100] flex transition-opacity duration-300 ${
@@ -59,24 +62,14 @@ function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLogg
                     </li>
                 );
                 })}
-                {/* Conditional Logout button based on isLoggedIn */}
-                {isLoggedIn && (
-                <li>
-                    <button
-                    onClick={() => {
-                        setIsLoggedIn(false);
-                        setMobileMenuOpen(false);
-                        router.push('/en/login');
-                        toast.info("You have been logged out."); // Logout toast
-                    }}
-                    className="text-lg font-semibold flex gap-x-3 items-center w-full text-left text-red-500 hover:text-red-600 transition-colors"
-                    >
-                    <Lock />
-                    Logout
-                    </button>
-                </li>
-                )}
             </ul>
+                {/* Log out  */}
+                <div onClick={()=>{
+                    handleLogout()
+                    setMobileMenuOpen(false)
+                }} className="items-center inline-flex mt-10 pl-7 group">
+                   <LogOut className="group-hover:text-primary duration-300 cursor-pointer" /> <button className="font-semibold group-hover:text-primary duration-300 cursor-pointer pl-2">Log Out</button>
+                </div>
             </div>
         </div>
      );

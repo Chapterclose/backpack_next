@@ -1,5 +1,6 @@
 'use client';
 
+import Logo from "@/assets/backpack-logo.png";
 import { contextProvider } from '@/contexts/Context';
 import {
   Activity,
@@ -11,23 +12,24 @@ import {
   FileLock,
   Home,
   Layers,
+  LogOut,
   Mail,
   ShieldCheck,
-  UserCircle,
   X
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-import Logo from "@/assets/backpack-logo.png";
-import Image from 'next/image';
 import toast, { Toaster } from 'react-hot-toast'; // Import toast and Toaster
+import { BiSolidUserCircle } from 'react-icons/bi';
+import { twMerge } from 'tailwind-merge';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const MobileNav = () => {
   const { setTheme, resolvedTheme } = useTheme();
-  const { primaryCertified, setPrimaryCertified } =
+  const { primaryCertified, setPrimaryCertified, walletAddress, connectWallet, handleLogout } =
     useContext(contextProvider);
   const pathname = usePathname();
   const router = useRouter();
@@ -77,10 +79,24 @@ const MobileNav = () => {
           </Link>
         </div>
         <div>
-          <UserCircle
-            className="cursor-pointer text-green-500"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          />
+          <div className="flex items-center gap-x-4">
+              {walletAddress !== "" ? (
+                <div
+                  className="cursor-pointer text-green-500"
+                  onClick={() => setMobileMenuOpen(true)}
+                >
+                  <BiSolidUserCircle className="text-3xl"/>
+                </div>
+              ) : (
+                <button
+                  onClick={connectWallet}
+                  className="bg-primary hover:bg-primary-200 font-medium text-black p-[5px_20px] rounded cursor-pointer"
+                >
+                  Log In
+                </button>
+              )}
+              <ThemeSwitcher />
+            </div>
         </div>
       </header>
 
@@ -123,8 +139,8 @@ const MobileNav = () => {
         </div>
         {/* User info */}
         <div className='px-6 mb-3'>
-          <h4 className='text-xl font-medium'>Email: Ofg4349535dretd3423dssfasdtCgegd</h4>
-          <h4 className='text-xl font-medium'>UID: 5295</h4>
+          <h4 className='text-lg font-medium'>Email: <span className="text-base">{walletAddress}</span></h4>
+          <h4 className='text-lg font-medium'>UID: 5295</h4>
           <p className='text-gray-500'>Credit Score: 100</p>
         </div>
 
@@ -151,6 +167,13 @@ const MobileNav = () => {
             )
             })}
           </ul>
+
+          <div onClick={()=>{
+                    handleLogout()
+                    setMobileMenuOpen(false)
+                }} className="items-center inline-flex mt-10 pl-7 group">
+                   <LogOut className="group-hover:text-primary duration-300 cursor-pointer" /> <button className="font-semibold group-hover:text-primary duration-300 cursor-pointer pl-2">Log Out</button>
+                </div>
         </div>
       </div>
     </div>
