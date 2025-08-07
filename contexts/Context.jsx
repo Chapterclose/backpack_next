@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
 
 export const contextProvider = createContext();
 
 const Context = ({ children }) => {
+  const router = useRouter()
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [markets, setMarkets] = useState({})
   const [primaryCertified, setPrimaryCertified] = useState(false)
@@ -42,6 +44,11 @@ const Context = ({ children }) => {
       checkWallet();
     }, []);
 
+    const handleLogout=()=>{
+      setWalletAddress("")
+      router.push("/")
+    }
+
   const values = {
     isLoggedIn,
     setIsLoggedIn,
@@ -51,7 +58,8 @@ const Context = ({ children }) => {
     setPrimaryCertified,
     walletAddress,
     setWalletAddress,
-    connectWallet
+    connectWallet,
+    handleLogout
   };
 
   return <contextProvider.Provider value={values}>{children}</contextProvider.Provider>;
