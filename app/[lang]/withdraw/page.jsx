@@ -18,9 +18,9 @@ function Withdraw() {
                 <ul>
                     {
                         currenciesListArr?.map((item,)=>(
-                            <Link href={`/en/withdraw-apply?coin=${item.title.toLocaleLowerCase()}`} className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 px-3 rounded">
+                            <Link key={item.id} href={`/en/withdraw-apply?coin=${item.title.toLocaleLowerCase()}`} className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 px-3 rounded">
                                 <div key={item.id} className="flex items-center gap-x-2 py-3">
-                                    <Image width={25} height={25} src={item.img}/>
+                                    <Image width={25} height={25} src={item.img} alt={item.id}/>
                                     <h4 className="dark:text-white">{item.title}</h4>
                                 </div>
 

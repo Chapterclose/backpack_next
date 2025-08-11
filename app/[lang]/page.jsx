@@ -9,7 +9,7 @@ export default function Home() {
     <>
       <HeroSection/>
       <PopularCrypto/>
-      <HomeFaq />
+      {/* <HomeFaq /> */}
       <EarningToday/>
     </>
   );

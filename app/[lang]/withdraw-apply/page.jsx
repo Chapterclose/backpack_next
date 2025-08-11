@@ -5,27 +5,76 @@ import FormInput from "@/components/Form/FormInput";
 import { ArrowLeft, BookMarked } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
-import usdtImg from "@/assets/markets/usdt.png";
-import ethImg from "@/assets/markets/2.png";
 import btcImg from "@/assets/markets/1.png";
+import ethImg from "@/assets/markets/2.png";
+import usdtImg from "@/assets/markets/usdt.png";
 import FormPassword from "@/components/Form/FormPassword";
+import DWStore from "@/store/DWStore";
+import UserStore from "@/store/UserStore";
 import { useSearchParams } from "next/navigation";
+
 function WithdrawApply() {
     const searchParams = useSearchParams()
     const coin = searchParams.get("coin")
     const fileInputRef = useRef(null);
+    const {UserData} = UserStore()
+    const {WithdrawRequestApi} = DWStore()
+    const [withdrawAmount, setWithdrawAmount] = useState("")
+    const [withdrawPassword, setWithdrawPassword] = useState("")
+    const [amountError, setAmountError] = useState("") 
+    const [passwordError, setPasswordError] = useState("") 
 
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    console.log('Selected file:', file);
-    // You can show a preview or handle upload here
-  };
+    const handleClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        console.log('Selected file:', file);
+        // You can show a preview or handle upload here
+    };
+
+    const handleSubmit = async () => {
+        // Reset previous errors
+        setAmountError("");
+        setPasswordError("");
+
+        let hasError = false;
+
+        // Validate withdrawAmount
+        if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) {
+            setAmountError("Please enter a valid withdrawal amount.");
+            hasError = true;
+        }
+
+        // Validate withdrawPassword
+        if (!withdrawPassword) {
+            setPasswordError("Please enter your withdrawal password.");
+            hasError = true;
+        } else if (withdrawPassword.length < 6) { // Example: minimum 6 characters
+            setPasswordError("Password must be at least 6 characters long.");
+            hasError = true;
+        }
+
+        if (hasError) {
+            return;
+        }
+
+        const payload = {
+            currency: coin.toUpperCase(),
+            amount: parseFloat(withdrawAmount),
+            crypto_address: UserData.username,
+            withdraw_password: withdrawPassword
+        };
+
+        await WithdrawRequestApi(payload)
+        setWithdrawAmount("")
+        setWithdrawPassword("")
+    };
+
     return ( 
         <div className="container py-[60px]">
             <div className="flex items-center justify-between mb-5">
@@ -47,7 +96,7 @@ function WithdrawApply() {
                 <div className="mb-4">
                     <label className="text-lg mb-2 block dark:text-white font-medium">Withdrawal currency ({coin})</label>
                     <div className={"w-full h-13 rounded pl-4 bg-gray-100 dark:bg-gray-800 flex items-center gap-x-4 font-semibold"}>
-                        <Image src={coin === "usd" && usdtImg || coin === "btc" && btcImg || coin === "eth" && ethImg } width={25} height={25} /> <h4 className="uppercase dark:text-white">{coin}</h4>
+                        <Image src={coin === "usdt-trc" && usdtImg || coin === "usdt-erc" && usdtImg || coin === "btc" && btcImg || coin === "eth" && ethImg } width={25} height={25} alt="coin" /> <h4 className="uppercase dark:text-white">{coin}</h4>
                     </div>
                 </div>
 
@@ -57,7 +106,13 @@ function WithdrawApply() {
                     placeholder="Please enter"
                     className="mb-5"
                     type="number"
+                    value={withdrawAmount} // Bind value to state
+                    onChange={(e)=>{
+                        setWithdrawAmount(e.target.value);
+                        setAmountError(""); // Clear error when typing
+                    }}
                     />
+                    {amountError && <p className="text-red-500 text-sm mt-1 absolute -bottom-1 left-0">{amountError}</p>} 
                     <span className="absolute right-3 text-lg bottom-[30px] text-primary-200 font-semibold">Max</span>
                 </div>
 
@@ -65,12 +120,22 @@ function WithdrawApply() {
                     label="Withdrawal address"
                     placeholder="Please enter"
                     className="mb-5"
-                    value="0x583d2f75847f2916591c32c4f8bcc477c89ae5f4"
+                    value={UserData.username}
+                    disabled={true}
                     />
                 
                 <FormPassword
-                label="Withdrawal Password"
+                    label="Withdrawal Password"
+                    placeholder={"Enter Password"}
+                    value={withdrawPassword} // Bind value to state
+                    onChange={(e)=>{
+                        setWithdrawPassword(e.target.value);
+                        setPasswordError(""); // Clear error when typing
+                    }}
                 />
+                {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+
+                <p className="mt-5 dark:text-white">If you don't have password then go to this link, <Link href={"set-fund-password"} className="underline text-blue-500 hover:text-blue-600 duration-300">Set Password</Link></p>
 
 
                 <p className="my-5 dark:text-white">Kind remeber: Withdrawal will incur a partial handling fee, which will be received within 24 hours after withdrawal. If you have any questions, please <span className="underline text-primary-100">Contact Customer Service</span></p>
@@ -80,10 +145,11 @@ function WithdrawApply() {
                 <Button 
                 text="Confirm Withdrawal"
                 className={"mt-5"}
+                handleFunc={handleSubmit}
                 />
             </div>
         </div>
-     );
+    );
 }
 
 export default WithdrawApply;

@@ -18,7 +18,7 @@ const MobileFooterLinks = () => {
       {/* Mobile Footer Accordion  */}
       {footerUrls.map((item, i) => (
         <div
-          id={item.id}
+          id={i}
           key={i}
           className={cn(
             "group rounded-xl p-5 mb-1 duration-300 md:hidden",
@@ -61,7 +61,7 @@ const MobileFooterLinks = () => {
           <Collapsible trigger="" open={i === activeCollapse} transitionTime={200}>
             {item?.map((urls) => (
               <p
-                key={urls.id}
+                key={urls.title}
                 className="text-[12px] md:text-[10px] lg:text-[14px] xxl:text-[16px] leading-[160%] text-body pr-[20px] xll:mt-[20px] lg:mt-[7px] mt-[12px] text-secondary capitalize cursor-pointer"
               >
                 {urls.title}

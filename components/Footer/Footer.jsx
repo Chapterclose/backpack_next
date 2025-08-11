@@ -2,7 +2,6 @@ import { footerUrls } from "@/constant";
 import FooterCommunity from "./FooterCommunity";
 import FooterCopyRight from "./FooterCopyright";
 import FooterLinkCard from "./FooterLinkCard";
-import MobileFooterLinks from "./MobileFooterLinks";
 
 const Footer = () => {
   return (
@@ -10,7 +9,7 @@ const Footer = () => {
       <div className="pb-10 lg:flex justify-around items-start gap-x-16 pt-10 px-5 dark:text-white">
         <FooterCommunity />
         <FooterLinkCard title={"About Us"} items={footerUrls[0]} />
-        <MobileFooterLinks />
+        {/* <MobileFooterLinks /> */}
         <div>
           <FooterLinkCard title={"Business"} items={footerUrls[1]} />
           <span className="block mt-5"></span>

@@ -1,4 +1,5 @@
 import { contextProvider } from "@/contexts/Context";
+import UserStore from "@/store/UserStore";
 import { LogOut, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
@@ -7,6 +8,7 @@ import { twMerge } from "tailwind-merge";
 function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLoggedIn, setIsLoggedIn, navItems, error}) {
     const pathname = usePathname();
     const {handleLogout} = useContext(contextProvider)
+    const {UserData} = UserStore()
     return ( 
        <div
         className={`fixed inset-0 z-[100] flex transition-opacity duration-300 ${
@@ -16,12 +18,12 @@ function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLogg
         }`}
       >
             <div
-            className={`w-[70%] bg-black/20 backdrop-blur transition-opacity duration-300`}
+            className={`w-[65%] bg-black/20 backdrop-blur transition-opacity duration-300`}
             onClick={() => setMobileMenuOpen(false)}
             ></div>
 
             <div
-            className={`w-[30%] bg-gray-900 text-white h-full shadow-2xl transform transition-transform duration-300 ease-in-out relative ${
+            className={`w-[35%] bg-gray-900 text-white h-full shadow-2xl transform transition-transform duration-300 ease-in-out relative ${
                 mobileMenuOpen ? "translate-x-0" : "translate-x-full"
             }`}
             >
@@ -36,7 +38,7 @@ function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLogg
                 </button>
             </div>
             <div className="px-6 mb-3">
-                <h4 className="text-xl font-medium">Email: user@email.com</h4>
+                <h4 className="text-xl font-medium">Email: {UserData?.username}</h4>
                 <h4 className="text-xl font-medium">UID: 5295</h4>
                 <p className="text-gray-500">Credit Score: 100</p>
             </div>
@@ -50,7 +52,7 @@ function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLogg
                     <button
                         onClick={() => handleNavItemClick(item)}
                         className={twMerge(
-                        "text-lg font-semibold flex gap-x-3 items-center w-full text-left",
+                        "text-lg font-semibold flex gap-x-3 items-center w-full text-left cursor-pointer",
                         pathname === item.href
                             ? "text-yellow-400"
                             : "hover:text-yellow-300"

@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
           <Context>
             <ClientLayout>
+              <Toaster position="top-center"/>
               {children}
             </ClientLayout>
           </Context>

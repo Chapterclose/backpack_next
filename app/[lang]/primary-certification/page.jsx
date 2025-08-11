@@ -1,7 +1,18 @@
+"use client"
+
 import Button from "@/components/Form/Button";
 import FormInput from "@/components/Form/FormInput";
+import UserStore from "@/store/UserStore";
+import { useState } from "react";
 
 function PrimaryCertificationPage() {
+   const [name, setName] = useState("")
+   const [idNumber, setIdNumber] = useState("")
+   const {PrimaryCertificationRequest} = UserStore()
+
+   const handleSubmit=async()=>{
+
+   }
     return ( 
         <div className="container py-[40px] lg:py-[80px]">
             <div className="text-center mb-10">
@@ -17,16 +28,21 @@ function PrimaryCertificationPage() {
                      label="Name"
                      placeholder="Enter Name"
                      className="mb-5"
+                     value={name}
+                     onChange={(e)=>setName(e.target.value)}
                      />
                      <FormInput
                      label="ID Number"
                      placeholder="Enter ID Number"
                      className="mb-5"
+                     value={idNumber}
+                     onChange={(e)=>setIdNumber(e.target.value)}
                      />
 
                      <Button
                      text="Submit"
                      className="w-full"
+                     handleFunc={handleSubmit}
                      />
                   </div>
                   <div></div>
