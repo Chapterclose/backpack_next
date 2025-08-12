@@ -14,7 +14,7 @@ function RechargeApply() {
     const searchParams = useSearchParams();
     const coin = searchParams.get("coin");
     const fileInputRef = useRef(null);
-    const { GeRechargeAddressRequest, rechargeAddress ,RechargeDepositRequest} = DWStore();
+    const { GeRechargeAddressRequest, rechargeAddress ,RechargeDepositRequest, isLoading} = DWStore();
 
     const [rechargeAmount, setRechargeAmount] = useState("");
     const [selectedScreenshot, setSelectedScreenshot] = useState(null); 
@@ -54,7 +54,6 @@ function RechargeApply() {
         GeRechargeAddressRequest();
     }, []);
 
-    // **handleSubmit function for recharge**
     const handleSubmit = async () => {
         // Validation
         let hasError = false;
@@ -121,8 +120,7 @@ function RechargeApply() {
                         onClick={copyToClipboard}
                     />
                     {copiedMessage && (
-                        // Adjust positioning if needed. This tries to place it near the icon.
-                        <span className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">Copied!</span>
+                        <span className="absolute top-2 left-[250px] lg:left-[350px]  bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">Copied!</span>
                     )}
                 </p>
             </div>
