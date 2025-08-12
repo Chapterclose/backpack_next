@@ -41,19 +41,19 @@ function AccountBalance({ showBalance, toggleBalanceVisibility }) {
 
             <div className="flex items-center text-center gap-x-5 mt-10">
                 <Link href="/recharge-deposit" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800">
-                    <CloudUpload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
+                    <CloudUpload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full dark:text-black"/>
                     <h4 className="text-[14px] md:text-base font-medium dark:text-white text-black mt-1">Deposit</h4>
                 </Link>
                 <Link href="/withdraw" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800">
-                    <CloudDownload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
+                    <CloudDownload className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full dark:text-black"/>
                     <h4 className="text-[14px] md:text-base font-medium dark:text-white text-black mt-1">Withdraw</h4>
                 </Link>
                 <Link href="/convert" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800">
-                    <FolderSync className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
+                    <FolderSync className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full dark:text-black"/>
                     <h4 className="text-[14px] md:text-base font-medium dark:text-white text-black mt-1">Convert</h4>
                 </Link>
                 <Link href="/transfer" className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800">
-                    <BadgeDollarSign className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full"/>
+                    <BadgeDollarSign className="mx-auto bg-primary w-[40px] h-[40px] text-xl p-2 rounded-full dark:text-black"/>
                     <h4 className="text-[14px] md:text-base font-medium dark:text-white text-black mt-1">Transfer</h4>
                 </Link>
             </div>

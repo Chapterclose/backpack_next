@@ -31,3 +31,30 @@ body{
 .hide-number-controls {
   -moz-appearance: textfield;
 }
+
+
+
+/* Add this to your global CSS file or a relevant CSS module */
+
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Ensure smooth transitions for the transform property */
+.transition-transform {
+    transition-property: transform;
+    transition-duration: 300ms; /* Adjust for desired speed */
+    transition-timing-function: ease-in-out; /* Smooth acceleration/deceleration */
+}
+
+/* Also ensure your individual buttons allow flex-shrink to prevent wrapping */
+.flex-shrink-0 {
+    flex-shrink: 0;
+}

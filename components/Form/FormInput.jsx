@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 
-function FormInput({ label, type, placeholder, className, disabled, ...props }) {
+function FormInput({ label, type, placeholder, className, onChange, value, disabled, ...props }) {
   return (
     <div className="mb-4">
       {label && (
@@ -12,6 +12,8 @@ function FormInput({ label, type, placeholder, className, disabled, ...props }) 
         value={props.value}
         type={type || "text"} 
         placeholder={placeholder}
+        onChange={onChange}
+        value={value}
         className={twMerge(
           "w-full px-3 py-3 border border-gray-300 dark:border-white rounded-md shadow-sm", 
           "focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent", 

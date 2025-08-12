@@ -1,5 +1,7 @@
 "use client";
 
+import UserStore from "@/store/UserStore";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
 
@@ -11,6 +13,7 @@ const Context = ({ children }) => {
   const [markets, setMarkets] = useState({})
   const [primaryCertified, setPrimaryCertified] = useState(false)
   const [walletAddress, setWalletAddress] = useState("");
+  const {UserLoginRequest} = UserStore()
 
   // Connect to MetaMask
     const connectWallet = async () => {
@@ -24,6 +27,7 @@ const Context = ({ children }) => {
           method: "eth_requestAccounts",
         });
         setWalletAddress(accounts[0]);
+        await UserLoginRequest({"metamask_id":`${accounts[0]}`})
       } catch (error) {
         console.error("MetaMask connection error:", error);
       }
@@ -46,6 +50,7 @@ const Context = ({ children }) => {
 
     const handleLogout=()=>{
       setWalletAddress("")
+      Cookies.remove('access')
       router.push("/")
     }
 
