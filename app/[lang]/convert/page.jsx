@@ -7,19 +7,16 @@ import Heading from '@/components/common/Heading';
 import Button from '@/components/Form/Button';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
-import { twMerge } from 'tailwind-merge'; // Import twMerge
+import { twMerge } from 'tailwind-merge'; 
 
 const ConvertPage = () => {
-  // State for the currency inputs and selected currencies
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
-  // Changed default fromCurrency to 'USDT-ERC'
-  const [fromCurrency, setFromCurrency] = useState('USDT-ERC'); 
-  const [toCurrency, setToCurrency] = useState('ETH'); // Changed default toCurrency to 'ETH'
-
-  // State to manage the visibility of the currency dropdowns
+  const [fromCurrency, setFromCurrency] = useState('USDT-ERC');
+  const [toCurrency, setToCurrency] = useState('ETH'); 
   const [isFromDropdownOpen, setIsFromDropdownOpen] = useState(false);
   const [isToDropdownOpen, setIsToDropdownOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -48,27 +45,27 @@ const ConvertPage = () => {
     'USDT-ERC': '1,200.00',
     'ETH': '5.25',
     'BTC': '0.50',
-    'USDT-TRC': '1,500.00', 
+    'USDT-TRC': '1,500.00',
   };
 
   const exchangeRates = {
     'USDT-ERC': {
       'ETH': 0.00025,
       'BTC': 0.000016,
-      'USDT-TRC': 1.00, 
+      'USDT-TRC': 1.00,
     },
     'ETH': {
       'USDT-ERC': 4000.00,
       'BTC': 0.065,
-      'USDT-TRC': 4000.00, 
+      'USDT-TRC': 4000.00,
     },
     'BTC': {
       'USDT-ERC': 62500.00,
       'ETH': 15.38,
-      'USDT-TRC': 62500.00, 
+      'USDT-TRC': 62500.00,
     },
     'USDT-TRC': {
-      'USDT-ERC': 1.00, 
+      'USDT-ERC': 1.00,
       'ETH': 0.00025,
       'BTC': 0.000016,
     },
@@ -77,9 +74,9 @@ const ConvertPage = () => {
 
   const currencies = [
     { name: 'ETH', symbol: ethImg },
-    { name: 'USDT-ERC', symbol: usdImg }, 
+    { name: 'USDT-ERC', symbol: usdImg },
     { name: 'BTC', symbol: btcImg },
-    { name: 'USDT-TRC', symbol: usdImg }, 
+    { name: 'USDT-TRC', symbol: usdImg },
   ];
 
   const calculateConversion = useCallback(() => {
@@ -97,13 +94,16 @@ const ConvertPage = () => {
   }, [calculateConversion]);
 
   const handleSwap = () => {
-    const tempCurrency = fromCurrency;
-    setFromCurrency(toCurrency);
-    setToCurrency(tempCurrency);
+    // Only swap if dropdowns are not open
+    if (!isFromDropdownOpen && !isToDropdownOpen) {
+      const tempCurrency = fromCurrency;
+      setFromCurrency(toCurrency);
+      setToCurrency(tempCurrency);
 
-    const tempValue = fromValue;
-    setFromValue(toValue);
-    setToValue(tempValue);
+      const tempValue = fromValue;
+      setFromValue(toValue);
+      setToValue(tempValue);
+    }
   };
 
   const handleSelectCurrency = (currency, type) => {
@@ -114,6 +114,29 @@ const ConvertPage = () => {
       setToCurrency(currency);
       setIsToDropdownOpen(false);
     }
+    setSuccessMessage('');
+  };
+
+  const handleConfirm = () => {
+    const amount = parseFloat(fromValue);
+    if (isNaN(amount) || amount <= 0) {
+      setSuccessMessage('Please enter a valid amount to convert.');
+      setTimeout(() => setSuccessMessage(''), 3000);
+      return;
+    }
+
+    // Simulate an API call or actual conversion logic here
+    console.log(`Converting ${fromValue} ${fromCurrency} to ${toValue} ${toCurrency}`);
+
+    // Set success message
+    setSuccessMessage('Conversion successful!');
+
+    // Clear the success message after 3 seconds
+    setTimeout(() => {
+      setSuccessMessage('');
+    }, 3000); 
+    setFromValue('');
+    setToValue('');
   };
 
   return (
@@ -142,12 +165,15 @@ const ConvertPage = () => {
               className={twMerge(
                 "bg-transparent text-xl font-medium w-full outline-none",
                 "placeholder-gray-400 text-gray-900 dark:text-gray-100 dark:placeholder-gray-500",
-                "flex-grow" // Allow input to grow and take available space
+                "flex-grow"
               )}
               value={fromValue}
-              onChange={(e) => setFromValue(e.target.value)}
+              onChange={(e) => {
+                setFromValue(e.target.value);
+                setSuccessMessage(''); // Clear message on input change
+              }}
             />
-            <div className="flex items-center space-x-2 flex-shrink-0"> {/* Add flex-shrink-0 to prevent shrinking */}
+            <div className="flex items-center space-x-2 flex-shrink-0">
               <button
                 className="text-xs text-green-500 font-semibold uppercase hover:text-green-600 transition-colors"
                 onClick={() => setFromValue(availableBalances[fromCurrency].replace(/,/g, ''))}
@@ -158,14 +184,15 @@ const ConvertPage = () => {
                 className="flex items-center cursor-pointer space-x-1"
                 onClick={() => setIsFromDropdownOpen(!isFromDropdownOpen)}
               >
-                <span className="text-md font-bold text-gray-900 dark:text-gray-100 min-w-[75px] text-right"> {/* Adjusted font-size and added min-width, text-right */}
-                    {fromCurrency}
+                <span className="text-md font-bold text-gray-900 dark:text-gray-100 min-w-[75px] text-right">
+                  {fromCurrency}
                 </span>
                 <Image
                   src={currencies.find(c => c.name === fromCurrency)?.symbol}
                   className='w-[20px] h-[20px]'
-                  />
-                
+                  alt={fromCurrency} // Added alt text for accessibility
+                />
+
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${isFromDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
@@ -188,8 +215,9 @@ const ConvertPage = () => {
                   onClick={() => handleSelectCurrency(currency.name, 'from')}
                 >
                   <Image
-                  src={currency.symbol}
-                  className='w-[20px] h-[20px]'
+                    src={currency.symbol}
+                    className='w-[20px] h-[20px]'
+                    alt={currency.name} // Added alt text for accessibility
                   />
                   <span className="font-medium text-gray-800 dark:text-gray-200">{currency.name}</span>
                 </div>
@@ -231,21 +259,22 @@ const ConvertPage = () => {
               className={twMerge(
                 "bg-transparent text-xl font-medium w-full outline-none",
                 "placeholder-gray-400 text-gray-900 dark:text-gray-100 dark:placeholder-gray-500",
-                "flex-grow" // Allow input to grow and take available space
+                "flex-grow"
               )}
               value={toValue}
             />
             <div
-              className="flex items-center cursor-pointer space-x-1 flex-shrink-0" // Add flex-shrink-0 to prevent shrinking
+              className="flex items-center cursor-pointer space-x-1 flex-shrink-0"
               onClick={() => setIsToDropdownOpen(!isToDropdownOpen)}
             >
-              <span className="text-md font-bold text-gray-900 dark:text-gray-100 min-w-[75px] text-right"> {/* Adjusted font-size and added min-width, text-right */}
-                  {toCurrency}
-              </span> 
+              <span className="text-md font-bold text-gray-900 dark:text-gray-100 min-w-[75px] text-right">
+                {toCurrency}
+              </span>
               <Image
-                  src={currencies.find(c => c.name === toCurrency)?.symbol}
-                  className='w-[20px] h-[20px]'
-                  />
+                src={currencies.find(c => c.name === toCurrency)?.symbol}
+                className='w-[20px] h-[20px]'
+                alt={toCurrency} // Added alt text for accessibility
+              />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${isToDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
@@ -267,8 +296,9 @@ const ConvertPage = () => {
                   onClick={() => handleSelectCurrency(currency.name, 'to')}
                 >
                   <Image
-                  src={currency.symbol}
-                  className='w-[20px] h-[20px]'
+                    src={currency.symbol}
+                    className='w-[20px] h-[20px]'
+                    alt={currency.name} // Added alt text for accessibility
                   />
                   <span className="font-medium text-gray-800 dark:text-gray-200">{currency.name}</span>
                 </div>
@@ -282,10 +312,17 @@ const ConvertPage = () => {
           Today's exchange rate: 1{fromCurrency} = {exchangeRates[fromCurrency]?.[toCurrency]?.toFixed(8) || 'N/A'}{toCurrency}
         </div>
 
+        {/* Success Message Display */}
+        {successMessage && (
+          <div className="mt-4 p-3 text-center text-sm font-medium rounded-lg bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200">
+            {successMessage}
+          </div>
+        )}
 
         <Button
           text={"Confirm"}
           className={"w-full mt-10"}
+          handleFunc={handleConfirm} // Assign the handleConfirm function
         />
       </div>
     </div>

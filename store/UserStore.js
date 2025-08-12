@@ -10,10 +10,12 @@ const UserStore = create(
   persist(
     (set) => ({
       isUserLogin:false,
+      isLoading:false,
         UserData:null,
         UserLoginRequest:async(body)=>{
             try{
                 set({isUserLogin:true})
+                set({isLoading:true})
                 let res=await api.post('/auth/connect_metamask/',body)
                 Cookies.set("access", res.data?.access,{ expires: 7 })
                 set({UserData:res.data['customer']})
@@ -21,17 +23,70 @@ const UserStore = create(
                 console.log(e)
             }finally {
                 set({isUserLogin:false})
+                set({isLoading:false})
             }
         },
+
+
         PrimaryCertificationRequest:async(body)=>{
             try{
-                set({isUserLogin:true})
+                set({isLoading:true})
                 let res=await api.post('/auth/primary-certificate/',body)
-                console.log(res)
+                toast.success(res.data['message'])
             }catch(e){
                 console.log(e)
             }finally {
-                set({isUserLogin:false})
+                set({isLoading:false})
+            }
+        },
+
+        // Email 
+        SendEmailOtpRequest:async(body)=>{
+            try{
+                set({isLoading:true})
+                let res=await api.post('/auth/send-email-otp/',body)
+                toast.success(res.data['message'])
+            }catch(e){
+                console.log(e)
+            }finally {
+                set({isLoading:false})
+            }
+        },
+
+        VerifyOtpRequest:async(body)=>{
+            try{
+                set({isLoading:true})
+                let res=await api.post('/auth/verify-otp/',body)
+                toast.success(res.data['message'])
+            }catch(e){
+                console.log(e)
+            }finally {
+                set({isLoading:false})
+            }
+        },
+
+        // Bank Apis 
+        bankInfo: null,
+        GetBankInfoRequest:async()=>{
+            try{
+                set({isLoading:true})
+                let res=await api.get('/auth/bank-account/')
+                set({bankInfo:res.data?.bank_cards})
+            }catch(e){
+                console.log(e)
+            }finally {
+                set({isLoading:false})
+            }
+        },
+        CreateBankAccountRequest:async(body)=>{
+            try{
+                set({isLoading:true})
+                let res=await api.post('/auth/bank-account/',body)
+                toast.success(res.data.message)
+            }catch(e){
+                console.log(e)
+            }finally {
+                set({isLoading:false})
             }
         },
     }),

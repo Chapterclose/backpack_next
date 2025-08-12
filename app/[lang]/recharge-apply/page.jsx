@@ -12,7 +12,7 @@ import { twMerge } from "tailwind-merge";
 
 function RechargeApply() {
     const searchParams = useSearchParams();
-    const coin = searchParams.get("coin"); // This will be the currency, e.g., "btc"
+    const coin = searchParams.get("coin");
     const fileInputRef = useRef(null);
     const { GeRechargeAddressRequest, rechargeAddress ,RechargeDepositRequest} = DWStore();
 
