@@ -48,6 +48,7 @@ const DWStore = create(
             },
 
 
+            // WithDraw api Start
         
             SetWithdrawPasswordRequest:async(body)=>{
                 try{
@@ -66,7 +67,6 @@ const DWStore = create(
                 try{
                     set({isLoading:true})
                     let res=await api.post('/trade/withdraw-request/', body)
-                    console.log(res)
                     toast.success(res.data['message'])
                 }catch(e){
                     console.log(e)
