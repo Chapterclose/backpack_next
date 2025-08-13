@@ -26,11 +26,13 @@ import toast, { Toaster } from 'react-hot-toast'; // Import toast and Toaster
 import { BiSolidUserCircle } from 'react-icons/bi';
 import { twMerge } from 'tailwind-merge';
 import ThemeSwitcher from './ThemeSwitcher';
+import UserStore from "@/store/UserStore";
 
 const MobileNav = () => {
   const { setTheme, resolvedTheme } = useTheme();
   const { primaryCertified, setPrimaryCertified, walletAddress, connectWallet, handleLogout } =
     useContext(contextProvider);
+    const {UserData} = UserStore()
   const pathname = usePathname();
   const router = useRouter();
 
@@ -140,7 +142,7 @@ const MobileNav = () => {
         {/* User info */}
         <div className='px-6 mb-3'>
           <h4 className='text-lg font-medium'>Email: <span className="text-base">{walletAddress}</span></h4>
-          <h4 className='text-lg font-medium'>UID: 5295</h4>
+          <h4 className='text-lg font-medium'>UID: {UserData?.id}</h4>
           <p className='text-gray-500'>Credit Score: 100</p>
         </div>
 

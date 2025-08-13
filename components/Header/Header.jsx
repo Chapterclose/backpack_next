@@ -11,16 +11,20 @@ import { BiSolidUserCircle } from "react-icons/bi";
 import MobileNav from "./MobileNav";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserMenu from "./UserMenu";
+import UserStore from "@/store/UserStore";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [error,setError] = useState(false)
   const {isLoggedIn, setIsLoggedIn, walletAddress, setWalletAddress, connectWallet} = useContext(contextProvider)
+  const {UserData} = UserStore()
   const router = useRouter();
 
   const handleNavItemClick = (item) => {
     if (item.protected) {
-      setError(true)
+      // setError(true)
+      toast.error("Please complete primary certification first.")
     } else {
       router.push(item.href);
       setMobileMenuOpen(false);

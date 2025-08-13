@@ -3,15 +3,15 @@
 import Button from "@/components/Form/Button";
 import FormInput from "@/components/Form/FormInput";
 import UserStore from "@/store/UserStore";
-import { Banknote, Edit, Loader2 } from "lucide-react"; // Import Loader2 icon for spinner
+import { Banknote, Cross, CrossIcon, Delete, Edit, Loader2, X } from "lucide-react"; // Import Loader2 icon for spinner
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 function BindCardBack() {
     // isAddingOrEditingBankCard now controls showing the form (true) vs. showing bank list (false)
     const [isAddingOrEditingBankCard, setIsAddingOrEditingBankCard] = useState(false)
     // Destructure isLoading directly from UserStore
-    const { GetBankInfoRequest, bankInfo, CreateBankAccountRequest, isLoading } = UserStore()
-
+    const { GetBankInfoRequest, bankInfo, CreateBankAccountRequest, isLoading, BankAccountEditRequest , BankAccountDeleteRequest} = UserStore()
     // Required fields with their states and error states
     const [cardNumber, setCardNumber] = useState("")
     const [cardNumberError, setCardNumberError] = useState("")
@@ -30,6 +30,7 @@ function BindCardBack() {
 
     // State to hold the bank card being edited, if any
     const [editingBankCard, setEditingBankCard] = useState(null);
+    const [editId, setEditId] = useState(null)
 
     const handleAddBankAccount = async () => {
         // Reset previous errors and submission status
@@ -69,8 +70,8 @@ function BindCardBack() {
                 home_address: homeAddress,
             };
             
-            const response = await CreateBankAccountRequest(payload);
-                
+            if(!editingBankCard){
+                const response = await CreateBankAccountRequest(payload);
                 setSubmitSuccess(true);
                 setCardNumber("");
                 setAffiliatedBank("");
@@ -82,6 +83,24 @@ function BindCardBack() {
                 await GetBankInfoRequest();
                 // Go back to the list view after successful submission
                 setIsAddingOrEditingBankCard(false);
+                window.scrollTo({top:0})
+            }else {
+                await BankAccountEditRequest(payload,editId)
+
+                setSubmitSuccess(true);
+                setCardNumber("");
+                setAffiliatedBank("");
+                setBankBranch("");
+                setCardHandlingBankAddress("");
+                setBankInternationalCode("");
+                setHomeAddress("");
+                setEditingBankCard(null); 
+                await GetBankInfoRequest();
+                // Go back to the list view after successful submission
+                setIsAddingOrEditingBankCard(false);
+                window.scrollTo({top:0})
+            }
+            
         } catch (error) {
             console.error("Error adding/updating bank account:", error);
             setSubmitError("An unexpected error occurred. Please try again later.");
@@ -94,6 +113,7 @@ function BindCardBack() {
 
     // Function to handle editing an existing bank card
     const handleEditBankCard = (card) => {
+        setEditId(card.id)
         setEditingBankCard(card);
         setCardNumber(card.card_number);
         setAffiliatedBank(card.bank_name);
@@ -118,6 +138,18 @@ function BindCardBack() {
         setSubmitSuccess(false);
         setSubmitError("");
     };
+
+    // delete 
+    const handleDeleteBankCard= async(id)=>{
+        if (window.confirm("Are you sure you want to delete this item?")) {
+            const res = await BankAccountDeleteRequest(id)
+            if(res.status === 200){
+                await GetBankInfoRequest()
+            }
+        } else {
+            toast.error("Deletion cancelled.");
+        }
+    }
 
     return (
         <div className="container py-[40px] lg:py-[80px]">
@@ -222,9 +254,14 @@ function BindCardBack() {
                                         <h4 className="text-xl font-semibold flex items-center gap-x-2">
                                             {card.name || 'Account Holder'} <span className="text-sm text-gray-400">({card.card_number.slice(-4)})</span>
                                         </h4>
-                                        <button onClick={() => handleEditBankCard(card)} className="text-green-400 hover:text-green-500">
+                                        <div>
+                                            <button onClick={() => handleEditBankCard(card)} className="text-green-400 hover:text-green-500 mr-3 cursor-pointer">
                                             <Edit size={20} />
-                                        </button>
+                                            </button>
+                                            <button onClick={() => handleDeleteBankCard(card?.id)} className="text-red-400 hover:text-red-500 cursor-pointer">
+                                            <X size={20} />
+                                            </button>
+                                        </div>
                                     </div>
                                     <p className="text-lg font-medium">{card.bank_name}</p>
                                     <p className="text-gray-400 text-sm">{card.bank_branch ? `Branch: ${card.bank_branch}` : ''}</p>

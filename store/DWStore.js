@@ -38,7 +38,6 @@ const DWStore = create(
                 try{
                     set({isLoading:true})
                     let res=await api.get('/trade/deposit-history/')
-                    console.log(res.data.deposit)
                     set({depositHistory:res.data.deposit})
                 }catch(e){
                     console.log(e)
@@ -68,8 +67,10 @@ const DWStore = create(
                     set({isLoading:true})
                     let res=await api.post('/trade/withdraw-request/', body)
                     toast.success(res.data['message'])
+                    return res
                 }catch(e){
                     console.log(e)
+                    return e
                 }finally {
                     set({isLoading:false})
                 }

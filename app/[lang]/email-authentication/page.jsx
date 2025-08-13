@@ -3,8 +3,9 @@
 import Button from "@/components/Form/Button";
 import FormInput from "@/components/Form/FormInput";
 import UserStore from "@/store/UserStore";
-import { Loader2 } from "lucide-react"; // Import Loader2 for the spinner
+import { CheckCircle, Loader2 } from "lucide-react"; // Import Loader2 for the spinner
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 function EmailAuthenticationPage() {
     const [email, setEmail] = useState("")
@@ -13,7 +14,7 @@ function EmailAuthenticationPage() {
     const [otpError, setOtpError] = useState("")
     const [sendSuccess, setSendSuccess] = useState(false)
     const [confirmSuccess, setConfirmSuccess] = useState(false)
-    const { SendEmailOtpRequest, VerifyOtpRequest, isLoading } = UserStore()
+    const { SendEmailOtpRequest, VerifyOtpRequest, isLoading, UserData, UserLoginRequest } = UserStore()
 
     const validateEmail = (email) => {
         return /\S+@\S+\.\S+/.test(email);
@@ -22,8 +23,8 @@ function EmailAuthenticationPage() {
     const handleSendEmail = async () => {
         setEmailError("");
         setSendSuccess(false);
-        setOtpError(""); // Clear OTP error as well
-        setConfirmSuccess(false); // Clear confirm success
+        setOtpError(""); 
+        setConfirmSuccess(false); 
 
         if (!email.trim()) {
             setEmailError("Email address cannot be empty.");
@@ -72,9 +73,18 @@ function EmailAuthenticationPage() {
 
         try {
             const response = await VerifyOtpRequest({ email, otp });
-            setConfirmSuccess(true); 
-            setOtp(""); 
-            setEmail("")
+            if(response.status === 400){
+                toast.error(response.response.data["message"])
+                setConfirmSuccess(false);
+            }else if(response.status === 200){
+                await UserLoginRequest({"metamask_id":`${UserData.username}`})
+                toast.success(response.data["message"])
+                setOtp(""); 
+                setEmail("")
+            }
+
+             
+            
         } catch (error) {
             console.error("Error verifying OTP:", error);
             setOtpError("An error occurred during verification. Please try again.");
@@ -97,7 +107,13 @@ function EmailAuthenticationPage() {
                     </div>
                 )}
 
-                <div className="grid lg:grid-cols-3 gap-5">
+                {
+                    UserData?._verified ? 
+                    <div className="text-center shadow-lg p-5">
+                    <CheckCircle className="text-green-500 mx-auto w-14 h-14" />
+                    <h3 className="text-green-500 font-semibold text-2xl mt-3">Verification Successful!</h3>
+                        </div>
+                    :<div className="grid lg:grid-cols-3 gap-5">
                     <div></div>
                     <div>
                         <FormInput
@@ -147,7 +163,7 @@ function EmailAuthenticationPage() {
                         />
                     </div>
                     <div></div>
-                </div>
+                </div>}
             </div>
         </div>
     );

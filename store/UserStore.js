@@ -1,4 +1,4 @@
-import api from "@/lib/utils";
+import api, { apiWithoutToken } from "@/lib/utils";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -16,9 +16,10 @@ const UserStore = create(
             try{
                 set({isUserLogin:true})
                 set({isLoading:true})
-                let res=await api.post('/auth/connect_metamask/',body)
+                let res=await apiWithoutToken.post('/auth/connect_metamask/',body)
                 Cookies.set("access", res.data?.access,{ expires: 7 })
                 set({UserData:res.data['customer']})
+                return res.status
             }catch(e){
                 console.log(e)
             }finally {
@@ -33,6 +34,7 @@ const UserStore = create(
                 set({isLoading:true})
                 let res=await api.post('/auth/primary-certificate/',body)
                 toast.success(res.data['message'])
+                return res.status
             }catch(e){
                 console.log(e)
             }finally {
@@ -46,6 +48,7 @@ const UserStore = create(
                 set({isLoading:true})
                 let res=await api.post('/auth/send-email-otp/',body)
                 toast.success(res.data['message'])
+                return res.status
             }catch(e){
                 console.log(e)
             }finally {
@@ -57,9 +60,10 @@ const UserStore = create(
             try{
                 set({isLoading:true})
                 let res=await api.post('/auth/verify-otp/',body)
-                toast.success(res.data['message'])
+                // toast.success(res.data['message'])
+                return res
             }catch(e){
-                console.log(e)
+                return e
             }finally {
                 set({isLoading:false})
             }
@@ -83,6 +87,29 @@ const UserStore = create(
                 set({isLoading:true})
                 let res=await api.post('/auth/bank-account/',body)
                 toast.success(res.data.message)
+            }catch(e){
+                console.log(e)
+            }finally {
+                set({isLoading:false})
+            }
+        },
+        BankAccountEditRequest:async(body,id)=>{
+            try{
+                set({isLoading:true})
+                let res=await api.put(`/auth/bank-account/${id}/`,body)
+                toast.success(res.data.message)
+            }catch(e){
+                console.log(e)
+            }finally {
+                set({isLoading:false})
+            }
+        },
+        BankAccountDeleteRequest:async(id)=>{
+            try{
+                set({isLoading:true})
+                let res=await api.delete(`/auth/bank-account/${id}/`)
+                toast.success(res.data.message)
+                return res
             }catch(e){
                 console.log(e)
             }finally {

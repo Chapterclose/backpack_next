@@ -23,11 +23,11 @@ function RechargeApply() {
     const [screenshotError, setScreenshotError] = useState(""); 
 
     const handleClick = () => {
-        fileInputRef.current?.click();
+        fileInputRef?.current?.click();
     };
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
+        const file = e.target?.files[0];
         if (file) {
             setSelectedScreenshot(file);
             setScreenshotError(""); // Clear error if file is selected
@@ -104,12 +104,12 @@ function RechargeApply() {
                 <Link href="/recharge-order" className="flex items-center gap-x-1 lg:text-xl font-semibold border border-primary-100 p-[2px_10px] lg:p-[5px_15px] rounded hover:border-primary-200 duration-300 mt-[-10px] lg:mt0 dark:text-white">History <BookMarked className="mt-1" /></Link>
             </div>
             
-            <QRCode
+            {rechargeAddress !== ""  && <QRCode
                 size={200}
                 style={{ height: "200", maxWidth: "100%", width: "200", margin:"0 auto" }}
                 value={rechargeAddress}
                 viewBox={`0 0 200 200`}
-            />
+            />}
 
             <div className="mt-5 mb-5 relative">
                 <h4 className="text-lg mb-2 block font-medium dark:text-white">Recharge Address (<span className="uppercase">{coin}</span>)</h4>

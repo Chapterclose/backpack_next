@@ -14,6 +14,7 @@ import FormPassword from "@/components/Form/FormPassword";
 import DWStore from "@/store/DWStore";
 import UserStore from "@/store/UserStore";
 import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 function WithdrawApply() {
     const searchParams = useSearchParams()
@@ -69,10 +70,16 @@ function WithdrawApply() {
             crypto_address: UserData.username,
             withdraw_password: withdrawPassword
         };
-
-        await WithdrawRequestApi(payload)
-        setWithdrawAmount("")
-        setWithdrawPassword("")
+        const res = await WithdrawRequestApi(payload)
+        if(res.status === 400){
+            toast.error(res.response.data["message"])
+        }else if(res.status === 403){
+            toast.error(res.response.data["message"])
+        }else if(res.status === 201){
+            setWithdrawAmount("")
+            setWithdrawPassword("")
+        }
+        
     };
 
     return ( 
