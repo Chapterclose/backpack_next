@@ -4,6 +4,7 @@ import UserStore from "@/store/UserStore";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const contextProvider = createContext();
 
@@ -17,17 +18,24 @@ const Context = ({ children }) => {
 
   // Connect to MetaMask
     const connectWallet = async () => {
-      if (typeof window.ethereum === "undefined") {
+      if (typeof window?.ethereum === "undefined") {
         alert("MetaMask is not installed!");
         return;
       }
   
       try {
-        const accounts = await window.ethereum.request({
+        const accounts = await window?.ethereum.request({
           method: "eth_requestAccounts",
         });
-        setWalletAddress(accounts[0]);
-        await UserLoginRequest({"metamask_id":`${accounts[0]}`})
+        if(accounts?.length >0){
+          const res = await UserLoginRequest({"metamask_id":`${accounts[0]}`})
+          if(res === 200 || res === 201){
+            setWalletAddress(accounts[0]);
+            toast.success("User Login Success!")
+          }else {
+            toast.error("Try again!")
+          }
+        }
       } catch (error) {
         console.error("MetaMask connection error:", error);
       }
@@ -36,12 +44,13 @@ const Context = ({ children }) => {
     // Auto-load wallet if already connected
     useEffect(() => {
       const checkWallet = async () => {
-        if (typeof window.ethereum !== "undefined") {
+        if (typeof window?.ethereum !== "undefined") {
           const accounts = await window.ethereum.request({
             method: "eth_accounts",
           });
-          if (accounts.length > 0) {
+          if (accounts?.length > 0) {
             setWalletAddress(accounts[0]);
+            await UserLoginRequest({"metamask_id":`${accounts[0]}`})
           }
         }
       };
@@ -52,6 +61,9 @@ const Context = ({ children }) => {
       setWalletAddress("")
       Cookies.remove('access')
       router.push("/")
+      localStorage.removeItem("user-store")
+      localStorage.removeItem("dw-store")
+      toast.success("User Logged Out!")
     }
 
   const values = {

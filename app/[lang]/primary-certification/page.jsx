@@ -5,6 +5,7 @@ import FormInput from "@/components/Form/FormInput";
 import UserStore from "@/store/UserStore";
 import { CheckCircle, Loader2 } from "lucide-react"; // Import Loader2
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 function PrimaryCertificationPage() {
     const [name, setName] = useState("")
@@ -12,8 +13,7 @@ function PrimaryCertificationPage() {
     const [nameError, setNameError] = useState("")
     const [idNumberError, setIdNumberError] = useState("")
     // Destructure isLoading from UserStore
-    const { PrimaryCertificationRequest, UserData, isLoading } = UserStore()
-
+    const { PrimaryCertificationRequest, UserData, isLoading, UserLoginRequest } = UserStore()
     const handleSubmit = async () => {
         // Reset previous errors
         setNameError("");
@@ -40,14 +40,14 @@ function PrimaryCertificationPage() {
             return;
         }
 
-        // PrimaryCertificationRequest should internally manage the isLoading state in UserStore
-        await PrimaryCertificationRequest({ name, id_number: parseFloat(idNumber) });
+        const res = await PrimaryCertificationRequest({ name, id_number: parseFloat(idNumber) });
 
-        // Only clear fields if the certification was successful
-        // Assuming PrimaryCertificationRequest updates UserData and indicates success internally
-        // or provides a return value to check against.
-        // For this example, we'll clear them always after the request,
-        // but in a real app, you might want to check for success before clearing.
+        if(res === 200) {
+            await UserLoginRequest({"metamask_id":`${UserData.username}`})
+        }else if(res === 401){
+            toast.error("Try Again!")
+        }
+
         setName("");
         setIdNumber("");
     }
@@ -55,13 +55,11 @@ function PrimaryCertificationPage() {
     return (
         <div className="container py-[40px] lg:py-[80px]">
             {isLoading ? (
-                // Display Loading Spinner when isLoading is true
                 <div className="flex justify-center items-center h-[200px] text-green-500">
                     <Loader2 className="animate-spin h-10 w-10 mr-3" />
                     <span className="text-lg">Processing certification...</span>
                 </div>
-            ) : UserData?.is_active ? (
-                // Show success message if user is active
+            ) : UserData?.id_number !== null ? (
                 <div className="text-center shadow-lg p-5">
                     <CheckCircle className="text-green-500 mx-auto w-14 h-14" />
                     <h3 className="text-green-500 font-semibold text-2xl mt-3">Certification Successful!</h3>

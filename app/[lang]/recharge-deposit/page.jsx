@@ -20,12 +20,12 @@ function RechargeDepositPage() {
 
                 <ul>
                     {
-                        currenciesListArr?.map((item,)=>{
+                        currenciesListArr?.map((item)=>{
                             return(
-                            <Link key={item.id} href={`/en/recharge-apply?coin=${item.title.toLocaleLowerCase()}`} className="flex items-center justify-between dark:hover:bg-gray-800 hover:bg-gray-100 px-3 rounded">
-                                <div key={item.id} className="flex items-center gap-x-2 py-3">
-                                    <Image width={25} height={25} src={item.img}/>
-                                    <h4 className="dark:text-white">{item.title}</h4>
+                            <Link key={item?.id} href={`/en/recharge-apply?coin=${item?.title.toLocaleLowerCase()}`} className="flex items-center justify-between dark:hover:bg-gray-800 hover:bg-gray-100 px-3 rounded">
+                                <div key={item?.id} className="flex items-center gap-x-2 py-3">
+                                    <Image width={25} height={25} src={item?.img} alt={item?.title}/>
+                                    <h4 className="dark:text-white">{item?.title}</h4>
                                 </div>
 
                                 <BiRightArrowAlt className="dark:text-white"/>

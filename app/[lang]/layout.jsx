@@ -1,11 +1,8 @@
-import Footer from "@/components/Footer/Footer";
-import Header from "@/components/Header/Header";
 import Context from "@/contexts/Context";
 import { ThemeProvider } from "next-themes";
 import { Poppins } from "next/font/google";
-import "./globals.css";
 import ClientLayout from "./ClientLayout";
-import { Toaster } from "react-hot-toast";
+import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,7 +24,6 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
           <Context>
             <ClientLayout>
-              <Toaster position="top-center"/>
               {children}
             </ClientLayout>
           </Context>
