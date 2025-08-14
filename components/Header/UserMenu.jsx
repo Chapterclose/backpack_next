@@ -39,7 +39,7 @@ function UserMenu({mobileMenuOpen, setMobileMenuOpen, handleNavItemClick, isLogg
             </div>
             <div className="px-6 mb-3">
                 <h4 className="text-xl font-medium">Email: {UserData?.username}</h4>
-                <h4 className="text-xl font-medium">UID: {UserData.id}</h4>
+                <h4 className="text-xl font-medium">UID: {UserData?.id}</h4>
                 <p className="text-gray-500">Credit Score: 100</p>
             </div>
 

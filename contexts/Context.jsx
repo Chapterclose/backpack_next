@@ -14,7 +14,7 @@ const Context = ({ children }) => {
   const [markets, setMarkets] = useState({})
   const [primaryCertified, setPrimaryCertified] = useState(false)
   const [walletAddress, setWalletAddress] = useState("");
-  const {UserLoginRequest} = UserStore()
+  const {UserLoginRequest, GetUserInfoRequest} = UserStore()
 
   // Connect to MetaMask
     const connectWallet = async () => {
@@ -29,11 +29,15 @@ const Context = ({ children }) => {
         });
         if(accounts?.length >0){
           const res = await UserLoginRequest({"metamask_id":`${accounts[0]}`})
-          if(res === 200 || res === 201){
+          if(res.status === 200 || res.status === 201){
             setWalletAddress(accounts[0]);
             toast.success("User Login Success!")
-          }else {
-            toast.error("Try again!")
+          }else if(res.status === 404) {
+            toast.error(res.response.data["message"])
+            setWalletAddress("")
+          }else if(res.status === 400){
+            toast.error(res.response.data["message"])
+            setWalletAddress("")
           }
         }
       } catch (error) {
@@ -49,8 +53,16 @@ const Context = ({ children }) => {
             method: "eth_accounts",
           });
           if (accounts?.length > 0) {
-            setWalletAddress(accounts[0]);
-            await UserLoginRequest({"metamask_id":`${accounts[0]}`})
+            const res = await GetUserInfoRequest({"metamask_id":`${accounts[0]}`})
+            if(res?.status === 404){
+              // toast.error(res.response.data["message"])
+              setWalletAddress("");
+            }else if(res.status === 401){
+              setWalletAddress("")
+            }
+            else if(res.status === 200){
+              setWalletAddress(accounts[0]);
+            }
           }
         }
       };

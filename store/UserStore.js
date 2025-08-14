@@ -19,9 +19,25 @@ const UserStore = create(
                 let res=await apiWithoutToken.post('/auth/connect_metamask/',body)
                 Cookies.set("access", res.data?.access,{ expires: 7 })
                 set({UserData:res.data['customer']})
-                return res.status
+                return res
             }catch(e){
                 console.log(e)
+                return e
+            }finally {
+                set({isUserLogin:false})
+                set({isLoading:false})
+            }
+        },
+        GetUserInfoRequest:async(body)=>{
+            try{
+                set({isUserLogin:true})
+                set({isLoading:true})
+                let res=await api.get('/auth/profile-information/',body)
+                set({UserData:res.data['customer']})
+                return res
+            }catch(e){
+                console.log(e)
+                return e
             }finally {
                 set({isUserLogin:false})
                 set({isLoading:false})
