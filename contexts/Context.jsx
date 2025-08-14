@@ -38,6 +38,8 @@ const Context = ({ children }) => {
           }else if(res.status === 400){
             toast.error(res.response.data["message"])
             setWalletAddress("")
+          }else if(res.status === 401){
+            toast.error("Unauthorized User, Try again!")
           }
         }
       } catch (error) {

@@ -13,6 +13,7 @@ const DWStore = create(
                 try{
                     set({isLoading:true})
                     let res=await api.get('/trade/recharge-address/')
+                    console.log(res)
                     set({rechargeAddress:res.data['recharge_address']})
                 }catch(e){
                     console.log(e)
@@ -54,6 +55,7 @@ const DWStore = create(
                     set({isLoading:true})
                     let res=await api.post('/trade/set-withdraw-password/', body)
                     toast.success(res.data['message'])
+                    return res
                 }catch(e){
                     console.log(e)
                 }finally {
