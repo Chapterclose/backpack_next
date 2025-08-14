@@ -77,6 +77,7 @@ const Context = ({ children }) => {
       router.push("/")
       localStorage.removeItem("user-store")
       localStorage.removeItem("dw-store")
+      localStorage.removeItem("realNameAuthStatus")
       toast.success("User Logged Out!")
     }
 

@@ -13,7 +13,6 @@ const DWStore = create(
                 try{
                     set({isLoading:true})
                     let res=await api.get('/trade/recharge-address/')
-                    console.log(res)
                     set({rechargeAddress:res.data['recharge_address']})
                 }catch(e){
                     console.log(e)

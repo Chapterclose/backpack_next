@@ -22,7 +22,7 @@ const Header = () => {
   const router = useRouter();
 
   const handleNavItemClick = (item) => {
-    if (item.protected) {
+    if (item.protected && UserData.id_number === null) {
       // setError(true)
       toast.error("Please complete primary certification first.")
     } else {

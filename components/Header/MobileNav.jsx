@@ -55,10 +55,8 @@ const MobileNav = () => {
   ];
 
   const handleNavItemClick = (item) => {
-    // Check if the item is 'protected' AND primaryCertification is not complete
-    if (item.protected && !primaryCertified) {
-      toast.error("Please complete primary certification first."); // This will now work
-      // setMobileMenuOpen(false); // You might want to keep the menu open or close it based on UX
+    if (item.protected && UserData.id_number === null) {
+      toast.error("Please complete primary certification first."); 
     } else {
       router.push(item.href);
       setMobileMenuOpen(false);

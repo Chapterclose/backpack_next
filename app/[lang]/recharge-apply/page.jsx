@@ -104,7 +104,7 @@ function RechargeApply() {
                 <Link href="/recharge-order" className="flex items-center gap-x-1 lg:text-xl font-semibold border border-primary-100 p-[2px_10px] lg:p-[5px_15px] rounded hover:border-primary-200 duration-300 mt-[-10px] lg:mt0 dark:text-white">History <BookMarked className="mt-1" /></Link>
             </div>
             
-            {rechargeAddress !== ""  && <QRCode
+            {rechargeAddress !== null  && <QRCode
                 size={200}
                 style={{ height: "200", maxWidth: "100%", width: "200", margin:"0 auto" }}
                 value={rechargeAddress}
