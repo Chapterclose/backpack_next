@@ -15,6 +15,7 @@ const TradeStore = create((set)=>({
                         'Content-Type': 'application/json'
                     }
                 })
+                console.log(res)
                 toast.success(res.data['message'])
             }catch(e){
                 console.log(e)
