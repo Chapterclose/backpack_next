@@ -12,6 +12,8 @@
     "@binance/connector": "^3.6.1",
     "@formatjs/intl-localematcher": "^0.6.1",
     "@headlessui/react": "^2.2.6",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
     "axios": "^1.11.0",
     "binance-api-node": "^0.12.9",
