@@ -1,6 +1,8 @@
 "use client"
 
 import BuySell from '@/components/Trade/BuySell';
+import OrderBook from '@/components/Trade/OrderBook';
+import { OrderHistory } from '@/components/Trade/OrderHistory';
 import RealTimePriceDisplay from '@/components/Trade/RealTimePriceDisplay';
 import StockChart from '@/components/Trade/StockChart';
 import { useSearchParams } from 'next/navigation';
@@ -75,14 +77,19 @@ export default function TradePage() {
 
   return (
     <div className='container py-[40px] lg:py-[60px]'>
-        <RealTimePriceDisplay
+        <div className='max-w-2xl mx-auto mb-5'>
+          <h3 className='uppercase dark:text-white font-semibold text-3xl'>{coin}/USDT</h3>
+          <h4 className='text-red-500 font-semibold'>{priceChangePercentage}%</h4>
+        </div>
+          <OrderBook/>
+        {/* <RealTimePriceDisplay
         coin={coin}
         currentPrice={currentPrice}
         priceChangePercentage={priceChangePercentage}
         highPrice={highPrice}
         lowPrice={lowPrice}
         volume={volume}
-      />
+      /> */}
 
         <div className='mt-10'>
             <StockChart
@@ -91,6 +98,9 @@ export default function TradePage() {
             volume={volume}
             />
         </div>
+
+
+        <OrderHistory/>
 
         <BuySell coin={coin}/>
     </div>

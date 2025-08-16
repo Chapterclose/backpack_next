@@ -6,13 +6,13 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function RechargeOrder() {
-  const [activeTab, setActiveTab] = useState('Success');
+  const [activeTab, setActiveTab] = useState('Approved');
   const { withdrawHistoryRequest, withdrawHistory, isLoading } = DWStore();
 
   const tabs = [
-    { id: 'Success', label: 'Success', status: 'success' },
-    { id: 'Pending', label: 'Pending', status: 'pending' },
-    { id: 'Fail', label: 'Fail', status: 'fail' },
+    { id: "Approved", label: "Approved", status: "approved" },
+    { id: "Pending", label: "Pending", status: "pending" },
+    { id: "Rejected", label: "Rejected", status: "rejected" },
   ];
 
   // Current tab object

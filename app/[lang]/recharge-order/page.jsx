@@ -1,25 +1,26 @@
 "use client";
 
-import DWStore from '@/store/DWStore';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Loader2 } from 'lucide-react'; 
-import { useEffect, useState } from 'react';
+import DWStore from "@/store/DWStore";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function RechargeOrder() {
-  const [activeTab, setActiveTab] = useState('Success');
+  const [activeTab, setActiveTab] = useState("Approved");
   const { DepositHistoryRequest, depositHistory, isLoading } = DWStore();
-
+  console.log(depositHistory);
   const tabs = [
-    { id: 'Success', label: 'Success', status: 'success' },
-    { id: 'Pending', label: 'Pending', status: 'pending' },
-    { id: 'Fail', label: 'Fail', status: 'fail' },
+    { id: "Approved", label: "Approved", status: "approved" },
+    { id: "Pending", label: "Pending", status: "pending" },
+    { id: "Rejected", label: "Rejected", status: "rejected" },
   ];
 
   // Current tab object
-  const activeTabItem = tabs.find(tab => tab.id === activeTab) || tabs[0];
+  const activeTabItem = tabs.find((tab) => tab.id === activeTab) || tabs[0];
 
   // Filter data for current tab
-  const filteredData = depositHistory?.filter(item => item.status === activeTabItem.status) || [];
+  const filteredData = depositHistory?.filter((item) => item.status === activeTabItem.status) || [];
 
   useEffect(() => {
     DepositHistoryRequest();
@@ -37,7 +38,6 @@ export default function RechargeOrder() {
       </div>
 
       <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg dark:shadow-2xl border border-transparent dark:border-gray-800">
-
         {/* Tabs */}
         <div className="relative flex">
           {tabs.map((tab) => (
@@ -45,7 +45,11 @@ export default function RechargeOrder() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`relative px-6 py-4 text-center text-sm font-medium transition-colors duration-300
-                ${activeTab === tab.id ? 'text-primary-200' : 'text-gray-900 dark:text-white hover:text-primary-200'}
+                ${
+                  activeTab === tab.id
+                    ? "text-primary-200"
+                    : "text-gray-900 dark:text-white hover:text-primary-200"
+                }
               `}
               disabled={isLoading} // Disable tabs while data is loading
             >
@@ -89,11 +93,27 @@ export default function RechargeOrder() {
               >
                 {filteredData.length > 0 ? (
                   <div className="space-y-4">
-                    {filteredData.map(item => (
-                      <div key={item.id} className="p-4 border rounded-lg dark:border-gray-700">
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">{item.currency}</p>
-                        <p className="text-lg text-gray-900 font-semibold dark:text-white">Amount: {item.amount}</p>
-                        <p className="text-sm capitalize dark:text-white">Status: {item.status}</p>
+                    {filteredData.map((item) => (
+                      <div key={item.id} className="p-4 border rounded-lg dark:border-gray-700 flex justify-between">
+                        <div>
+                          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                            {item.currency}
+                          </p>
+                          <p className="text-lg text-gray-900 font-semibold dark:text-white">
+                            Amount: {item.amount}
+                          </p>
+                          <p className="text-sm capitalize dark:text-white">
+                            Status: {item.status}
+                          </p>
+                        </div>
+                        <div>
+                          {item.screenshot !== "" && <Image
+                            src={item?.screenshot !== "" && item?.screenshot}
+                            alt="recharge"
+                            height={100}
+                            width={100}
+                          />}
+                        </div>
                       </div>
                     ))}
                   </div>
