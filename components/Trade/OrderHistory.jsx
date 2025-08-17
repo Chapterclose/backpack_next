@@ -1,72 +1,74 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TradeStore from "@/store/TradeStore";
 import { CheckCircle, Clock, TrendingDown, TrendingUp, XCircle } from "lucide-react";
 
-const openOrders = [
-  {
-    id: "1",
-    type: "buy",
-    symbol: "BTC/USDT",
-    amount: 0.0125,
-    price: 48500,
-    total: 606.25,
-    status: "pending",
-    timestamp: new Date(),
-    timeframe: "60s",
-    pnl: 125.5,
-  },
-  {
-    id: "2",
-    type: "sell",
-    symbol: "BTC/USDT",
-    amount: 0.025,
-    price: 47800,
-    total: 1195,
-    status: "pending",
-    timestamp: new Date(Date.now() - 300000),
-    timeframe: "1d",
-    pnl: -45.3,
-  },
-];
+// const openOrders = [
+//   {
+//     id: "1",
+//     type: "buy",
+//     symbol: "BTC/USDT",
+//     amount: 0.0125,
+//     price: 48500,
+//     total: 606.25,
+//     status: "pending",
+//     timestamp: new Date(),
+//     timeframe: "60s",
+//     pnl: 125.5,
+//   },
+//   {
+//     id: "2",
+//     type: "sell",
+//     symbol: "BTC/USDT",
+//     amount: 0.025,
+//     price: 47800,
+//     total: 1195,
+//     status: "pending",
+//     timestamp: new Date(Date.now() - 300000),
+//     timeframe: "1d",
+//     pnl: -45.3,
+//   },
+// ];
 
-const orderHistory = [
-  {
-    id: "3",
-    type: "buy",
-    symbol: "BTC/USDT",
-    amount: 0.01,
-    price: 46500,
-    total: 465,
-    status: "completed",
-    timestamp: new Date(Date.now() - 3600000),
-    timeframe: "12h",
-  },
-  {
-    id: "4",
-    type: "sell",
-    symbol: "BTC/USDT",
-    amount: 0.02,
-    price: 48000,
-    total: 960,
-    status: "completed",
-    timestamp: new Date(Date.now() - 7200000),
-    timeframe: "7d",
-  },
-  {
-    id: "5",
-    type: "buy",
-    symbol: "BTC/USDT",
-    amount: 0.015,
-    price: 45000,
-    total: 675,
-    status: "cancelled",
-    timestamp: new Date(Date.now() - 86400000),
-    timeframe: "15d",
-  },
-];
+// const orderHistory = [
+//   {
+//     id: "3",
+//     type: "buy",
+//     symbol: "BTC/USDT",
+//     amount: 0.01,
+//     price: 46500,
+//     total: 465,
+//     status: "completed",
+//     timestamp: new Date(Date.now() - 3600000),
+//     timeframe: "12h",
+//   },
+//   {
+//     id: "4",
+//     type: "sell",
+//     symbol: "BTC/USDT",
+//     amount: 0.02,
+//     price: 48000,
+//     total: 960,
+//     status: "completed",
+//     timestamp: new Date(Date.now() - 7200000),
+//     timeframe: "7d",
+//   },
+//   {
+//     id: "5",
+//     type: "buy",
+//     symbol: "BTC/USDT",
+//     amount: 0.015,
+//     price: 45000,
+//     total: 675,
+//     status: "cancelled",
+//     timestamp: new Date(Date.now() - 86400000),
+//     timeframe: "15d",
+//   },
+// ];
 
 export const OrderHistory = () => {
+  const {openOrders,orderHistory} = TradeStore()
   return (
     <Card className="p-3 sm:p-6 dark:text-white mt-15">
       <Tabs defaultValue="open" className="w-full">
@@ -140,17 +142,21 @@ const OrderTable = ({ orders, showPnL }) => {
                     order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
                   }`}
                 >
-                  {order.type.toUpperCase()}
+                  {/* {order.type.toUpperCase()} */}
+                  {order.type}
                 </div>
                 <div className="text-sm text-muted-foreground">{order.symbol}</div>
               </div>
             </div>
 
-            <div className="font-mono text-sm">{order.amount.toFixed(6)} BTC</div>
+            {/* <div className="font-mono text-sm">{order.amount.toFixed(6)} BTC</div> */}
+            <div className="font-mono text-sm">{order.amount} BTC</div>
 
-            <div className="font-mono text-sm">${order.price.toLocaleString()}</div>
+            {/* <div className="font-mono text-sm">${order.price.toLocaleString()}</div> */}
+            <div className="font-mono text-sm">${order.price}</div>
 
-            <div className="font-mono text-sm">${order.total.toLocaleString()}</div>
+            {/* <div className="font-mono text-sm">${order.total.toLocaleString()}</div> */}
+            <div className="font-mono text-sm">${order.total}</div>
 
             <div>
               <Badge
@@ -187,9 +193,11 @@ const OrderTable = ({ orders, showPnL }) => {
                 </div>
               ) : (
                 <div className="text-muted-foreground">
-                  {order.timestamp.toLocaleDateString()}
+                  {/* {order.timestamp.toLocaleDateString()} */}
+                  {order.timestamp}
                   <br />
-                  <span className="text-xs">{order.timestamp.toLocaleTimeString()}</span>
+                  {/* <span className="text-xs">{order.timestamp.toLocaleTimeString()}</span> */}
+                  <span className="text-xs">{order.timestamp}</span>
                 </div>
               )}
             </div>
@@ -216,7 +224,8 @@ const OrderTable = ({ orders, showPnL }) => {
                       order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
                     }`}
                   >
-                    {order.type.toUpperCase()} {order.symbol}
+                    {/* {order.type.toUpperCase()} {order.symbol} */}
+                    {order.type} {order.symbol}
                   </div>
                   <div className="text-xs text-muted-foreground">{order.timeframe}</div>
                 </div>
@@ -248,16 +257,19 @@ const OrderTable = ({ orders, showPnL }) => {
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
                 <div className="text-muted-foreground">Amount</div>
-                <div className="font-mono text-sm">{order.amount.toFixed(4)} BTC</div>
+                {/* <div className="font-mono text-sm">{order.amount.toFixed(4)} BTC</div> */}
+                <div className="font-mono text-sm">{order.amount} BTC</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Price</div>
-                <div className="font-mono text-sm">${order.price.toLocaleString()}</div>
+                {/* <div className="font-mono text-sm">${order.price.toLocaleString()}</div> */}
+                <div className="font-mono text-sm">${order.price}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Total</div>
                 <div className="font-mono text-sm font-semibold">
-                  ${order.total.toLocaleString()}
+                  {/* ${order.total.toLocaleString()} */}
+                  ${order.total}
                 </div>
               </div>
               <div>
@@ -269,16 +281,19 @@ const OrderTable = ({ orders, showPnL }) => {
                         order.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
                       }`}
                     >
-                      {order.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)}
+                      {/* {order.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)} */}
+                      {order.pnl >= 0 ? "+" : ""}${order.pnl}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="text-muted-foreground">Time</div>
                     <div className="text-muted-foreground text-xs">
-                      {order.timestamp.toLocaleDateString()}
+                      {/* {order.timestamp.toLocaleDateString()} */}
+                      {order.timestamp}
                       <br />
-                      {order.timestamp.toLocaleTimeString()}
+                      {/* {order.timestamp.toLocaleTimeString()} */}
+                      {order.timestamp}
                     </div>
                   </>
                 )}

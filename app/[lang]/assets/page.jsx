@@ -4,15 +4,22 @@ import AccountBalance from "@/components/assets/AccountBalance";
 import AssetDetails from "@/components/assets/AssetDetails";
 import Button from "@/components/Form/Button";
 import { contextProvider } from "@/contexts/Context";
-import { useContext, useState } from "react";
+import UserStore from "@/store/UserStore";
+import { useContext, useEffect, useState } from "react";
 
 function AssetsPage() {
     const [showBalance, setShowBalance] = useState(true);
     const {walletAddress, connectWallet} = useContext(contextProvider);
-
+    const {GetAccountBalanceRequest} = UserStore()
     const toggleBalanceVisibility = () => {
         setShowBalance(!showBalance);
     };
+
+
+    useEffect(()=>{
+        GetAccountBalanceRequest()
+    },[])
+
     return ( 
         <>
             {walletAddress !== "" ? <div className="container py-[80px] dark:text-white">
