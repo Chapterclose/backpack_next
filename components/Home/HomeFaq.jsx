@@ -2,13 +2,17 @@
 
 import { homeFaqData } from "@/constant";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
-import Collapsible from "react-collapsible";
+import React, { useEffect, useRef, useState } from "react"; // Import useRef and useEffect
 import { FaMinus, FaPlus } from "react-icons/fa";
 
 const HomeFaq = () => {
-  // states
-  const [activeCollapse, setActiveCollapse] = useState();
+  const [activeCollapse, setActiveCollapse] = useState(null);
+  const contentRefs = useRef([]); // Create a ref to store references to content elements
+
+  // Initialize contentRefs array with nulls for each item
+  useEffect(() => {
+    contentRefs.current = homeFaqData.map((_, i) => contentRefs.current[i] ?? null);
+  }, []);
 
   const handleCollapse = (i) => {
     setActiveCollapse((prev) => (prev === i ? null : i));
@@ -26,14 +30,12 @@ const HomeFaq = () => {
             key={i}
             className={cn(
               "group rounded-xl p-5 mb-1 hover:text-black dark:text-white duration-300",
-              //   i === 0 && "!pt-0",
               activeCollapse === i && "bg-black-100"
             )}
           >
             <h5
               className={cn(
                 "dark:group-hover:text-white cursor-pointer text-[14px] lg:text-[16px] xll:text-[20px] leading-[145%] font-medium text-heading flex justify-between items-center duration-300"
-                // activeCollapse === i ? "p-0" : "p-5"
               )}
               onClick={() => handleCollapse(i)}
             >
@@ -49,24 +51,28 @@ const HomeFaq = () => {
                       "text-black",
                       activeCollapse === i && "bg-primary w-8 h-8 p-2 rounded-full"
                     )}
-                    activeCollapse={activeCollapse}
-                    i={i}
                   />
                 ) : (
-                  <FaPlus
-                    className={cn(
-                      "text-black dark:text-white",
-                      // activeCollapse === i && "text-yellow-300"
-                    )}
-                  />
+                  <FaPlus className={cn("text-black dark:text-white")} />
                 )}
               </span>
             </h5>
-            <Collapsible trigger="" open={i === activeCollapse} transitionTime={200}>
-              <p className="text-[12px] md:text-[10px] lg:text-[14px] xxl:text-[16px] leading-[160%] text-body pr-[20px] xll:mt-[20px] lg:mt-[7px] mt-[12px] text-secondary dark:text-white">
+            {/* Dynamic max-height for smooth transition */}
+            <div
+              ref={(el) => (contentRefs.current[i] = el)} // Assign ref to the div
+              style={{
+                maxHeight:
+                  activeCollapse === i ? `${contentRefs.current[i]?.scrollHeight}px` : "0px",
+              }}
+              className={cn(
+                "overflow-hidden transition-[max-height,opacity] duration-500 ease-in-out", // Transition both max-height and opacity
+                activeCollapse === i ? "opacity-100 mt-[12px]" : "opacity-0"
+              )}
+            >
+              <p className="text-[12px] md:text-[10px] lg:text-[14px] xxl:text-[16px] leading-[160%] text-body pr-[20px] text-secondary dark:text-white">
                 {url}
               </p>
-            </Collapsible>
+            </div>
           </div>
         </React.Fragment>
       ))}
