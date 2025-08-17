@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import Button from "../Form/Button";
 
-function BuySell({ coin }) {
+function BuySell({ coin, handleTrade }) {
   const [activePopup, setActivePopup] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("60s"); // Default to '60s'
   const [purchaseVolume, setPurchaseVolume] = useState("");
@@ -127,6 +127,7 @@ function BuySell({ coin }) {
     };
     await TradeBuySellRequest(tradeData);
     closePopup();
+    handleTrade({ type: "buy", amount: parseFloat(1), price: 100, timeframe: "60s" });
   };
 
   // --- Tailwind CSS Classes ---
@@ -148,7 +149,7 @@ function BuySell({ coin }) {
             <Button handleFunc={connectWallet} text={"Connect"} />
           </div>
         ) : (
-          <div className="flex justify-center gap-x-4 fixed bottom-[90px] lg:bottom-0 left-1/2 -translate-x-1/2 z-[99]">
+          <div className="flex justify-center gap-x-4 fixed bottom-[90px] lg:bottom-5 left-1/2 -translate-x-1/2 z-[99]">
             <button
               className="px-15 lg:px-20 py-3 cursor-pointer bg-green-500 text-white font-bold rounded hover:bg-green-600 transition-colors"
               onClick={() => setActivePopup("buy")}
