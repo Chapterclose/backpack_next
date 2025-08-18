@@ -5,7 +5,7 @@ const Card = (({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={twMerge(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      "rounded-lg border border-gray-700 bg-card text-card-foreground shadow-sm",
       className
     )}
     {...props}
