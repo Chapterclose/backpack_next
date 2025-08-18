@@ -1,8 +1,12 @@
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import { BarChart2, Clock, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
+
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TradeStore from "@/store/TradeStore";
-import { CheckCircle, Clock, TrendingDown, TrendingUp, XCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // const openOrders = [
 //   {
@@ -67,8 +71,75 @@ import { CheckCircle, Clock, TrendingDown, TrendingUp, XCircle } from "lucide-re
 //   },
 // ];
 
+// Data for the table
+
+const TimerCell = ({ initialTimeInSeconds }) => {
+  const [countdown, setCountdown] = useState(initialTimeInSeconds);
+
+  useEffect(() => {
+    // If the countdown is already at zero, do nothing.
+    if (countdown <= 0) {
+      return;
+    }
+
+    // Set up a timer to decrement the countdown every second.
+    const timer = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+
+    // Clean up the timer when the component unmounts or when the countdown finishes.
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  return (
+    <div className="flex items-center justify-center">
+      <span className="text-xl font-bold text-blue-400">{countdown > 0 ? countdown : "0"}s</span>
+    </div>
+  );
+};
+const data = [
+  {
+    high: "178,484",
+    low: "47,474",
+    volume: "584,848",
+    change: "47,474",
+    purchase: "100 USDT",
+    profit: "10 USDT",
+    status: "Win / loss",
+  },
+  {
+    high: "215,678",
+    low: "38,123",
+    volume: "601,987",
+    change: "65,432",
+    purchase: "150 USDT",
+    profit: "15 USDT",
+    status: "Win",
+  },
+  {
+    high: "190,000",
+    low: "55,200",
+    volume: "550,500",
+    change: "40,100",
+    purchase: "120 USDT",
+    profit: "12 USDT",
+    status: "Loss",
+    timeInSeconds: 12220,
+  },
+  {
+    high: "220,100",
+    low: "49,500",
+    volume: "720,300",
+    change: "55,600",
+    purchase: "200 USDT",
+    profit: "25 USDT",
+    status: "Win",
+    timeInSeconds: 60,
+  },
+];
+
 export const OrderHistory = () => {
-  const {openOrders,orderHistory} = TradeStore()
+  const { openOrders, orderHistory } = TradeStore();
   return (
     <Card className="p-3 sm:p-6 dark:text-white mt-15">
       <Tabs defaultValue="open" className="w-full">
@@ -77,7 +148,7 @@ export const OrderHistory = () => {
             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden xs:inline">Open Orders</span>
             <span className="xs:hidden">Open</span>
-            <span className="ml-1">({openOrders.length})</span>
+            <span className="ml-1">({openOrders?.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="history"
@@ -90,19 +161,19 @@ export const OrderHistory = () => {
         </TabsList>
 
         <TabsContent value="open" className="mt-3 sm:mt-4">
-          <OrderTable orders={openOrders} showPnL={true} />
+          <OrderTable orders={openOrders} isOpen={true} />
         </TabsContent>
 
         <TabsContent value="history" className="mt-3 sm:mt-4">
-          <OrderTable orders={orderHistory} showPnL={false} />
+          <OrderTable orders={orderHistory} isOpen={false} />
         </TabsContent>
       </Tabs>
     </Card>
   );
 };
 
-const OrderTable = ({ orders, showPnL }) => {
-  if (orders.length === 0) {
+const OrderTable = ({ orders, isOpen }) => {
+  if (orders?.length === 0) {
     return (
       <div className="text-center py-6 sm:py-8 text-muted-foreground">
         <p className="text-sm sm:text-base">No orders found</p>
@@ -111,196 +182,104 @@ const OrderTable = ({ orders, showPnL }) => {
   }
 
   return (
-    <div className="space-y-2">
-      {/* Desktop Header - Hidden on mobile */}
-      <div className="hidden lg:grid grid-cols-6 gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b">
-        <div>Type/Symbol</div>
-        <div>Amount</div>
-        <div>Price</div>
-        <div>Total</div>
-        <div>Status</div>
-        {showPnL ? <div>P&L</div> : <div>Time</div>}
-      </div>
-
-      {/* Orders */}
-      <div className="space-y-2">
-        {orders.map((order) => (
-          // Desktop Layout
-          <div
-            key={order.id}
-            className="hidden lg:grid grid-cols-6 gap-4 px-4 py-3 hover:bg-muted/50 rounded-lg transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              {order.type === "buy" ? (
-                <TrendingUp className="w-4 h-4 text-trading-buy" />
-              ) : (
-                <TrendingDown className="w-4 h-4 text-trading-sell" />
-              )}
-              <div>
-                <div
-                  className={`font-medium ${
-                    order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
-                  }`}
-                >
-                  {/* {order.type.toUpperCase()} */}
-                  {order.type}
-                </div>
-                <div className="text-sm text-muted-foreground">{order.symbol}</div>
-              </div>
-            </div>
-
-            {/* <div className="font-mono text-sm">{order.amount.toFixed(6)} BTC</div> */}
-            <div className="font-mono text-sm">{order.amount} BTC</div>
-
-            {/* <div className="font-mono text-sm">${order.price.toLocaleString()}</div> */}
-            <div className="font-mono text-sm">${order.price}</div>
-
-            {/* <div className="font-mono text-sm">${order.total.toLocaleString()}</div> */}
-            <div className="font-mono text-sm">${order.total}</div>
-
-            <div>
-              <Badge
-                variant={
-                  order.status === "completed"
-                    ? "default"
-                    : order.status === "pending"
-                    ? "secondary"
-                    : "destructive"
-                }
-                className={
-                  order.status === "completed"
-                    ? "bg-success text-success-foreground"
-                    : order.status === "pending"
-                    ? "bg-warning text-warning-foreground"
-                    : ""
-                }
+    <div className="bg-slate-800 text-white rounded-xl shadow-lg w-full border border-slate-700">
+      <div className="overflow-x-auto rounded-lg">
+        <table className="min-w-full divide-y divide-slate-700">
+          <thead className="bg-slate-700 sticky top-0">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
               >
-                {order.status === "completed" && <CheckCircle className="w-3 h-3 mr-1" />}
-                {order.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
-                {order.status === "cancelled" && <XCircle className="w-3 h-3 mr-1" />}
-                {order.status}
-              </Badge>
-            </div>
-
-            <div className="text-sm">
-              {showPnL && order.pnl !== undefined ? (
-                <div
-                  className={`font-mono ${
-                    order.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
-                  }`}
-                >
-                  {order.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)}
-                </div>
-              ) : (
-                <div className="text-muted-foreground">
-                  {/* {order.timestamp.toLocaleDateString()} */}
-                  {order.timestamp}
-                  <br />
-                  {/* <span className="text-xs">{order.timestamp.toLocaleTimeString()}</span> */}
-                  <span className="text-xs">{order.timestamp}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-
-        {/* Mobile Layout */}
-        {orders.map((order) => (
-          <div
-            key={`mobile-${order.id}`}
-            className="lg:hidden bg-card border rounded-lg p-3 space-y-3"
-          >
-            {/* Header Row */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {order.type === "buy" ? (
-                  <TrendingUp className="w-4 h-4 text-trading-buy" />
-                ) : (
-                  <TrendingDown className="w-4 h-4 text-trading-sell" />
-                )}
-                <div>
-                  <div
-                    className={`font-semibold text-sm ${
-                      order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
-                    }`}
-                  >
-                    {/* {order.type.toUpperCase()} {order.symbol} */}
-                    {order.type} {order.symbol}
+                High
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Low
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Volume
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Change
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Purchase Volume
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                Profit
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider"
+              >
+                {isOpen ? "Time" : "Status"}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-slate-800 divide-y divide-slate-700">
+            {data.map((item, index) => (
+              <tr key={index} className="hover:bg-slate-700 transition-colors duration-200">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <TrendingUp size={16} className="text-green-500 mr-2" />
+                    {item.high}
                   </div>
-                  <div className="text-xs text-muted-foreground">{order.timeframe}</div>
-                </div>
-              </div>
-              <Badge
-                variant={
-                  order.status === "completed"
-                    ? "default"
-                    : order.status === "pending"
-                    ? "secondary"
-                    : "destructive"
-                }
-                className={`text-xs ${
-                  order.status === "completed"
-                    ? "bg-success text-success-foreground"
-                    : order.status === "pending"
-                    ? "bg-warning text-warning-foreground"
-                    : ""
-                }`}
-              >
-                {order.status === "completed" && <CheckCircle className="w-3 h-3 mr-1" />}
-                {order.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
-                {order.status === "cancelled" && <XCircle className="w-3 h-3 mr-1" />}
-                {order.status}
-              </Badge>
-            </div>
-
-            {/* Details Grid */}
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <div className="text-muted-foreground">Amount</div>
-                {/* <div className="font-mono text-sm">{order.amount.toFixed(4)} BTC</div> */}
-                <div className="font-mono text-sm">{order.amount} BTC</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground">Price</div>
-                {/* <div className="font-mono text-sm">${order.price.toLocaleString()}</div> */}
-                <div className="font-mono text-sm">${order.price}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground">Total</div>
-                <div className="font-mono text-sm font-semibold">
-                  {/* ${order.total.toLocaleString()} */}
-                  ${order.total}
-                </div>
-              </div>
-              <div>
-                {showPnL && order.pnl !== undefined ? (
-                  <>
-                    <div className="text-muted-foreground">P&L</div>
-                    <div
-                      className={`font-mono text-sm font-semibold ${
-                        order.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
-                      }`}
-                    >
-                      {/* {order.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)} */}
-                      {order.pnl >= 0 ? "+" : ""}${order.pnl}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-muted-foreground">Time</div>
-                    <div className="text-muted-foreground text-xs">
-                      {/* {order.timestamp.toLocaleDateString()} */}
-                      {order.timestamp}
-                      <br />
-                      {/* {order.timestamp.toLocaleTimeString()} */}
-                      {order.timestamp}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <TrendingDown size={16} className="text-red-500 mr-2" />
+                    {item.low}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <BarChart2 size={16} className="text-cyan-400 mr-2" />
+                    {item.volume}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <TrendingUp size={16} className="text-purple-500 mr-2" />
+                    {item.change}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <DollarSign size={16} className="text-yellow-500 mr-2" />
+                    {item.purchase}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <DollarSign size={16} className="text-emerald-500 mr-2" />
+                    {item.profit}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                  <div className="flex items-center">
+                    <Clock size={16} className="text-gray-400 mr-2" />
+                    {isOpen ? <TimerCell initialTimeInSeconds={120} /> : item.status} 
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

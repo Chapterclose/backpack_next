@@ -1,10 +1,12 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { contextProvider } from "@/contexts/Context";
 import { CheckCircle, Clock } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
+import First from "./First";
+import FF from "./FF";
 
 export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) => {
   const { countdown, setCountdown } = useContext(contextProvider);
@@ -67,20 +69,29 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
       open={isOpen || forceOpen}
       onOpenChange={(open) => {
         if (!open) {
-          setForceOpen(false); // 👈 allow manual closing
+          setForceOpen(false); // allow manual closing
           onClose();
         }
       }}
     >
-      <DialogContent className="max-w-md mx-4 sm:mx-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-md mx-auto">
+        {/* <DialogHeader>
           <DialogTitle className="text-center text-lg sm:text-xl">
             {isConfirmed ? "Trade Confirmed!" : "Confirm Trade"}
           </DialogTitle>
-        </DialogHeader>
+        </DialogHeader> */}
 
         {!isConfirmed ? (
           <div className="space-y-4 sm:space-y-6">
+            <First/>
+            {/* Timer  */}
+            {/* <div className="text-center bg-green-500 w-[100px] h-[100px] rounded-full flex items-center justify-center mx-auto">
+              <div className="text-xl">
+                <Clock className="w-3 mx-auto h-3 sm:w-6 sm:h-6" />
+                {formatTime(countdown)}
+              </div>
+            </div>
+
             <Card className="p-3 sm:p-4">
               <div className="space-y-3">
                 <div className="flex justify-between text-sm sm:text-base">
@@ -112,26 +123,10 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
                   <span>{order.timeframe}</span>
                 </div>
               </div>
-            </Card>
-
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 text-xl sm:text-2xl font-mono">
-                <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
-                {formatTime(countdown)}
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                Time remaining for this trade
-              </p>
-            </div>
+            </Card> */}
           </div>
         ) : (
-          <div className="text-center py-4 sm:py-6">
-            <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-success mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">Trade Executed!</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              Your {order.type} order has been placed successfully.
-            </p>
-          </div>
+          <FF/>
         )}
       </DialogContent>
     </Dialog>
