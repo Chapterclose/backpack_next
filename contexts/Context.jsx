@@ -15,6 +15,8 @@ const Context = ({ children }) => {
   const [primaryCertified, setPrimaryCertified] = useState(false)
   const [walletAddress, setWalletAddress] = useState("");
   const {UserLoginRequest, GetUserInfoRequest} = UserStore()
+  // trade countdown 
+  const [countdown, setCountdown] = useState(0);
 
   // Connect to MetaMask
     const connectWallet = async () => {
@@ -91,7 +93,9 @@ const Context = ({ children }) => {
     walletAddress,
     setWalletAddress,
     connectWallet,
-    handleLogout
+    handleLogout,
+    countdown,
+    setCountdown
   };
 
   return <contextProvider.Provider value={values}>{children}</contextProvider.Provider>;

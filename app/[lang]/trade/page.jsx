@@ -5,6 +5,7 @@ import OrderBook from "@/components/Trade/OrderBook";
 import { OrderHistory } from "@/components/Trade/OrderHistory";
 import StockChart from "@/components/Trade/StockChart";
 import { TradeConfirmationModal } from "@/components/Trade/TradeConfirmationModal";
+import TradeStore from "@/store/TradeStore";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -48,6 +49,9 @@ export default function TradePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
   const [openOrders, setOpenOrders] = useState(mockOpenOrders);
+
+  // Apis Call
+  const { OpenOrdersRequest, OrderHistoryRequest } = TradeStore();
 
   const wsRef = useRef(null);
   const tickerReconnectTimeoutRef = useRef(null);
@@ -138,6 +142,11 @@ export default function TradePage() {
 
     setCurrentOrder(null);
   };
+
+  useEffect(() => {
+    OpenOrdersRequest();
+    OrderHistoryRequest();
+  }, []);
 
   return (
     <div className="container py-[40px] lg:py-[60px]">

@@ -1,41 +1,41 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { contextProvider } from "@/contexts/Context";
 import { CheckCircle, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) => {
-  const [countdown, setCountdown] = useState(0);
+  const { countdown, setCountdown } = useContext(contextProvider);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [forceOpen, setForceOpen] = useState(false); // 👈 to reopen after time ends
 
   useEffect(() => {
     if (!isOpen || !order) return;
 
-    // Reset state when modal opens
     setIsConfirmed(false);
 
-    // Set countdown based on timeframe
     const timeframes = {
-      "30s": 30,
-      "1m": 60,
-      "3m": 180,
-      "5m": 300,
-      "15m": 900,
-      "1h": 3600,
+      "60s": 10,
+      "120s": 120,
+      "12h": 43200,
+      "1d": 86400,
+      "7d": 604800,
+      "15d": 1296000,
     };
 
     setCountdown(timeframes[order.timeframe] || 60);
   }, [isOpen, order]);
 
   useEffect(() => {
-    if (countdown <= 0 || !isOpen) return;
+    if (countdown <= 0) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          setIsConfirmed(false);
+          setIsConfirmed(true);
+          setForceOpen(true); // 👈 reopen with confirmed view
           return 0;
         }
         return prev - 1;
@@ -43,12 +43,13 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [countdown, isOpen]);
+  }, [countdown]);
 
   const handleConfirm = () => {
     setIsConfirmed(true);
     setTimeout(() => {
       onConfirm();
+      setForceOpen(false);
       onClose();
     }, 2000);
   };
@@ -62,7 +63,15 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
   if (!order) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen || forceOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          setForceOpen(false); // 👈 allow manual closing
+          onClose();
+        }
+      }}
+    >
       <DialogContent className="max-w-md mx-4 sm:mx-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-lg sm:text-xl">
@@ -113,26 +122,6 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 Time remaining for this trade
               </p>
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={onClose}
-                className="flex-1 h-10 sm:h-11 text-sm sm:text-base"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleConfirm}
-                className={`flex-1 h-10 sm:h-11 text-sm sm:text-base ${
-                  order.type === "buy"
-                    ? "bg-primary-200 hover:bg-primary-100"
-                    : "bg-primary-200 hover:bg-primary-100"
-                } text-white`}
-              >
-                Confirm Trade
-              </Button>
             </div>
           </div>
         ) : (
