@@ -67,7 +67,7 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
       open={isOpen || forceOpen}
       onOpenChange={(open) => {
         if (!open) {
-          setForceOpen(false); // 👈 allow manual closing
+          setForceOpen(false); // allow manual closing
           onClose();
         }
       }}

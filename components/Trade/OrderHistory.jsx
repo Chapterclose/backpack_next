@@ -77,7 +77,7 @@ export const OrderHistory = () => {
             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden xs:inline">Open Orders</span>
             <span className="xs:hidden">Open</span>
-            <span className="ml-1">({openOrders.length})</span>
+            <span className="ml-1">({openOrders?.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="history"
@@ -124,14 +124,14 @@ const OrderTable = ({ orders, showPnL }) => {
 
       {/* Orders */}
       <div className="space-y-2">
-        {orders.map((order) => (
+        {orders?.map((order) => (
           // Desktop Layout
           <div
-            key={order.id}
+            key={order?.id}
             className="hidden lg:grid grid-cols-6 gap-4 px-4 py-3 hover:bg-muted/50 rounded-lg transition-colors"
           >
             <div className="flex items-center gap-2">
-              {order.type === "buy" ? (
+              {order?.type === "buy" ? (
                 <TrendingUp className="w-4 h-4 text-trading-buy" />
               ) : (
                 <TrendingDown className="w-4 h-4 text-trading-sell" />
@@ -139,65 +139,65 @@ const OrderTable = ({ orders, showPnL }) => {
               <div>
                 <div
                   className={`font-medium ${
-                    order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
+                    order?.type === "buy" ? "text-trading-buy" : "text-trading-sell"
                   }`}
                 >
                   {/* {order.type.toUpperCase()} */}
-                  {order.type}
+                  {order?.type}
                 </div>
-                <div className="text-sm text-muted-foreground">{order.symbol}</div>
+                <div className="text-sm text-muted-foreground">{order?.symbol}</div>
               </div>
             </div>
 
             {/* <div className="font-mono text-sm">{order.amount.toFixed(6)} BTC</div> */}
-            <div className="font-mono text-sm">{order.amount} BTC</div>
+            <div className="font-mono text-sm">{order?.amount} BTC</div>
 
             {/* <div className="font-mono text-sm">${order.price.toLocaleString()}</div> */}
-            <div className="font-mono text-sm">${order.price}</div>
+            <div className="font-mono text-sm">${order?.price}</div>
 
             {/* <div className="font-mono text-sm">${order.total.toLocaleString()}</div> */}
-            <div className="font-mono text-sm">${order.total}</div>
+            <div className="font-mono text-sm">${order?.total}</div>
 
             <div>
               <Badge
                 variant={
-                  order.status === "completed"
+                  order?.status === "completed"
                     ? "default"
-                    : order.status === "pending"
+                    : order?.status === "pending"
                     ? "secondary"
                     : "destructive"
                 }
                 className={
-                  order.status === "completed"
+                  order?.status === "completed"
                     ? "bg-success text-success-foreground"
-                    : order.status === "pending"
+                    : order?.status === "pending"
                     ? "bg-warning text-warning-foreground"
                     : ""
                 }
               >
-                {order.status === "completed" && <CheckCircle className="w-3 h-3 mr-1" />}
-                {order.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
-                {order.status === "cancelled" && <XCircle className="w-3 h-3 mr-1" />}
-                {order.status}
+                {order?.status === "completed" && <CheckCircle className="w-3 h-3 mr-1" />}
+                {order?.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
+                {order?.status === "cancelled" && <XCircle className="w-3 h-3 mr-1" />}
+                {order?.status}
               </Badge>
             </div>
 
             <div className="text-sm">
-              {showPnL && order.pnl !== undefined ? (
+              {showPnL && order?.pnl !== undefined ? (
                 <div
                   className={`font-mono ${
-                    order.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
+                    order?.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
                   }`}
                 >
-                  {order.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)}
+                  {order?.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)}
                 </div>
               ) : (
                 <div className="text-muted-foreground">
                   {/* {order.timestamp.toLocaleDateString()} */}
-                  {order.timestamp}
+                  {order?.timestamp}
                   <br />
                   {/* <span className="text-xs">{order.timestamp.toLocaleTimeString()}</span> */}
-                  <span className="text-xs">{order.timestamp}</span>
+                  <span className="text-xs">{order?.timestamp}</span>
                 </div>
               )}
             </div>
@@ -205,15 +205,15 @@ const OrderTable = ({ orders, showPnL }) => {
         ))}
 
         {/* Mobile Layout */}
-        {orders.map((order) => (
+        {orders?.map((order) => (
           <div
-            key={`mobile-${order.id}`}
+            key={`mobile-${order?.id}`}
             className="lg:hidden bg-card border rounded-lg p-3 space-y-3"
           >
             {/* Header Row */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {order.type === "buy" ? (
+                {order?.type === "buy" ? (
                   <TrendingUp className="w-4 h-4 text-trading-buy" />
                 ) : (
                   <TrendingDown className="w-4 h-4 text-trading-sell" />
@@ -221,35 +221,35 @@ const OrderTable = ({ orders, showPnL }) => {
                 <div>
                   <div
                     className={`font-semibold text-sm ${
-                      order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
+                      order?.type === "buy" ? "text-trading-buy" : "text-trading-sell"
                     }`}
                   >
                     {/* {order.type.toUpperCase()} {order.symbol} */}
-                    {order.type} {order.symbol}
+                    {order?.type} {order?.symbol}
                   </div>
-                  <div className="text-xs text-muted-foreground">{order.timeframe}</div>
+                  <div className="text-xs text-muted-foreground">{order?.timeframe}</div>
                 </div>
               </div>
               <Badge
                 variant={
-                  order.status === "completed"
+                  order?.status === "completed"
                     ? "default"
-                    : order.status === "pending"
+                    : order?.status === "pending"
                     ? "secondary"
                     : "destructive"
                 }
                 className={`text-xs ${
-                  order.status === "completed"
+                  order?.status === "completed"
                     ? "bg-success text-success-foreground"
-                    : order.status === "pending"
+                    : order?.status === "pending"
                     ? "bg-warning text-warning-foreground"
                     : ""
                 }`}
               >
-                {order.status === "completed" && <CheckCircle className="w-3 h-3 mr-1" />}
-                {order.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
-                {order.status === "cancelled" && <XCircle className="w-3 h-3 mr-1" />}
-                {order.status}
+                {order?.status === "completed" && <CheckCircle className="w-3 h-3 mr-1" />}
+                {order?.status === "pending" && <Clock className="w-3 h-3 mr-1" />}
+                {order?.status === "cancelled" && <XCircle className="w-3 h-3 mr-1" />}
+                {order?.status}
               </Badge>
             </div>
 
@@ -258,31 +258,31 @@ const OrderTable = ({ orders, showPnL }) => {
               <div>
                 <div className="text-muted-foreground">Amount</div>
                 {/* <div className="font-mono text-sm">{order.amount.toFixed(4)} BTC</div> */}
-                <div className="font-mono text-sm">{order.amount} BTC</div>
+                <div className="font-mono text-sm">{order?.amount} BTC</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Price</div>
                 {/* <div className="font-mono text-sm">${order.price.toLocaleString()}</div> */}
-                <div className="font-mono text-sm">${order.price}</div>
+                <div className="font-mono text-sm">${order?.price}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Total</div>
                 <div className="font-mono text-sm font-semibold">
                   {/* ${order.total.toLocaleString()} */}
-                  ${order.total}
+                  ${order?.total}
                 </div>
               </div>
               <div>
-                {showPnL && order.pnl !== undefined ? (
+                {showPnL && order?.pnl !== undefined ? (
                   <>
                     <div className="text-muted-foreground">P&L</div>
                     <div
                       className={`font-mono text-sm font-semibold ${
-                        order.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
+                        order?.pnl >= 0 ? "text-trading-buy" : "text-trading-sell"
                       }`}
                     >
                       {/* {order.pnl >= 0 ? "+" : ""}${order.pnl.toFixed(2)} */}
-                      {order.pnl >= 0 ? "+" : ""}${order.pnl}
+                      {order?.pnl >= 0 ? "+" : ""}${order?.pnl}
                     </div>
                   </>
                 ) : (
@@ -290,10 +290,10 @@ const OrderTable = ({ orders, showPnL }) => {
                     <div className="text-muted-foreground">Time</div>
                     <div className="text-muted-foreground text-xs">
                       {/* {order.timestamp.toLocaleDateString()} */}
-                      {order.timestamp}
+                      {order?.timestamp}
                       <br />
                       {/* {order.timestamp.toLocaleTimeString()} */}
-                      {order.timestamp}
+                      {order?.timestamp}
                     </div>
                   </>
                 )}
