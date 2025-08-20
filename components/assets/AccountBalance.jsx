@@ -1,13 +1,14 @@
 "use client";
+import { AmountWithCommas } from "@/lib/utils";
 import UserStore from "@/store/UserStore";
 import {
-    BadgeDollarSign,
-    CloudDownload,
-    CloudUpload,
-    Eye,
-    EyeOff,
-    FolderSync,
-    RefreshCw,
+  BadgeDollarSign,
+  CloudDownload,
+  CloudUpload,
+  Eye,
+  EyeOff,
+  FolderSync,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react"; // Import useState hook
@@ -18,8 +19,8 @@ function AccountBalance({ showBalance, toggleBalanceVisibility }) {
 
   const handleRefresh = async () => {
     setIsLoading(true);
-    setTimeout( async() => {
-        await GetAccountBalanceRequest();
+    setTimeout(async () => {
+      await GetAccountBalanceRequest();
       setIsLoading(false);
     }, 1500);
   };
@@ -43,7 +44,11 @@ function AccountBalance({ showBalance, toggleBalanceVisibility }) {
         </div>
       </div>
       <h3 className="text-3xl font-semibold text-black dark:text-white mt-2">
-        {showBalance ? AccountBalance?.USDT?.available : "****"}
+        {showBalance
+          ? AccountBalance?.USDT?.available
+            ? AmountWithCommas(AccountBalance?.USDT?.available)
+            : "0"
+          : "****"}
       </h3>
 
       {isLoading && (

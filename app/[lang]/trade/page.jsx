@@ -27,6 +27,8 @@ export default function TradePage() {
   const [hoverdCandleData, hoveredSetCandleData] = useState(null);
   const [currentCandleData, setCurrentCandleData] = useState(null);
   const stockChartLegendData = hoverdCandleData || currentCandleData;
+  const candleColor =
+    stockChartLegendData?.open > stockChartLegendData?.close ? "#e13255" : "#2EBD85";
 
   // Apis Call
   const { OpenOrdersRequest, OrderHistoryRequest, orderHistory, openOrders } = TradeStore();
@@ -158,6 +160,7 @@ export default function TradePage() {
         low={lowPrice}
         volume={volume}
         change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
+        candleColor={candleColor}
       />
 
       <BuySell coin={coin} handleTrade={handleTrade} AccountBalance={AccountBalance} />
@@ -172,6 +175,7 @@ export default function TradePage() {
         low={lowPrice}
         volume={volume}
         change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
+        candleColor={candleColor}
       />
     </div>
   );

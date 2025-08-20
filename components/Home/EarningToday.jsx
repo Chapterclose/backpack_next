@@ -12,7 +12,7 @@ function EarningToday() {
                 <h2 className="text-3xl lg:text-5xl font-semibold dark:text-white text-black lg:mb-8 mb-5">Start earning today</h2>
                 {walletAddress === "" && <Button
                 handleFunc={connectWallet}
-                text="Log In Now"
+                text="Connect Now"
                 />}
             </div>
         </div>

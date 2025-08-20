@@ -1,13 +1,10 @@
 "use client";
 
 import { AmountWithCommas } from "@/lib/utils";
-import TradeStore from "@/store/TradeStore";
 import { BarChart2, Clock, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import React from "react";
 
-export default function FF() {
-  const { tradingData } = TradeStore();
-
+export default function HistoryCard({ order }) {
   // Helper function to render a single metric item
   const renderMetricItem = (label, value, icon, valueColorClass = "") => (
     <div
@@ -23,60 +20,72 @@ export default function FF() {
   );
 
   return (
-    <div className="flex justify-center p-2 sm:p-4 max-h-screen">
+    <div className="flex justify-center p-2 sm:p-4 max-h-screen max-w-2xl mx-auto">
       <div className="bg-slate-900 text-white rounded-xl shadow-lg p-4 w-full">
         {/* Main Value Display */}
         <div className="text-center my-8">
-          <div className={`text-5xl font-extrabold ${tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"}`}>{tradingData?.profit}</div>
-          <div className={`text-2xl font-bold ${tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"}`}>USDT+</div>
+          <div
+            className={`text-5xl font-extrabold ${
+              order?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {order?.profit}
+          </div>
+          <div
+            className={`text-2xl font-bold ${
+              order?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            USDT+
+          </div>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 gap-2 mb-4">
           {renderMetricItem(
             "HIGH",
-            AmountWithCommas(tradingData?.high),
+            AmountWithCommas(order?.high),
             <TrendingUp className="text-green-500" />,
             "text-green-400" // Specific color for HIGH
           )}
           {renderMetricItem(
             "LOW",
-            AmountWithCommas(tradingData?.low),
+            AmountWithCommas(order?.low),
             <TrendingDown className="text-red-500" />,
             "text-red-400" // Specific color for LOW
           )}
           {renderMetricItem(
             "VOLUME",
-            AmountWithCommas(tradingData?.volume),
+            AmountWithCommas(order?.volume),
             <BarChart2 className="text-cyan-400" />,
             "text-cyan-300" // Specific color for VOLUME
           )}
           {renderMetricItem(
             "CHANGE",
-            AmountWithCommas(tradingData?.change),
+            AmountWithCommas(order?.change),
             <TrendingUp className="text-purple-500" />,
             "text-purple-300" // Specific color for CHANGE
           )}
           {renderMetricItem(
             "PURCHASE VOLUME",
-            AmountWithCommas(tradingData?.amount),
+            AmountWithCommas(order?.amount),
             <DollarSign className="text-yellow-500" />,
             "text-yellow-300" // Specific color for PURCHASE VOLUME
           )}
           {renderMetricItem(
             "PROFIT",
-            AmountWithCommas(tradingData?.profit),
+            AmountWithCommas(order?.profit),
             <DollarSign className="text-emerald-500" />,
             `${
-              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+              order?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             } capitalize`
           )}
           {renderMetricItem(
             "STATUS",
-            tradingData?.result_display?.status,
+            order?.result_display?.status,
             <Clock className="text-gray-400" />,
             `${
-              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+              order?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             } capitalize`
           )}
         </div>
