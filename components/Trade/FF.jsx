@@ -66,13 +66,17 @@ export default function FF() {
             "PROFIT",
             tradingData?.profit,
             <DollarSign className="text-emerald-500" />,
-            "text-green-500" // Specific color for PROFIT
+            `${
+              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            } capitalize`
           )}
           {renderMetricItem(
             "STATUS",
             tradingData?.result_display?.status,
             <Clock className="text-gray-400" />,
-            `${tradingData?.result_display?.status === "win" ? "text-green-500":"text-red-500"} capitalize`
+            `${
+              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            } capitalize`
           )}
         </div>
       </div>
