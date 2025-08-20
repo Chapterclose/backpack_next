@@ -25,7 +25,7 @@ const TradeStore = create(
           });
           // console.log(res)
           set({ tradingData: res.data?.trade });
-          toast.success(res.data["message"]);
+          // toast.success(res.data["message"]);
           return res;
         } catch (e) {
           console.log(e);
@@ -53,7 +53,7 @@ const TradeStore = create(
           set({ isLoading: true });
           let res = await api.patch(`/trade/trade-update/${id}/`, body);
           set({ tradingData: res.data?.trade });
-          toast.success(res.data["message"]);
+          // toast.success(res.data["message"]);
           return res;
         } catch (e) {
           console.log(e);
