@@ -6,35 +6,9 @@ import { OrderHistory } from "@/components/Trade/OrderHistory";
 import StockChart from "@/components/Trade/StockChart";
 import { TradeConfirmationModal } from "@/components/Trade/TradeConfirmationModal";
 import TradeStore from "@/store/TradeStore";
+import UserStore from "@/store/UserStore";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
-const mockOpenOrders = [
-  {
-    id: "1",
-    type: "buy",
-    symbol: "BTC/USDT",
-    amount: 0.0125,
-    price: 48500,
-    total: 606.25,
-    status: "pending",
-    timestamp: new Date(),
-    timeframe: "60s",
-    pnl: 125.5,
-  },
-  {
-    id: "2",
-    type: "sell",
-    symbol: "BTC/USDT",
-    amount: 0.025,
-    price: 47800,
-    total: 1195,
-    status: "pending",
-    timestamp: new Date(Date.now() - 300000),
-    timeframe: "1d",
-    pnl: -45.3,
-  },
-];
 
 export default function TradePage() {
   const searchParams = useSearchParams();
@@ -48,56 +22,66 @@ export default function TradePage() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
-  const [openOrders, setOpenOrders] = useState(mockOpenOrders);
+
+  // Chart State
+  const [hoverdCandleData, hoveredSetCandleData] = useState(null);
+  const [currentCandleData, setCurrentCandleData] = useState(null);
+  const stockChartLegendData = hoverdCandleData || currentCandleData;
 
   // Apis Call
-  const { OpenOrdersRequest, OrderHistoryRequest } = TradeStore();
-
+  const { OpenOrdersRequest, OrderHistoryRequest, orderHistory, openOrders } = TradeStore();
+  const { GetAccountBalanceRequest, AccountBalance } = UserStore();
+  // console.log(openOrders,orderHistory)
   const wsRef = useRef(null);
   const tickerReconnectTimeoutRef = useRef(null);
 
   useEffect(() => {
-    if (wsRef.current) {
-      if (tickerReconnectTimeoutRef.current) {
-        clearTimeout(tickerReconnectTimeoutRef.current);
-        tickerReconnectTimeoutRef.current = null;
+    // WebSocket for 24hr Ticker Statistics (@ticker stream)
+    const connectWebSocket = () => {
+      if (wsRef.current) {
+        if (tickerReconnectTimeoutRef.current) {
+          clearTimeout(tickerReconnectTimeoutRef.current);
+          tickerReconnectTimeoutRef.current = null;
+        }
+        wsRef.current.close();
       }
-      wsRef.current.close();
-    } // WebSocket for 24hr Ticker Statistics (@ticker stream)
 
-    wsRef.current = new WebSocket(`wss://stream.binance.com:9443/ws/${coin}usdt@ticker`);
-    wsRef.current.onopen = () => {
-      console.log("Binance Ticker WebSocket Connected");
-      setError(null);
-      if (tickerReconnectTimeoutRef.current) {
-        clearTimeout(tickerReconnectTimeoutRef.current);
-        tickerReconnectTimeoutRef.current = null;
-      }
+      wsRef.current = new WebSocket(`wss://stream.binance.com:9443/ws/${coin}usdt@ticker`);
+      wsRef.current.onopen = () => {
+        console.log("Binance Ticker WebSocket Connected");
+        setError(null);
+        if (tickerReconnectTimeoutRef.current) {
+          clearTimeout(tickerReconnectTimeoutRef.current);
+          tickerReconnectTimeoutRef.current = null;
+        }
+      };
+      wsRef.current.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        setCurrentPrice(parseFloat(message.c).toFixed(2));
+        setPriceChangePercentage(parseFloat(message.P).toFixed(2));
+        setHighPrice(parseFloat(message.h).toFixed(2));
+        setLowPrice(parseFloat(message.l).toFixed(2));
+        setVolume(parseFloat(message.v));
+      };
+      wsRef.current.onerror = (event) => {
+        console.error("Binance Ticker WebSocket Error:", event);
+        setError(
+          "Real-time data connection error for ticker data. Please check console for details."
+        );
+      };
+      wsRef.current.onclose = (event) => {
+        console.log("Binance Ticker WebSocket Disconnected:", event.code, event.reason);
+        if (event.code !== 1000 && event.code !== 1001 && !tickerReconnectTimeoutRef.current) {
+          setError("Real-time ticker data disconnected. Attempting to reconnect...");
+          tickerReconnectTimeoutRef.current = setTimeout(() => {
+            console.log("Attempting to reconnect Ticker WebSocket...");
+            connectWebSocket();
+          }, 3000);
+        }
+      };
     };
-    wsRef.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setCurrentPrice(parseFloat(message.c).toFixed(2));
-      setPriceChangePercentage(parseFloat(message.P).toFixed(2));
-      setHighPrice(parseFloat(message.h).toFixed(2));
-      setLowPrice(parseFloat(message.l).toFixed(2));
-      setVolume(parseFloat(message.v));
-    };
-    wsRef.current.onerror = (event) => {
-      console.error("Binance Ticker WebSocket Error:", event);
-      setError(
-        "Real-time data connection error for ticker data. Please check console for details."
-      );
-    };
-    wsRef.current.onclose = (event) => {
-      console.log("Binance Ticker WebSocket Disconnected:", event.code, event.reason);
-      if (event.code !== 1000 && event.code !== 1001 && !tickerReconnectTimeoutRef.current) {
-        setError("Real-time ticker data disconnected. Attempting to reconnect...");
-        tickerReconnectTimeoutRef.current = setTimeout(() => {
-          console.log("Attempting to reconnect Ticker WebSocket...");
-          wsRef.current.close();
-        }, 3000);
-      }
-    };
+
+    connectWebSocket();
 
     return () => {
       if (wsRef.current) {
@@ -108,7 +92,7 @@ export default function TradePage() {
         wsRef.current.close();
       }
     };
-  }, []);
+  }, [coin]);
 
   const handleTrade = (order) => {
     setCurrentOrder(order);
@@ -131,22 +115,14 @@ export default function TradePage() {
       pnl: Math.random() > 0.5 ? Math.random() * 200 - 100 : undefined,
     };
 
-    setOpenOrders((prev) => [newOrder, ...prev]);
-
-    // toast({
-    //   title: "Trade Executed",
-    //   description: `${currentOrder.type.toUpperCase()} position opened for ${
-    //     currentOrder.amount
-    //   } BTC (${currentOrder.timeframe}).`,
-    // });
-
     setCurrentOrder(null);
   };
 
   useEffect(() => {
     OpenOrdersRequest();
     OrderHistoryRequest();
-  }, []);
+    GetAccountBalanceRequest();
+  }, [OpenOrdersRequest, OrderHistoryRequest, GetAccountBalanceRequest]);
 
   return (
     <div className="container py-[40px] lg:py-[60px]">
@@ -154,30 +130,48 @@ export default function TradePage() {
         <h3 className="uppercase dark:text-white font-semibold text-3xl">{coin}/USDT</h3>
         <h4 className="text-red-500 font-semibold">{priceChangePercentage}%</h4>
       </div>
-      <OrderBook />
+      <OrderBook coin={coin} />
       {/* <RealTimePriceDisplay
         coin={coin}
-        currentPrice={currentPrice}
-        priceChangePercentage={priceChangePercentage}
-        highPrice={highPrice}
-        lowPrice={lowPrice}
-        volume={volume}
-      /> */}
+        currentPrice={currentPrice}
+        priceChangePercentage={priceChangePercentage}
+        highPrice={highPrice}
+        lowPrice={lowPrice}
+        volume={volume}
+      /> */}
 
       <div className="mt-10">
-        <StockChart highPrice={highPrice} lowPrice={lowPrice} volume={volume} />
+        <StockChart
+          highPrice={highPrice}
+          lowPrice={lowPrice}
+          volume={volume}
+          hoverdCandleData={hoverdCandleData}
+          currentCandleData={currentCandleData}
+          stockChartLegendData={stockChartLegendData}
+          hoveredSetCandleData={hoveredSetCandleData}
+          setCurrentCandleData={setCurrentCandleData}
+        />
       </div>
 
-      <OrderHistory />
+      <OrderHistory
+        high={highPrice}
+        low={lowPrice}
+        volume={volume}
+        change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
+      />
 
-      <BuySell coin={coin} handleTrade={handleTrade} />
+      <BuySell coin={coin} handleTrade={handleTrade} AccountBalance={AccountBalance} />
 
       {/* Trade Confirmation Modal */}
       <TradeConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        order={currentOrder}
+        // order={currentOrder}
         onConfirm={handleConfirmTrade}
+        high={highPrice}
+        low={lowPrice}
+        volume={volume}
+        change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
       />
     </div>
   );

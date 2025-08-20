@@ -30,7 +30,7 @@ function AssetsPage() {
             <div className="flex flex-col text-center items-center justify-center py-[60px] lg:py-[100px] px-5 lg:px-0"> 
                 <h2 className="text-3xl lg:text-4xl font-semibold capitalize mb-5 dark:text-white">Let's start you crypto journey with us.</h2>
                 <Button
-                text={"Connect Now"}
+                text={"Log In"}
                 handleFunc={connectWallet}
                 />
             </div>    

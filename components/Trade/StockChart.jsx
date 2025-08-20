@@ -6,12 +6,10 @@ import moment from "moment/moment";
 import { useTheme } from "next-themes";
 import React, { useEffect, useRef, useState } from "react";
 
-function StockChart({highPrice, lowPrice, volume}) {
+function StockChart({highPrice, lowPrice, volume ,hoverdCandleData, currentCandleData, stockChartLegendData, hoveredSetCandleData, setCurrentCandleData}) {
   const { __, resolvedTheme } = useTheme();
 
   const chartRef = useRef(null);
-  const [hoverdCandleData, hoveredSetCandleData] = useState(null);
-  const [currentCandleData, setCurrentCandleData] = useState(null);
 
   const stockChartColors =
     resolvedTheme === "dark"
@@ -126,7 +124,6 @@ function StockChart({highPrice, lowPrice, volume}) {
     };
   }, [resolvedTheme]);
 
-  const stockChartLegendData = hoverdCandleData || currentCandleData;
   const candleColor =
     stockChartLegendData?.open > stockChartLegendData?.close
       ? "#e13255"
