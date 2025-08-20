@@ -1,11 +1,12 @@
 "use client";
 
 import { contextProvider } from "@/contexts/Context";
+import { AmountWithCommas } from "@/lib/utils";
 import { BarChart2, Clock, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 
 // Main component for the trading UI
-export default function First({ tradingDetails, high, low, volume, change }) {
+export default function First({ tradingDetails, high, low, volume, change, candleColor }) {
   const { countdown } = useContext(contextProvider);
   const [count, setCountdown] = useState(countdown);
   const [isRunning, setIsRunning] = useState(true);
@@ -24,7 +25,7 @@ export default function First({ tradingDetails, high, low, volume, change }) {
   }, [count, isRunning]);
 
   // Helper function to render a single metric item
-  const renderMetricItem = (label, value, icon, valueColorClass = "") => (
+  const renderMetricItem = (label, value, icon, valueColorClass = "", candle) => (
     <div
       key={label}
       className="bg-slate-700 py-1 px-4 rounded-lg flex items-center justify-between transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
@@ -33,7 +34,9 @@ export default function First({ tradingDetails, high, low, volume, change }) {
         {React.cloneElement(icon, { size: 16 })}
         <span className="ml-2 text-slate-300 font-medium text-xs">{label}</span>
       </div>
-      <span className={`text-lg font-bold truncate ${valueColorClass}`}>{value}</span>
+      <span style={{ color: candle }} className={`text-lg font-bold truncate ${valueColorClass}`}>
+        {value}
+      </span>
     </div>
   );
 
@@ -41,7 +44,7 @@ export default function First({ tradingDetails, high, low, volume, change }) {
   const progress = (countdown / 60) * 360;
 
   return (
-    <div className="flex bg-slate-900 justify-center p-2 sm:p-4 max-h-screen overflow-y-auto">
+    <div className="flex bg-slate-900 justify-center p-2 sm:p-4 max-h-screen overflow-y-auto max-w-xl mx-auto">
       <div className="text-white rounded-xl shadow-lg p-4 w-full">
         {/* Animated Countdown Timer */}
         <div className="relative flex justify-center items-center my-4">
@@ -62,32 +65,33 @@ export default function First({ tradingDetails, high, low, volume, change }) {
         <div className="grid grid-cols-1 gap-2 mb-4">
           {renderMetricItem(
             "HIGH",
-            high,
+            AmountWithCommas(high),
             <TrendingUp className="text-green-500" />,
-            "text-green-400"
+            "",
+            candleColor
           )}
-          {renderMetricItem("LOW", low, <TrendingDown className="text-red-500" />, "text-red-400")}
+          {renderMetricItem("LOW", low, <TrendingDown className="text-red-500" />, "", candleColor)}
           {renderMetricItem(
             "VOLUME",
-            volume,
+            AmountWithCommas(volume),
             <BarChart2 className="text-cyan-400" />,
-            "text-cyan-300"
+            "", candleColor
           )}
           {renderMetricItem(
             "CHANGE",
-            change,
+            AmountWithCommas(change),
             <TrendingUp className="text-purple-500" />,
-            "text-purple-300"
+            "", candleColor
           )}
           {renderMetricItem(
             "PURCHASE VOLUME",
-            `${tradingDetails?.amount} USDT`,
+            `${AmountWithCommas(tradingDetails?.amount)} USDT`,
             <DollarSign className="text-yellow-500" />,
             "text-yellow-300"
           )}
           {renderMetricItem(
             "PROFIT",
-            `${tradingDetails?.profit} USDT`,
+            `${AmountWithCommas(tradingDetails?.profit)} USDT`,
             <DollarSign className="text-emerald-500" />,
             "text-emerald-300"
           )}

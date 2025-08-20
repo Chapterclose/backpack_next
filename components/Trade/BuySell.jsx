@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast"; // Import react-hot-toast
 import Button from "../Form/Button";
+import { AmountWithCommas } from "@/lib/utils";
 
 function BuySell({ coin, handleTrade, AccountBalance }) {
   // State for managing the pop-up, selected period, and purchase volume
@@ -239,7 +240,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
           <div className="flex justify-center gap-x-4 fixed bottom-[90px] lg:bottom-5 left-1/2 -translate-x-1/2 z-[99]">
             <button
               className={`px-15 lg:px-20 py-3 cursor-pointer bg-green-500 text-white font-bold rounded transition-colors ${
-                isTradeRunning ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"
+                isTradeRunning ? "opacity-80 !cursor-not-allowed" : "hover:bg-green-600"
               }`}
               onClick={() => {
                 if (isTradeRunning) {
@@ -256,7 +257,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
             </button>
             <button
               className={`px-15 lg:px-20 py-3 cursor-pointer bg-red-500 text-white font-bold rounded transition-colors ${
-                isTradeRunning ? "opacity-50 cursor-not-allowed" : "hover:bg-red-600"
+                isTradeRunning ? "opacity-80 !cursor-not-allowed" : "hover:bg-red-600"
               }`}
               onClick={() => {
                 if (isTradeRunning) {
@@ -343,7 +344,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
 
             <p className="text-gray-400 mt-6 text-sm">
               Available balance:{" "}
-              <span className="text-white font-bold">{AccountBalance?.USDT?.available} USDT</span>
+              <span className="text-white font-bold">{AmountWithCommas(AccountBalance?.USDT?.available)} USDT</span>
             </p>
 
             <button

@@ -3,28 +3,29 @@
 import Logo from "@/assets/backpack-logo.png";
 import { navItems } from "@/constant";
 import { contextProvider } from "@/contexts/Context";
+import UserStore from "@/store/UserStore";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation"; // Import usePathname
 import { useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { BiSolidUserCircle } from "react-icons/bi";
 import MobileNav from "./MobileNav";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserMenu from "./UserMenu";
-import UserStore from "@/store/UserStore";
-import toast from "react-hot-toast";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [error,setError] = useState(false)
-  const {isLoggedIn, setIsLoggedIn, walletAddress, setWalletAddress, connectWallet} = useContext(contextProvider)
-  const {UserData} = UserStore()
+  const [error, setError] = useState(false);
+  const { isLoggedIn, setIsLoggedIn, walletAddress, setWalletAddress, connectWallet } =
+    useContext(contextProvider);
+  const { UserData } = UserStore();
   const router = useRouter();
+  const pathname = usePathname(); // Get the current pathname
 
   const handleNavItemClick = (item) => {
     if (item.protected && UserData.id_number === null) {
-      // setError(true)
-      toast.error("Please complete primary certification first.")
+      toast.error("Please complete primary certification first.");
     } else {
       router.push(item.href);
       setMobileMenuOpen(false);
@@ -42,7 +43,11 @@ const Header = () => {
     return () => {
       clearTimeout(timer);
     };
-  }, [error]); 
+  }, [error]);
+
+  // Function to check if the trade link should be active
+  const isTradeLinkActive = pathname.startsWith("/en/trade");
+
   return (
     <>
       <div className="shadow-lg dark:shadow-2xl px-6 dark:bg-dark dark:text-white">
@@ -50,22 +55,30 @@ const Header = () => {
           <div className="flex items-center">
             <div className="logo mr-10">
               <Link href="/">
-                <Image
-                  src={Logo}
-                  alt="logo"
-                  className="w-[180px] h-[60px]"
-                />
+                <Image src={Logo} alt="logo" className="w-[180px] h-[60px]" />
               </Link>
             </div>
             <div className="hidden lg:block">
               <ul className="flex gap-x-8">
-                <Link href="/en/markets" className="font-semibold p-1 hover:text-primary-100 duration-300">
+                <Link
+                  href="/en/markets"
+                  className="font-semibold p-1 hover:text-primary-100 duration-300"
+                >
                   Markets
                 </Link>
-                <Link href="/en/trade?symbol=btc" className="font-semibold p-1 hover:text-primary-100 duration-300">
+                {/* Apply conditional class for Trade link */}
+                <Link
+                  href="/en/trade?symbol=btc"
+                  className={`font-semibold p-1 hover:text-primary-100 duration-300 ${
+                    isTradeLinkActive ? "text-primary-100" : ""
+                  }`}
+                >
                   Trade
                 </Link>
-                <Link href="/en/assets" className="font-semibold p-1 hover:text-primary-100 duration-300">
+                <Link
+                  href="/en/assets"
+                  className="font-semibold p-1 hover:text-primary-100 duration-300"
+                >
                   Assets
                 </Link>
               </ul>
@@ -78,7 +91,7 @@ const Header = () => {
                 className="cursor-pointer text-green-500"
                 onClick={() => setMobileMenuOpen(true)}
               >
-                <BiSolidUserCircle className="text-3xl"/>
+                <BiSolidUserCircle className="text-3xl" />
               </div>
             ) : (
               <button
@@ -93,19 +106,17 @@ const Header = () => {
         </div>
       </div>
 
+      <UserMenu
+        isLoggedIn={isLoggedIn}
+        handleNavItemClick={handleNavItemClick}
+        mobileMenuOpen={mobileMenuOpen}
+        navItems={navItems}
+        setIsLoggedIn={setIsLoggedIn}
+        setMobileMenuOpen={setMobileMenuOpen}
+        error={error}
+      />
 
-          <UserMenu
-            isLoggedIn={isLoggedIn}
-            handleNavItemClick={handleNavItemClick}
-            mobileMenuOpen={mobileMenuOpen}
-            navItems={navItems}
-            setIsLoggedIn={setIsLoggedIn}
-            setMobileMenuOpen={setMobileMenuOpen}
-            error={error}
-          />
-
-        
-        <MobileNav/>
+      <MobileNav />
     </>
   );
 };

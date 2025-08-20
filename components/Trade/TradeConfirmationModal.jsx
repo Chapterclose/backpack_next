@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import FF from "./FF";
 import First from "./First";
 
-export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, volume, change }) => {
+export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, volume, change, candleColor }) => {
   const { countdown, setCountdown } = useContext(contextProvider);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [forceOpen, setForceOpen] = useState(false); //reopen after time
@@ -78,7 +78,7 @@ export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, 
       <DialogContent className="max-w-md mx-auto">
         {!isConfirmed ? (
           <div className="space-y-4 sm:space-y-6">
-            <First tradingDetails={tradingDetails} high={high} low={low} volume={volume} change={change} />
+            <First tradingDetails={tradingDetails} high={high} low={low} volume={volume} change={change} candleColor={candleColor} />
           </div>
         ) : (
           <FF />
