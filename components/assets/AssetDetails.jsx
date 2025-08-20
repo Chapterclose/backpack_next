@@ -6,7 +6,6 @@ import Image from "next/image";
 
 function AssetDetails({ showBalance }) {
   const { AccountBalance } = UserStore();
-  console.log(AccountBalance)
   return (
     <div className="pt-[50px]">
       <h4 className="text-2xl text-black dark:text-white font-medium mb-3">Asset Details</h4>
@@ -22,12 +21,12 @@ function AssetDetails({ showBalance }) {
             <h4 className="font-medium">{showBalance ? AccountBalance?.USDT?.available : "****"}</h4>
           </div>
           <div>
-            <h4 className="text-black dark:text-white">Occupation</h4>
-            <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
+            <h4 className="text-black dark:text-white">Locked</h4>
+            <h4 className="font-medium">{showBalance ? AccountBalance?.USDT?.locked : "****"}</h4>
           </div>
           <div>
-            <h4 className="text-black dark:text-white">Equivalent(USDT)</h4>
-            <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
+            <h4 className="text-black dark:text-white">Total</h4>
+            <h4 className="font-medium">{showBalance ? AccountBalance?.USDT?.total : "****"}</h4>
           </div>
         </div>
       </div>
@@ -42,12 +41,12 @@ function AssetDetails({ showBalance }) {
             <h4 className="font-medium">{showBalance ? AccountBalance?.BTC?.available : "****"}</h4>
           </div>
           <div>
-            <h4 className="text-black dark:text-white">Occupation</h4>
-            <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
+            <h4 className="text-black dark:text-white">Locked</h4>
+            <h4 className="font-medium">{showBalance ? AccountBalance?.BTC?.locked : "****"}</h4>
           </div>
           <div>
-            <h4 className="text-black dark:text-white">Equivalent(USDT)</h4>
-            <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
+            <h4 className="text-black dark:text-white">Total</h4>
+            <h4 className="font-medium">{showBalance ? AccountBalance?.BTC?.total : "****"}</h4>
           </div>
         </div>
       </div>
@@ -62,12 +61,12 @@ function AssetDetails({ showBalance }) {
             <h4 className="font-medium">{showBalance ? AccountBalance?.ETH?.available : "****"}</h4>
           </div>
           <div>
-            <h4 className="text-black dark:text-white">Occupation</h4>
-            <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
+            <h4 className="text-black dark:text-white">Locked</h4>
+            <h4 className="font-medium">{showBalance ? AccountBalance?.ETH?.locked : "****"}</h4>
           </div>
           <div>
-            <h4 className="text-black dark:text-white">Equivalent(USDT)</h4>
-            <h4 className="font-medium">{showBalance ? "0.00" : "****"}</h4>
+            <h4 className="text-black dark:text-white">Total</h4>
+            <h4 className="font-medium">{showBalance ? AccountBalance?.ETH?.total : "****"}</h4>
           </div>
         </div>
       </div>

@@ -1,34 +1,30 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { contextProvider } from "@/contexts/Context";
-import { CheckCircle, Clock } from "lucide-react";
+import TradeStore from "@/store/TradeStore";
 import { useContext, useEffect, useState } from "react";
-import First from "./First";
 import FF from "./FF";
+import First from "./First";
 
-export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) => {
+export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, volume, change }) => {
   const { countdown, setCountdown } = useContext(contextProvider);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [forceOpen, setForceOpen] = useState(false); // 👈 to reopen after time ends
-
+  const [forceOpen, setForceOpen] = useState(false); //reopen after time
+  const {
+    tradingDetails,
+    tradingData,
+    TradeUpdateRequest,
+    openOrders,
+    OpenOrdersRequest,
+    OrderHistoryRequest,
+  } = TradeStore();
   useEffect(() => {
-    if (!isOpen || !order) return;
-
-    setIsConfirmed(false);
-
-    const timeframes = {
-      "60s": 10,
-      "120s": 120,
-      "12h": 43200,
-      "1d": 86400,
-      "7d": 604800,
-      "15d": 1296000,
-    };
-
-    setCountdown(timeframes[order.timeframe] || 60);
-  }, [isOpen, order]);
+    if (isOpen && openOrders?.length > 0) {
+      setIsConfirmed(false);
+      setCountdown(openOrders[0]?.countdown_seconds);
+    }
+  }, [isOpen, openOrders]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -38,6 +34,26 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
         if (prev <= 1) {
           setIsConfirmed(true);
           setForceOpen(true); // 👈 reopen with confirmed view
+
+          // call async function outside of state updater
+          const updateTrade = async () => {
+            try {
+              await TradeUpdateRequest(tradingDetails?.id, {
+                current_price: "10000",
+                high,
+                low,
+                volume,
+                change: change,
+                profit: tradingDetails?.profit,
+              });
+            } catch (err) {
+              console.error("Trade update failed:", err);
+            }
+          };
+
+          updateTrade();
+          OpenOrdersRequest();
+          OrderHistoryRequest();
           return 0;
         }
         return prev - 1;
@@ -47,22 +63,7 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const handleConfirm = () => {
-    setIsConfirmed(true);
-    setTimeout(() => {
-      onConfirm();
-      setForceOpen(false);
-      onClose();
-    }, 2000);
-  };
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
-
-  if (!order) return null;
+  if (!tradingDetails) return null;
 
   return (
     <Dialog
@@ -75,58 +76,12 @@ export const TradeConfirmationModal = ({ isOpen, onClose, order, onConfirm }) =>
       }}
     >
       <DialogContent className="max-w-md mx-auto">
-        {/* <DialogHeader>
-          <DialogTitle className="text-center text-lg sm:text-xl">
-            {isConfirmed ? "Trade Confirmed!" : "Confirm Trade"}
-          </DialogTitle>
-        </DialogHeader> */}
-
         {!isConfirmed ? (
           <div className="space-y-4 sm:space-y-6">
-            <First/>
-            {/* Timer  */}
-            {/* <div className="text-center bg-green-500 w-[100px] h-[100px] rounded-full flex items-center justify-center mx-auto">
-              <div className="text-xl">
-                <Clock className="w-3 mx-auto h-3 sm:w-6 sm:h-6" />
-                {formatTime(countdown)}
-              </div>
-            </div>
-
-            <Card className="p-3 sm:p-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-muted-foreground">Action:</span>
-                  <span
-                    className={`font-semibold ${
-                      order.type === "buy" ? "text-trading-buy" : "text-trading-sell"
-                    }`}
-                  >
-                    {order.type.toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-muted-foreground">Amount:</span>
-                  <span className="font-mono">{order.amount} BTC</span>
-                </div>
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-muted-foreground">Price:</span>
-                  <span className="font-mono">${order.price.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-muted-foreground">Total:</span>
-                  <span className="font-mono font-semibold">
-                    ${(order.amount * order.price).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span className="text-muted-foreground">Duration:</span>
-                  <span>{order.timeframe}</span>
-                </div>
-              </div>
-            </Card> */}
+            <First tradingDetails={tradingDetails} high={high} low={low} volume={volume} change={change} />
           </div>
         ) : (
-          <FF/>
+          <FF />
         )}
       </DialogContent>
     </Dialog>

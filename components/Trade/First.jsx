@@ -1,46 +1,41 @@
-"use client"
+"use client";
 
-import { BarChart2, Clock, DollarSign, RefreshCcw, TrendingDown, TrendingUp } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { contextProvider } from "@/contexts/Context";
+import { BarChart2, Clock, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
+import React, { useContext, useEffect, useState } from "react";
 
 // Main component for the trading UI
-export default function First() {
-  const [countdown, setCountdown] = useState(1296000);
+export default function First({ tradingDetails, high, low, volume, change }) {
+  const { countdown } = useContext(contextProvider);
+  const [count, setCountdown] = useState(countdown);
   const [isRunning, setIsRunning] = useState(true);
 
   // Use useEffect to handle the countdown logic
   useEffect(() => {
     let timer;
-    if (isRunning && countdown > 0) {
+    if (isRunning && count > 0) {
       timer = setTimeout(() => {
-        setCountdown(countdown - 1);
+        setCountdown(count - 1);
       }, 1000);
-    } else if (countdown === 0) {
+    } else if (count === 0) {
       setIsRunning(false);
     }
     return () => clearTimeout(timer);
-  }, [countdown, isRunning]);
+  }, [count, isRunning]);
 
-  // Handle the reset button click
-  const handleReset = () => {
-    setCountdown(60);
-    setIsRunning(true);
-  };
-
-  // Hardcoded data for demonstration. In a real app, this would come from an API.
-  const metrics = [
-    { label: "HIGH", value: "178,484", icon: <TrendingUp className="text-green-500" /> },
-    { label: "LOW", value: "47,474", icon: <TrendingDown className="text-red-500" /> },
-    { label: "VOLUME", value: "584,848", icon: <BarChart2 className="text-cyan-400" /> },
-    { label: "CHANGE", value: "47,474", icon: <TrendingUp className="text-purple-500" /> },
-    {
-      label: "PURCHASE VOLUME",
-      value: "100 USDT",
-      icon: <DollarSign className="text-yellow-500" />,
-    },
-    { label: "PROFIT", value: "10 USDT", icon: <DollarSign className="text-emerald-500" /> },
-    { label: "STATUS", value: "PENDING", icon: <Clock className="text-gray-400" /> },
-  ];
+  // Helper function to render a single metric item
+  const renderMetricItem = (label, value, icon, valueColorClass = "") => (
+    <div
+      key={label}
+      className="bg-slate-700 py-1 px-4 rounded-lg flex items-center justify-between transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+    >
+      <div className="flex items-center">
+        {React.cloneElement(icon, { size: 16 })}
+        <span className="ml-2 text-slate-300 font-medium text-xs">{label}</span>
+      </div>
+      <span className={`text-lg font-bold truncate ${valueColorClass}`}>{value}</span>
+    </div>
+  );
 
   // Calculate the progress for the circular countdown timer
   const progress = (countdown / 60) * 360;
@@ -65,30 +60,44 @@ export default function First() {
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 gap-2 mb-4">
-          {metrics.map((metric) => (
-            <div
-              key={metric.label}
-              className="bg-slate-700 py-1 px-4 rounded-lg flex items-center justify-between transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
-            >
-              <div className="flex items-center">
-                {React.cloneElement(metric.icon, { size: 16 })}
-                <span className="ml-2 text-slate-300 font-medium text-xs">{metric.label}</span>
-              </div>
-              <span className="text-lg font-bold truncate">{metric.value}</span>
-            </div>
-          ))}
+          {renderMetricItem(
+            "HIGH",
+            high,
+            <TrendingUp className="text-green-500" />,
+            "text-green-400"
+          )}
+          {renderMetricItem("LOW", low, <TrendingDown className="text-red-500" />, "text-red-400")}
+          {renderMetricItem(
+            "VOLUME",
+            volume,
+            <BarChart2 className="text-cyan-400" />,
+            "text-cyan-300"
+          )}
+          {renderMetricItem(
+            "CHANGE",
+            change,
+            <TrendingUp className="text-purple-500" />,
+            "text-purple-300"
+          )}
+          {renderMetricItem(
+            "PURCHASE VOLUME",
+            `${tradingDetails?.amount} USDT`,
+            <DollarSign className="text-yellow-500" />,
+            "text-yellow-300"
+          )}
+          {renderMetricItem(
+            "PROFIT",
+            `${tradingDetails?.profit} USDT`,
+            <DollarSign className="text-emerald-500" />,
+            "text-emerald-300"
+          )}
+          {renderMetricItem(
+            "STATUS",
+            `${tradingDetails?.status}`,
+            <Clock className="text-gray-400" />,
+            "text-gray-300"
+          )}
         </div>
-
-        {/* Action Button */}
-        {/* <div className="flex justify-center">
-          <button
-            onClick={handleReset}
-            className="bg-blue-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:bg-blue-500 transition-colors duration-300 flex items-center gap-1 text-sm"
-          >
-            <RefreshCcw size={16} />
-            Reset Timer
-          </button>
-        </div> */}
       </div>
     </div>
   );

@@ -4,9 +4,10 @@ import { BarChart2, Clock, DollarSign, TrendingDown, TrendingUp } from "lucide-r
 
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { contextProvider } from "@/contexts/Context";
 import TradeStore from "@/store/TradeStore";
 import { CheckCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // const openOrders = [
 //   {
@@ -75,7 +76,6 @@ import { useEffect, useState } from "react";
 
 const TimerCell = ({ initialTimeInSeconds }) => {
   const [countdown, setCountdown] = useState(initialTimeInSeconds);
-
   useEffect(() => {
     // If the countdown is already at zero, do nothing.
     if (countdown <= 0) {
@@ -97,49 +97,10 @@ const TimerCell = ({ initialTimeInSeconds }) => {
     </div>
   );
 };
-const data = [
-  {
-    high: "178,484",
-    low: "47,474",
-    volume: "584,848",
-    change: "47,474",
-    purchase: "100 USDT",
-    profit: "10 USDT",
-    status: "Win / loss",
-  },
-  {
-    high: "215,678",
-    low: "38,123",
-    volume: "601,987",
-    change: "65,432",
-    purchase: "150 USDT",
-    profit: "15 USDT",
-    status: "Win",
-  },
-  {
-    high: "190,000",
-    low: "55,200",
-    volume: "550,500",
-    change: "40,100",
-    purchase: "120 USDT",
-    profit: "12 USDT",
-    status: "Loss",
-    timeInSeconds: 12220,
-  },
-  {
-    high: "220,100",
-    low: "49,500",
-    volume: "720,300",
-    change: "55,600",
-    purchase: "200 USDT",
-    profit: "25 USDT",
-    status: "Win",
-    timeInSeconds: 60,
-  },
-];
 
-export const OrderHistory = () => {
+export const OrderHistory = ({ high, low, volume, change }) => {
   const { openOrders, orderHistory } = TradeStore();
+  const { countdown } = useContext(contextProvider);
   return (
     <Card className="p-3 sm:p-6 dark:text-white mt-15">
       <Tabs defaultValue="open" className="w-full">
@@ -161,7 +122,15 @@ export const OrderHistory = () => {
         </TabsList>
 
         <TabsContent value="open" className="mt-3 sm:mt-4">
-          <OrderTable orders={openOrders} isOpen={true} />
+          <OrderTable
+            orders={openOrders}
+            high={high}
+            low={low}
+            volume={volume}
+            isOpen={true}
+            change={change}
+            countdown={countdown}
+          />
         </TabsContent>
 
         <TabsContent value="history" className="mt-3 sm:mt-4">
@@ -172,7 +141,7 @@ export const OrderHistory = () => {
   );
 };
 
-const OrderTable = ({ orders, isOpen }) => {
+const OrderTable = ({ orders, isOpen, high, low, volume, countdown, change }) => {
   if (orders?.length === 0) {
     return (
       <div className="text-center py-6 sm:py-8 text-muted-foreground">
@@ -232,36 +201,36 @@ const OrderTable = ({ orders, isOpen }) => {
             </tr>
           </thead>
           <tbody className="bg-slate-800 divide-y divide-slate-700">
-            {data.map((item, index) => (
+            {orders?.map((item, index) => (
               <tr key={index} className="hover:bg-slate-700 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                   <div className="flex items-center">
                     <TrendingUp size={16} className="text-green-500 mr-2" />
-                    {item.high}
+                    {isOpen ? high : item.high}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                   <div className="flex items-center">
                     <TrendingDown size={16} className="text-red-500 mr-2" />
-                    {item.low}
+                    {isOpen ? low : item.low}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                   <div className="flex items-center">
                     <BarChart2 size={16} className="text-cyan-400 mr-2" />
-                    {item.volume}
+                    {isOpen ? volume : item.volume}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                   <div className="flex items-center">
                     <TrendingUp size={16} className="text-purple-500 mr-2" />
-                    {item.change}
+                    {isOpen ? `${change}` : item.change}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                   <div className="flex items-center">
                     <DollarSign size={16} className="text-yellow-500 mr-2" />
-                    {item.purchase}
+                    {item.amount}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
@@ -271,10 +240,22 @@ const OrderTable = ({ orders, isOpen }) => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                  <div className="flex items-center">
-                    <Clock size={16} className="text-gray-400 mr-2" />
-                    {isOpen ? <TimerCell initialTimeInSeconds={120} /> : item.status} 
-                  </div>
+                  {isOpen ? (
+                    <div className="flex items-center">
+                      <Clock size={16} className="text-gray-400 mr-2" />
+                      <span className="text-xl font-bold text-blue-400">
+                        {countdown > 0 ? countdown : "0"}s
+                      </span>
+                    </div>
+                  ) : (
+                    <span
+                      className={`capitalize font-semibold ${
+                        item?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {item?.result_display?.status}
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

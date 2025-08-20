@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-export default function OrderBook() {
+export default function OrderBook({ coin }) {
   const [bids, setBids] = useState([]);
   const [asks, setAsks] = useState([]);
 
   useEffect(() => {
-    const ws = new WebSocket("wss://stream.binance.com:9443/ws/dogeusdt@depth20@100ms");
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${coin}usdt@depth20@100ms`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      setAsks(data?.asks?.slice(0,10)); // Asks (sell orders)
-      setBids(data?.bids?.slice(0,10)); // Bids (buy orders)
+      setAsks(data?.asks?.slice(0, 10)); // Asks (sell orders)
+      setBids(data?.bids?.slice(0, 10)); // Bids (buy orders)
     };
 
     return () => ws.close();
@@ -22,7 +22,7 @@ export default function OrderBook() {
   const HeadingRow = ({ color }) => (
     <li className="flex justify-between text-black dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
       <span className="text-left">Price (USDT)</span>
-      <span className="text-right">Amount (BTC)</span>
+      <span className="text-right uppercase">Amount (${coin})</span>
     </li>
   );
 

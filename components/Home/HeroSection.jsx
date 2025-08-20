@@ -17,7 +17,7 @@ function HeroSection() {
                 
                 {walletAddress === "" && <Button
                 handleFunc={connectWallet}
-                text="Connect"
+                text="Log In"
                 className={"px-14"}
                 />}
             </div>

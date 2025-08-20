@@ -8,6 +8,12 @@ const TradeStore = create(
   persist(
     (set) => ({
       isLoading: false,
+      tradingData: null,
+
+      countDown: 0,
+
+      setCountdown: (value) => set({ countDown: value }),
+
       TradeBuySellRequest: async (body) => {
         try {
           set({ isLoading: true });
@@ -17,7 +23,38 @@ const TradeStore = create(
               "Content-Type": "application/json",
             },
           });
+          // console.log(res)
+          set({ tradingData: res.data?.trade });
           toast.success(res.data["message"]);
+          return res;
+        } catch (e) {
+          console.log(e);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      tradingDetails: null,
+      TradeDetailsRequest: async (id) => {
+        try {
+          set({ isLoading: true });
+          let res = await api.get(`/trade/trade-details/${id}/`);
+          set({ tradingDetails: res.data });
+          return res;
+        } catch (e) {
+          console.log(e);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      TradeUpdateRequest: async (id, body) => {
+        try {
+          set({ isLoading: true });
+          let res = await api.patch(`/trade/trade-update/${id}/`, body);
+          set({ tradingData: res.data?.trade });
+          toast.success(res.data["message"]);
+          return res;
         } catch (e) {
           console.log(e);
         } finally {
@@ -33,6 +70,7 @@ const TradeStore = create(
           if (res.status === 200) {
             set({ openOrders: res?.data?.open_orders });
           }
+          return res;
         } catch (e) {
           console.log(e);
         } finally {
@@ -58,8 +96,11 @@ const TradeStore = create(
     {
       name: "trade-store",
       partialize: (state) => ({
+        tradingData: state.tradingData,
+        tradingDetails: state.tradingDetails,
         openOrders: state.openOrders,
         orderHistory: state.orderHistory,
+        countDown: state.countDown,
       }),
     }
   )

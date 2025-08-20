@@ -59,14 +59,14 @@ const DialogFooter = ({ className, ...props }) => (
 );
 DialogFooter.displayName = "DialogFooter";
 
-const DialogTitle = ({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={twMerge("text-lg font-semibold leading-none tracking-tight", className)}
-    {...props}
-  />
-);
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
+// const DialogTitle = ({ className, ...props }, ref) => (
+//   <DialogPrimitive.Title
+//     ref={ref}
+//     className={twMerge("text-lg font-semibold leading-none tracking-tight", className)}
+//     {...props}
+//   />
+// );
+// DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
 const DialogDescription = ({ className, ...props }, ref) => (
   <DialogPrimitive.Description
@@ -86,6 +86,6 @@ export {
   DialogHeader,
   DialogOverlay,
   DialogPortal,
-  DialogTitle,
+  // DialogTitle,
   DialogTrigger,
 };
