@@ -98,7 +98,7 @@ const Header = () => {
                 onClick={connectWallet}
                 className="bg-primary hover:bg-primary-200 font-medium text-black p-[5px_20px] rounded cursor-pointer"
               >
-                Log In
+                Connect
               </button>
             )}
             <ThemeSwitcher />
