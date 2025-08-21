@@ -48,7 +48,6 @@ export const TradeConfirmationModal = ({
           const updateTrade = async () => {
             try {
               await TradeUpdateRequest(tradingDetails?.id, {
-                current_price: "10000",
                 high,
                 low,
                 volume,
@@ -69,7 +68,7 @@ export const TradeConfirmationModal = ({
               console.error("Error getting open order history", err);
             }
           };
-          apiCalls()
+          apiCalls();
 
           return 0;
         }
