@@ -8,6 +8,9 @@ import React from "react";
 export default function FF() {
   const { tradingData } = TradeStore();
 
+  // ✅ check if change is negative
+  const isNegative = Number(tradingData?.change) < 0;
+
   // Helper function to render a single metric item
   const renderMetricItem = (label, value, icon, valueColorClass = "") => (
     <div
@@ -27,45 +30,71 @@ export default function FF() {
       <div className="bg-slate-900 text-white rounded-xl shadow-lg p-4 w-full">
         {/* Main Value Display */}
         <div className="text-center my-8">
-          <div className={`text-5xl font-extrabold ${tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"}`}>{tradingData?.profit}</div>
-          <div className={`text-2xl font-bold ${tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"}`}>USDT+</div>
+          <div
+            className={`text-5xl font-extrabold ${
+              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {AmountWithCommas(
+              tradingData?.result_display?.status === "win"
+                ? tradingData?.profit
+                : tradingData?.amount
+            )}
+          </div>
+          <div
+            className={`text-2xl font-bold ${
+              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            USDT+
+          </div>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 gap-2 mb-4">
           {renderMetricItem(
+            "Action",
+            tradingData?.title,
+            <DollarSign className="text-blue-500" />,
+            "text-blue-400"
+          )}
+          {renderMetricItem(
             "HIGH",
             AmountWithCommas(tradingData?.high),
-            <TrendingUp className="text-green-500" />,
-            "text-green-400" // Specific color for HIGH
+            <TrendingUp className={isNegative ? "text-red-500" : "text-green-500"} />,
+            isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "LOW",
             AmountWithCommas(tradingData?.low),
-            <TrendingDown className="text-red-500" />,
-            "text-red-400" // Specific color for LOW
+            <TrendingDown className={isNegative ? "text-red-500" : "text-green-500"} />,
+            isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "VOLUME",
             AmountWithCommas(tradingData?.volume),
-            <BarChart2 className="text-cyan-400" />,
-            "text-cyan-300" // Specific color for VOLUME
+            <BarChart2 className={isNegative ? "text-red-500" : "text-cyan-400"} />,
+            isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "CHANGE",
             AmountWithCommas(tradingData?.change),
-            <TrendingUp className="text-purple-500" />,
-            "text-purple-300" // Specific color for CHANGE
+            <TrendingUp className={isNegative ? "text-red-500" : "text-purple-500"} />,
+            isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "PURCHASE VOLUME",
             AmountWithCommas(tradingData?.amount),
             <DollarSign className="text-yellow-500" />,
-            "text-yellow-300" // Specific color for PURCHASE VOLUME
+            "text-yellow-300"
           )}
           {renderMetricItem(
-            "PROFIT",
-            AmountWithCommas(tradingData?.profit),
+            `${tradingData?.result_display?.status === "win" ? "PROFIT" : "LOSS"}`,
+            AmountWithCommas(
+              tradingData?.result_display?.status === "win"
+                ? tradingData?.profit
+                : tradingData?.amount
+            ),
             <DollarSign className="text-emerald-500" />,
             `${
               tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"

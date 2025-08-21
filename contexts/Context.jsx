@@ -18,7 +18,7 @@ const Context = ({ children }) => {
   const { UserLoginRequest, GetUserInfoRequest } = UserStore();
   const { openOrders, OpenOrdersRequest } = TradeStore();
   // trade countdown
-  const [countdown, setCountdown] = useState(openOrders[0]?.countdown_seconds || 0);
+  const [countdown, setCountdown] = useState(0);
 
   // This useEffect handles fetching initial data
   useEffect(() => {
@@ -27,8 +27,8 @@ const Context = ({ children }) => {
 
   // This useEffect handles setting the countdown when openOrders data is fetched
   useEffect(() => {
-    if (openOrders.length > 0) {
-      setCountdown(openOrders[0].countdown_seconds);
+    if (openOrders?.length > 0) {
+      setCountdown(openOrders[0]?.countdown_seconds);
     }
   }, [openOrders]);
 
