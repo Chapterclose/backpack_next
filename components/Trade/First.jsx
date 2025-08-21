@@ -64,6 +64,12 @@ export default function First({ tradingDetails, high, low, volume, change, candl
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 gap-2 mb-4">
           {renderMetricItem(
+            "Action",
+            tradingDetails?.title,
+            <DollarSign className="text-blue-500" />,
+            "text-blue-400"
+          )}
+          {renderMetricItem(
             "HIGH",
             AmountWithCommas(high),
             <TrendingUp className="text-green-500" />,
@@ -75,13 +81,15 @@ export default function First({ tradingDetails, high, low, volume, change, candl
             "VOLUME",
             AmountWithCommas(volume),
             <BarChart2 className="text-cyan-400" />,
-            "", candleColor
+            "",
+            candleColor
           )}
           {renderMetricItem(
             "CHANGE",
             AmountWithCommas(change),
             <TrendingUp className="text-purple-500" />,
-            "", candleColor
+            "",
+            candleColor
           )}
           {renderMetricItem(
             "PURCHASE VOLUME",

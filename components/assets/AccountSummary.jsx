@@ -13,10 +13,9 @@ import {
 import Link from "next/link";
 import { useState } from "react"; // Import useState hook
 
-function AccountBalance({ showBalance, toggleBalanceVisibility }) {
+function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisibility }) {
   const [isLoading, setIsLoading] = useState(false); // State for loading
   const { AccountBalance, GetAccountBalanceRequest } = UserStore();
-
   const handleRefresh = async () => {
     setIsLoading(true);
     setTimeout(async () => {
@@ -46,7 +45,7 @@ function AccountBalance({ showBalance, toggleBalanceVisibility }) {
       <h3 className="text-3xl font-semibold text-black dark:text-white mt-2">
         {showBalance
           ? AccountBalance?.USDT?.available
-            ? AmountWithCommas(AccountBalance?.USDT?.available)
+            ? AmountWithCommas(totalAvailableBalance)
             : "0"
           : "****"}
       </h3>
@@ -99,4 +98,4 @@ function AccountBalance({ showBalance, toggleBalanceVisibility }) {
   );
 }
 
-export default AccountBalance;
+export default AccountSummary;
