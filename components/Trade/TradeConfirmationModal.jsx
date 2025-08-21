@@ -1,13 +1,22 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { contextProvider } from "@/contexts/Context";
 import TradeStore from "@/store/TradeStore";
 import { useContext, useEffect, useState } from "react";
 import FF from "./FF";
 import First from "./First";
 
-export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, volume, change, candleColor }) => {
+export const TradeConfirmationModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  high,
+  low,
+  volume,
+  change,
+  candleColor,
+}) => {
   const { countdown, setCountdown } = useContext(contextProvider);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [forceOpen, setForceOpen] = useState(false); //reopen after time
@@ -52,8 +61,16 @@ export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, 
           };
 
           updateTrade();
-          OpenOrdersRequest();
-          OrderHistoryRequest();
+          const apiCalls = async () => {
+            try {
+              await OpenOrdersRequest();
+              await OrderHistoryRequest();
+            } catch (err) {
+              console.error("Error getting open order history", err);
+            }
+          };
+          apiCalls()
+
           return 0;
         }
         return prev - 1;
@@ -76,9 +93,19 @@ export const TradeConfirmationModal = ({ isOpen, onClose, onConfirm, high, low, 
       }}
     >
       <DialogContent className="max-w-md mx-auto">
+        <DialogHeader>
+          <DialogTitle className="text-center text-lg sm:text-xl">{``}</DialogTitle>
+        </DialogHeader>
         {!isConfirmed ? (
           <div className="space-y-4 sm:space-y-6">
-            <First tradingDetails={tradingDetails} high={high} low={low} volume={volume} change={change} candleColor={candleColor} />
+            <First
+              tradingDetails={tradingDetails}
+              high={high}
+              low={low}
+              volume={volume}
+              change={change}
+              candleColor={candleColor}
+            />
           </div>
         ) : (
           <FF />

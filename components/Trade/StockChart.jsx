@@ -1,12 +1,20 @@
 "use client";
 
-import { generateData } from "@/constant/stockChartRealTimeData";
 import { createChart } from "lightweight-charts";
-import moment from "moment/moment";
 import { useTheme } from "next-themes";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
-function StockChart({highPrice, lowPrice, volume ,hoverdCandleData, currentCandleData, stockChartLegendData, hoveredSetCandleData, setCurrentCandleData}) {
+function StockChart({
+  highPrice,
+  lowPrice,
+  volume,
+  hoverdCandleData,
+  currentCandleData,
+  stockChartLegendData,
+  hoveredSetCandleData,
+  setCurrentCandleData,
+  coin,
+}) {
   const { __, resolvedTheme } = useTheme();
 
   const chartRef = useRef(null);
@@ -40,64 +48,70 @@ function StockChart({highPrice, lowPrice, volume ,hoverdCandleData, currentCandl
       },
     });
 
-    // Setting the border color for the vertical axis
     chart.priceScale("right").applyOptions({
       borderColor: stockChartColors.borderColor,
       ticksVisible: true,
     });
 
-    // Setting the border color for the horizontal axis
     chart.timeScale().applyOptions({
       borderColor: stockChartColors.borderColor,
       ticksVisible: true,
     });
 
-    chart.timeScale().fitContent();
-    chart.timeScale().scrollToPosition(5);
-
-    // Generate sample data to use within a candlestick series
-    const candleStickData = generateData(2500, 20, 1000);
-
-    // Create the Main Series (Candlesticks)
     const mainSeries = chart.addCandlestickSeries();
-    // Set the data for the Main Series
-    mainSeries.setData(candleStickData.initialData);
 
-    // simulate real-time data
-    function* getNextRealtimeUpdate(realtimeData) {
-      for (const dataPoint of realtimeData) {
-        yield dataPoint;
-      }
-      return null;
-    }
-
-    const streamingDataProvider = getNextRealtimeUpdate(
-      candleStickData.realtimeUpdates
-    );
-
-    const intervalID = setInterval(() => {
-      const update = streamingDataProvider.next();
-      if (update.done) {
-        clearInterval(intervalID);
-        return;
-      }
-      setCurrentCandleData(update.value);
-      mainSeries.update(update.value);
-    }, 1000);
-
-    // Changing the Candlestick colors
     mainSeries.applyOptions({
       wickUpColor: "#2EBD85",
       upColor: "#2EBD85",
-      wickDownColor: "#e13255", //red color
+      wickDownColor: "#e13255",
       downColor: "#e13255",
       borderVisible: true,
     });
 
+    const coinname = `${coin}usdt`;
+    const dailyInterval = "1d";
+    const realtimeInterval = "1m";
+
+    // 1. Fetch historical daily data first
+    fetch(
+      `https://api.binance.com/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${dailyInterval}&limit=30`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const historicalData = data.map((d) => ({
+          time: d[0] / 1000,
+          open: parseFloat(d[1]),
+          high: parseFloat(d[2]),
+          low: parseFloat(d[3]),
+          close: parseFloat(d[4]),
+        }));
+        mainSeries.setData(historicalData);
+        // Remove left-side space by calling fitContent after data is loaded
+        chart.timeScale().fitContent();
+      })
+      .catch((error) => console.error("Error fetching historical data:", error));
+
+    // 2. Connect to the WebSocket for real-time 1-minute data
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${coinname}@kline_${realtimeInterval}`);
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.k) {
+        const candle = message.k;
+        const newCandleData = {
+          time: candle.t / 1000,
+          open: parseFloat(candle.o),
+          high: parseFloat(candle.h),
+          low: parseFloat(candle.l),
+          close: parseFloat(candle.c),
+        };
+        setCurrentCandleData(newCandleData);
+        mainSeries.update(newCandleData);
+      }
+    };
+
     const updateLegend = (param) => {
-      const validCrosshairPoint = !(
-        param === undefined || param.time === undefined
-      );
+      const validCrosshairPoint = !(param === undefined || param.time === undefined);
 
       if (validCrosshairPoint) {
         const data = param.seriesData.get(mainSeries);
@@ -115,100 +129,67 @@ function StockChart({highPrice, lowPrice, volume ,hoverdCandleData, currentCandl
 
     window.addEventListener("resize", handleResize);
 
-    // Cleanup
     return () => {
-      // resizeObserver.disconnect();
+      ws.close();
       window.removeEventListener("resize", handleResize);
-      clearInterval(intervalID);
       chart.remove();
     };
-  }, [resolvedTheme]);
+  }, [resolvedTheme, coin]);
 
   const candleColor =
-    stockChartLegendData?.open > stockChartLegendData?.close
-      ? "#e13255"
-      : "#2EBD85";
+    stockChartLegendData?.open > stockChartLegendData?.close ? "#e13255" : "#2EBD85";
+
+  // The JSX for the price indicator remains the same
   return (
     <div
       ref={chartRef}
       style={{ width: "100%" }}
-      className="relative dark:text-white h-[440px] border-gray-100   box-content mb-1"
+      className="relative dark:text-white h-[440px] border-gray-100   box-content mb-1"
     >
       <div className="absolute top-2 left-5 z-20 flex flex-col lg:flex-row w-full flex-wrap gap-x-2">
+        <p className="text-secondary text-xs"> </p>
         <p className="text-secondary text-xs">
-          {/* {moment(stockChartLegendData?.time).format("YYYY/MM/DD HH:mm")} */}
+          Vol: <span style={{ color: candleColor }}>{volume}</span>
         </p>
         <p className="text-secondary text-xs">
-          Vol:{" "}
-          <span
-            style={{
-              color: candleColor,
-            }}
-          >
-            {/* {stockChartLegendData?.open?.toFixed(2)} */}
-            {volume}
-          </span>
+          High: <span style={{ color: candleColor }}>{highPrice}</span>
         </p>
         <p className="text-secondary text-xs">
-          High:{" "}
-          <span
-            style={{
-              color: candleColor,
-            }}
-          >
-            {/* {stockChartLegendData?.high?.toFixed(2)} */}
-            {highPrice}
-          </span>
-        </p>
-        <p className="text-secondary text-xs">
-          Low:{" "}
-          <span
-            style={{
-              color: candleColor,
-            }}
-          >
-            {/* {stockChartLegendData?.low?.toFixed(2)} */}
-            {lowPrice}
-          </span>
+          Low: <span style={{ color: candleColor }}>{lowPrice}</span>
         </p>
         <p className="text-secondary text-xs">
           Close:{" "}
-          <span
-            style={{
-              color: candleColor,
-            }}
-          >
-            {stockChartLegendData?.close?.toFixed(2)}
-          </span>
+          <span style={{ color: candleColor }}>{stockChartLegendData?.close?.toFixed(2)}</span>
         </p>
         <p className="text-secondary text-xs">
           Change:{" "}
-          <span
-            style={{
-              color: candleColor,
-            }}
-          >
-            {(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(
-              2
-            )}
+          <span style={{ color: candleColor }}>
+            {(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
           </span>
         </p>
         <p className="text-secondary text-xs">
           AMPLITUDE:{" "}
-          <span
-            style={{
-              color: candleColor,
-            }}
-          >
+          <span style={{ color: candleColor }}>
             {(
               ((stockChartLegendData?.high - stockChartLegendData?.low) /
                 stockChartLegendData?.low) *
               stockChartLegendData?.low
             ).toFixed(2)}{" "}
-            %
+            %{" "}
           </span>
         </p>
       </div>
+      {/* Real-time price indicator */}
+      {currentCandleData?.close && (
+        <div
+          className="absolute top-8 right-2 lg:right-5 z-20 font-bold"
+          style={{
+            color: currentCandleData.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
+          }}
+        >
+          <span>{currentCandleData.close?.toFixed(2)}</span>
+        </div>
+      )}
     </div>
   );
 }
