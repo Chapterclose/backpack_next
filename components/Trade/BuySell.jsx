@@ -8,7 +8,7 @@ import toast from "react-hot-toast"; // Import react-hot-toast
 import Button from "../Form/Button";
 import { AmountWithCommas } from "@/lib/utils";
 
-function BuySell({ coin, handleTrade, AccountBalance }) {
+function BuySell({ coin, handleTrade, AccountBalance,currentPrice }) {
   // State for managing the pop-up, selected period, and purchase volume
   const [activePopup, setActivePopup] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("60s");
@@ -153,7 +153,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
     }
 
     // Check if AccountBalance is sufficient
-    const availableBalance = AccountBalance?.USDT?.available || 0;
+    const availableBalance = totalAvailableBalance || 0;
     if (amount > availableBalance) {
       setErrorMessage("You don't have enough balance to trade.");
       toast.error("You don't have enough balance to trade.");
@@ -170,7 +170,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
       period: selectedPeriod,
       percentage: dynamicPercentage,
       amount: amount,
-      current_price: "10000", // This likely needs to be dynamic based on real-time data
+      current_price: currentPrice,
     };
     try {
       const res = await TradeBuySellRequest(tradeData);
