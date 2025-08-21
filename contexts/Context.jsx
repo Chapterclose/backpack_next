@@ -16,6 +16,7 @@ const Context = ({ children }) => {
   const [primaryCertified, setPrimaryCertified] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
   const { UserLoginRequest, GetUserInfoRequest } = UserStore();
+  const [totalAvailableBalance, setTotalAvailableBalance] = useState(0);
   const { openOrders, OpenOrdersRequest } = TradeStore();
   // trade countdown
   const [countdown, setCountdown] = useState(0);
@@ -109,6 +110,8 @@ const Context = ({ children }) => {
     handleLogout,
     countdown,
     setCountdown,
+    totalAvailableBalance,
+    setTotalAvailableBalance
   };
 
   return <contextProvider.Provider value={values}>{children}</contextProvider.Provider>;

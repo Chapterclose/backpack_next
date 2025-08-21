@@ -18,7 +18,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
   const [isTradeRunning, setIsTradeRunning] = useState(false); // New state for trade running status
 
   // Context and store hooks
-  const { walletAddress, connectWallet } = useContext(contextProvider);
+  const { walletAddress, connectWallet , totalAvailableBalance} = useContext(contextProvider);
   const { TradeBuySellRequest, tradingData, TradeDetailsRequest, OpenOrdersRequest, openOrders } =
     TradeStore();
   // Refs and hooks for component logic
@@ -344,7 +344,7 @@ function BuySell({ coin, handleTrade, AccountBalance }) {
 
             <p className="text-gray-400 mt-6 text-sm">
               Available balance:{" "}
-              <span className="text-white font-bold">{AmountWithCommas(AccountBalance?.USDT?.available)} USDT</span>
+              <span className="text-white font-bold">{AmountWithCommas(totalAvailableBalance)} USDT</span>
             </p>
 
             <button
