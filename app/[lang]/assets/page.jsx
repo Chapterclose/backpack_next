@@ -10,9 +10,8 @@ import { useContext, useEffect, useState } from "react";
 function AssetsPage() {
   const [showBalance, setShowBalance] = useState(true);
   const [prices, setPrices] = useState({ USDT: 1, BTC: null, ETH: null });
-  //   console.log(prices)
-  const [totalAvailableBalance, setTotalAvailableBalance] = useState(0);
-  const { walletAddress, connectWallet } = useContext(contextProvider);
+  const { walletAddress, connectWallet, totalAvailableBalance, setTotalAvailableBalance } =
+    useContext(contextProvider);
   const { GetAccountBalanceRequest, AccountBalance } = UserStore();
   const toggleBalanceVisibility = () => {
     setShowBalance(!showBalance);

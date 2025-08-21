@@ -5,10 +5,11 @@ import OrderBook from "@/components/Trade/OrderBook";
 import { OrderHistory } from "@/components/Trade/OrderHistory";
 import StockChart from "@/components/Trade/StockChart";
 import { TradeConfirmationModal } from "@/components/Trade/TradeConfirmationModal";
+import { contextProvider } from "@/contexts/Context";
 import TradeStore from "@/store/TradeStore";
 import UserStore from "@/store/UserStore";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 export default function TradePage() {
   const searchParams = useSearchParams();
@@ -23,6 +24,10 @@ export default function TradePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
 
+  // available balance
+  const [prices, setPrices] = useState({ USDT: 1, BTC: null, ETH: null });
+  const { totalAvailableBalance, setTotalAvailableBalance } = useContext(contextProvider);
+
   // Chart State
   const [hoverdCandleData, hoveredSetCandleData] = useState(null);
   const [currentCandleData, setCurrentCandleData] = useState(null);
@@ -33,7 +38,6 @@ export default function TradePage() {
   // Apis Call
   const { OpenOrdersRequest, OrderHistoryRequest, orderHistory, openOrders } = TradeStore();
   const { GetAccountBalanceRequest, AccountBalance } = UserStore();
-  // console.log(openOrders,orderHistory)
   const wsRef = useRef(null);
   const tickerReconnectTimeoutRef = useRef(null);
 
@@ -125,6 +129,41 @@ export default function TradePage() {
     OrderHistoryRequest();
     GetAccountBalanceRequest();
   }, [OpenOrdersRequest, OrderHistoryRequest, GetAccountBalanceRequest]);
+
+  useEffect(() => {
+    const socket = new WebSocket(
+      "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade"
+    );
+
+    socket.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      const symbol = msg?.data?.s;
+      const price = parseFloat(msg?.data?.p);
+
+      if (symbol === "BTCUSDT") {
+        setPrices((prev) => ({ ...prev, BTC: price }));
+      } else if (symbol === "ETHUSDT") {
+        setPrices((prev) => ({ ...prev, ETH: price }));
+      }
+    };
+
+    return () => socket.close();
+  }, []);
+
+  useEffect(() => {
+    if (!AccountBalance) return;
+
+    const usdtAvailable = parseFloat(AccountBalance?.USDT?.available || "0");
+    const btcAvailable = parseFloat(AccountBalance?.BTC?.available || "0");
+    const ethAvailable = parseFloat(AccountBalance?.ETH?.available || "0");
+
+    const usdtValue = usdtAvailable * prices.USDT;
+    const btcValue = btcAvailable * (prices.BTC || 0);
+    const ethValue = ethAvailable * (prices.ETH || 0);
+
+    const total = usdtValue + btcValue + ethValue;
+    setTotalAvailableBalance(total);
+  }, [AccountBalance, prices]);
 
   return (
     <div className="container py-[40px] lg:py-[60px]">
