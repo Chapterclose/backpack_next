@@ -1,5 +1,4 @@
 import api from "@/lib/utils";
-import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -17,12 +16,7 @@ const TradeStore = create(
       TradeBuySellRequest: async (body) => {
         try {
           set({ isLoading: true });
-          let res = await api.post("/trade/buy-sell/", body, {
-            headers: {
-              AUTHORIZATION: `Bearer ${Cookies.get("access")}`,
-              "Content-Type": "application/json",
-            },
-          });
+          let res = await api.post("/trade/buy-sell/", body);
           // console.log(res)
           set({ tradingData: res.data?.trade });
           // toast.success(res.data["message"]);
