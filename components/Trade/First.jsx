@@ -10,7 +10,6 @@ export default function First({ tradingDetails, high, low, volume, change, candl
   const { countdown } = useContext(contextProvider);
   const [count, setCountdown] = useState(countdown);
   const [isRunning, setIsRunning] = useState(true);
-
   // Use useEffect to handle the countdown logic
   useEffect(() => {
     let timer;
@@ -67,7 +66,7 @@ export default function First({ tradingDetails, high, low, volume, change, candl
             "Action",
             tradingDetails?.title,
             <DollarSign className="text-blue-500" />,
-            "text-blue-400"
+            tradingDetails?.trade_type === "buy" ? "text-green-500" : "text-red-500"
           )}
           {renderMetricItem(
             "HIGH",

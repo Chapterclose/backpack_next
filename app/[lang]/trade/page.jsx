@@ -129,11 +129,11 @@ export default function TradePage() {
     OrderHistoryRequest();
     GetAccountBalanceRequest();
   }, [OpenOrdersRequest, OrderHistoryRequest, GetAccountBalanceRequest]);
-  useEffect(()=>{
-    GetAccountBalanceRequest()
-    OrderHistoryRequest()
-    OpenOrdersRequest()
-  },[])
+  useEffect(() => {
+    GetAccountBalanceRequest();
+    OrderHistoryRequest();
+    OpenOrdersRequest();
+  }, []);
   useEffect(() => {
     const socket = new WebSocket(
       "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade"
@@ -207,7 +207,16 @@ export default function TradePage() {
         candleColor={candleColor}
       />
 
-      <BuySell coin={coin} handleTrade={handleTrade} AccountBalance={AccountBalance} currentPrice={currentPrice} />
+      <BuySell
+        coin={coin}
+        handleTrade={handleTrade}
+        AccountBalance={AccountBalance}
+        currentPrice={currentPrice}
+        high={highPrice}
+        low={lowPrice}
+        volume={volume}
+        change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
+      />
 
       {/* Trade Confirmation Modal */}
       <TradeConfirmationModal

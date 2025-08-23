@@ -5,7 +5,7 @@ import FormInput from "@/components/Form/FormInput";
 import DWStore from "@/store/DWStore";
 import { ArrowLeft, BookMarked, Camera, Copy } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "react-qr-code";
 import { twMerge } from "tailwind-merge";
@@ -16,6 +16,7 @@ function RechargeApply() {
   const fileInputRef = useRef(null);
   const { GeRechargeAddressRequest, rechargeAddress, RechargeDepositRequest, isLoading } =
     DWStore();
+  const navigate = useRouter()
 
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
@@ -100,6 +101,8 @@ function RechargeApply() {
       setSelectedScreenshot(null);
       setScreenshotPreview(null); // Clear preview after successful submission
       fileInputRef.current.value = "";
+      navigate.push("/recharge-order")
+      
     } catch (error) {
       console.error("Error submitting recharge:", error.message);
       alert(`Error: ${error.message}`);

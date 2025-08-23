@@ -8,11 +8,13 @@ export default function HistoryCard({ order }) {
   const isNegative = Number(order?.change) < 0; // ✅ check if change is minus
 
   // Helper function to render a single metric item
-  const renderMetricItem = (label, value, icon = null, valueColorClass = "") => (
+  const renderMetricItem = (label, value, icon = null, valueColorClass = "", labelColor = "") => (
     <div className="flex justify-between items-center py-2">
       <div className="flex items-center">
         {icon && React.cloneElement(icon, { size: 16 })} {/* Render icon if provided */}
-        <span className={`text-gray-400 text-sm font-medium ${icon ? "ml-2" : ""}`}>{label}</span>
+        <span className={`text-gray-400 text-sm font-medium ${icon ? "ml-2" : ""} ${labelColor}`}>
+          {label}
+        </span>
       </div>
       <span className={`text-right text-sm font-semibold ${valueColorClass}`}>{value}</span>
     </div>
@@ -27,7 +29,7 @@ export default function HistoryCard({ order }) {
             "Action",
             order?.title,
             <DollarSign className="text-blue-500" />,
-            "text-blue-400"
+            order?.trade_type === "buy" ? "text-green-500" : "text-red-500"
           )}
           {renderMetricItem(
             "HIGH",
@@ -60,12 +62,15 @@ export default function HistoryCard({ order }) {
             "text-yellow-300"
           )}
           {renderMetricItem(
-            `${order?.result_display?.status === "win" ? "WIN":"LOSS"}`,
-            AmountWithCommas(order?.result_display?.status === "win" ? order?.profit : order?.amount),
+            `${order?.result_display?.status === "win" ? "PROFIT" : "LOSS"}`,
+            AmountWithCommas(
+              order?.result_display?.status === "win" ? order?.profit : order?.amount
+            ),
             <DollarSign className="text-emerald-500" />,
             `${
-              order?.result_display?.status === "win" ? "text-green-400" : "text-red-500"
-            } capitalize`
+              order?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+            } capitalize`, // The color for the label
+            `${order?.result_display?.status === "win" ? "" : "text-red-500 font-semibold"}`
           )}
           {renderMetricItem(
             "STATUS",

@@ -1,14 +1,14 @@
 "use client";
 
 import { contextProvider } from "@/contexts/Context";
+import { AmountWithCommas } from "@/lib/utils";
 import TradeStore from "@/store/TradeStore";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast"; // Import react-hot-toast
 import Button from "../Form/Button";
-import { AmountWithCommas } from "@/lib/utils";
 
-function BuySell({ coin, handleTrade, AccountBalance,currentPrice }) {
+function BuySell({ coin, handleTrade, AccountBalance, currentPrice, high, low, volume, change }) {
   // State for managing the pop-up, selected period, and purchase volume
   const [activePopup, setActivePopup] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("60s");
@@ -18,7 +18,7 @@ function BuySell({ coin, handleTrade, AccountBalance,currentPrice }) {
   const [isTradeRunning, setIsTradeRunning] = useState(false); // New state for trade running status
 
   // Context and store hooks
-  const { walletAddress, connectWallet , totalAvailableBalance} = useContext(contextProvider);
+  const { walletAddress, connectWallet, totalAvailableBalance } = useContext(contextProvider);
   const { TradeBuySellRequest, tradingData, TradeDetailsRequest, OpenOrdersRequest, openOrders } =
     TradeStore();
   // Refs and hooks for component logic
@@ -171,6 +171,10 @@ function BuySell({ coin, handleTrade, AccountBalance,currentPrice }) {
       percentage: dynamicPercentage,
       amount: amount,
       current_price: currentPrice,
+      high,
+      low,
+      volume,
+      change,
     };
     try {
       const res = await TradeBuySellRequest(tradeData);
@@ -344,7 +348,9 @@ function BuySell({ coin, handleTrade, AccountBalance,currentPrice }) {
 
             <p className="text-gray-400 mt-6 text-sm">
               Available balance:{" "}
-              <span className="text-white font-bold">{AmountWithCommas(totalAvailableBalance)} USDT</span>
+              <span className="text-white font-bold">
+                {AmountWithCommas(totalAvailableBalance)} USDT
+              </span>
             </p>
 
             <button

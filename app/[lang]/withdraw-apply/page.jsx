@@ -11,16 +11,18 @@ import btcImg from "@/assets/markets/1.png";
 import ethImg from "@/assets/markets/2.png";
 import usdtImg from "@/assets/markets/usdt.png";
 import FormPassword from "@/components/Form/FormPassword";
+import { AmountWithCommas } from "@/lib/utils";
 import DWStore from "@/store/DWStore";
 import UserStore from "@/store/UserStore";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 function WithdrawApply() {
+  const navigate = useRouter();
   const searchParams = useSearchParams();
   const coin = searchParams.get("coin");
   const fileInputRef = useRef(null);
-  const { UserData } = UserStore();
+  const { UserData, GetAccountBalanceRequest, AccountBalance } = UserStore();
   const { WithdrawRequestApi } = DWStore();
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawPassword, setWithdrawPassword] = useState("");
@@ -28,7 +30,6 @@ function WithdrawApply() {
   const [amountError, setAmountError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [addressError, setAddressError] = useState(""); // New state for address error
-
   // Define default wallet addresses
   const defaultAddresses = {
     btc: "bc1qe8gf05j258tlla2jzqkwh8jma8szxk2nfp8k5a",
@@ -37,12 +38,27 @@ function WithdrawApply() {
     "usdt-trc": "TEk3My3UGQh4FENTeB6jtKgASeR9eFaebj",
   };
 
+  let currentBalance = 0;
+  if (AccountBalance && coin) {
+    if (coin === "btc") {
+      currentBalance = AccountBalance.BTC?.available;
+    } else if (coin === "eth") {
+      currentBalance = AccountBalance.ETH?.available;
+    } else if (coin === "usdt-erc" || coin === "usdt-trc") {
+      currentBalance = AccountBalance.USDT?.available;
+    }
+  }
+
   // Set default wallet address when coin changes or on initial load
   useEffect(() => {
     if (coin && defaultAddresses[coin]) {
       setWalletAddress(defaultAddresses[coin]);
     }
   }, [coin]);
+
+  useEffect(() => {
+    GetAccountBalanceRequest();
+  }, []);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -104,6 +120,7 @@ function WithdrawApply() {
     } else if (res.status === 201) {
       setWithdrawAmount("");
       setWithdrawPassword("");
+      navigate.push("/withdraw-order");
     }
   };
 
@@ -128,7 +145,9 @@ function WithdrawApply() {
 
       <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg py-5 px-2 lg:p-5">
         <div className="border-b pb-10 mb-10 border-gray-200 dark:border-gray-700 text-center">
-          <h4 className="text-6xl mb-2 dark:text-white text-black font-semibold">0.00</h4>
+          <h4 className="text-6xl mb-2 dark:text-white text-black font-semibold">
+            {AmountWithCommas(currentBalance || 0)}
+          </h4>
           <p className="text-black dark:text-white font-medium">
             Available Balance(<span className="uppercase">{coin}</span>)
           </p>
