@@ -7,9 +7,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function RechargeOrder() {
-  const [activeTab, setActiveTab] = useState("Approved");
+  const [activeTab, setActiveTab] = useState("Pending");
   const { DepositHistoryRequest, depositHistory, isLoading } = DWStore();
-  console.log(depositHistory);
   const tabs = [
     { id: "Approved", label: "Approved", status: "approved" },
     { id: "Pending", label: "Pending", status: "pending" },
@@ -17,7 +16,7 @@ export default function RechargeOrder() {
   ];
 
   // Current tab object
-  const activeTabItem = tabs.find((tab) => tab.id === activeTab) || tabs[0];
+  const activeTabItem = tabs.find((tab) => tab.id === activeTab) || tabs[1];
 
   // Filter data for current tab
   const filteredData = depositHistory?.filter((item) => item.status === activeTabItem.status) || [];

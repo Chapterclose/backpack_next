@@ -6,7 +6,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function RechargeOrder() {
-  const [activeTab, setActiveTab] = useState('Approved');
+  const [activeTab, setActiveTab] = useState('Pending');
   const { withdrawHistoryRequest, withdrawHistory, isLoading } = DWStore();
 
   const tabs = [
@@ -16,7 +16,7 @@ export default function RechargeOrder() {
   ];
 
   // Current tab object
-  const activeTabItem = tabs.find(tab => tab.id === activeTab) || tabs[0];
+  const activeTabItem = tabs.find(tab => tab.id === activeTab) || tabs[1];
 
   // Filter data for current tab
   const filteredData = withdrawHistory?.filter(item => item.status === activeTabItem.status) || [];

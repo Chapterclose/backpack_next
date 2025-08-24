@@ -4,22 +4,24 @@ import { AmountWithCommas } from "@/lib/utils";
 import TradeStore from "@/store/TradeStore";
 import { BarChart2, Clock, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 export default function FF() {
   const { tradingData } = TradeStore();
 
-  // ✅ check if change is negative
   const isNegative = Number(tradingData?.change) < 0;
 
   // Helper function to render a single metric item
-  const renderMetricItem = (label, value, icon, valueColorClass = "") => (
+  const renderMetricItem = (label, value, icon, valueColorClass = "", labelColor = "") => (
     <div
       key={label}
       className="bg-slate-700 py-1 px-4 rounded-lg flex items-center justify-between transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
     >
       <div className="flex items-center">
         {React.cloneElement(icon, { size: 16 })}
-        <span className="ml-2 text-slate-300 font-medium text-xs">{label}</span>
+        <span className={twMerge("ml-2 text-slate-300 font-medium text-xs", labelColor)}>
+          {label}
+        </span>
       </div>
       <span className={`text-lg font-bold truncate ${valueColorClass}`}>{value}</span>
     </div>
@@ -46,7 +48,7 @@ export default function FF() {
               tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             }`}
           >
-            USDT+
+            USDT{tradingData?.result_display?.status === "win" ? "+" : "-"}
           </div>
         </div>
 
@@ -56,7 +58,7 @@ export default function FF() {
             "Action",
             tradingData?.title,
             <DollarSign className="text-blue-500" />,
-            "text-blue-400"
+            tradingData?.trade_type === "buy" ? "text-green-500" : "text-red-500"
           )}
           {renderMetricItem(
             "HIGH",
@@ -98,7 +100,8 @@ export default function FF() {
             <DollarSign className="text-emerald-500" />,
             `${
               tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
-            } capitalize`
+            } capitalize`, // The color for the label
+            `${tradingData?.result_display?.status === "win" ? "" : "text-red-500 font-semibold"}`
           )}
           {renderMetricItem(
             "STATUS",

@@ -15,7 +15,15 @@ const UserStore = create(
           set({ isUserLogin: true });
           set({ isLoading: true });
           let res = await apiWithoutToken.post("/auth/connect_metamask/", body);
-          Cookies.set("access", res.data?.access, { expires: 7 });
+          // Set cookie using js-cookie on client
+          try {
+            Cookies.set("access", res.data?.access || "", { expires: 7, path: "/" });
+          } catch {}
+          if (typeof window !== "undefined") {
+            try {
+              window.localStorage.setItem("access", res.data?.access || "");
+            } catch {}
+          }
           set({ UserData: res.data["customer"] });
           return res;
         } catch (e) {

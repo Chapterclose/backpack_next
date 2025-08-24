@@ -89,8 +89,13 @@ const Context = ({ children }) => {
 
   const handleLogout = () => {
     setWalletAddress("");
-    Cookies.remove("access");
+    try {
+      Cookies.remove("access", { path: "/" });
+    } catch {}
     router.push("/");
+    try {
+      localStorage.removeItem("access");
+    } catch {}
     localStorage.removeItem("user-store");
     localStorage.removeItem("dw-store");
     localStorage.removeItem("realNameAuthStatus");
@@ -111,7 +116,7 @@ const Context = ({ children }) => {
     countdown,
     setCountdown,
     totalAvailableBalance,
-    setTotalAvailableBalance
+    setTotalAvailableBalance,
   };
 
   return <contextProvider.Provider value={values}>{children}</contextProvider.Provider>;

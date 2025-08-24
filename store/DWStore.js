@@ -65,6 +65,7 @@ const DWStore = create(
         try {
           set({ isLoading: true });
           let res = await api.post("/trade/withdraw-request/", body);
+          console.log(res)
           toast.success(res.data["message"]);
           return res;
         } catch (e) {
