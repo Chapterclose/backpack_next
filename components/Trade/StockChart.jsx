@@ -92,7 +92,9 @@ function StockChart({
       .catch((error) => console.error("Error fetching historical data:", error));
 
     // 2. Connect to the WebSocket for real-time 1-minute data
-    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${coinname}@kline_${realtimeInterval}`);
+    const ws = new WebSocket(
+      `wss://stream.binance.com:9443/ws/${coinname}@kline_${realtimeInterval}`
+    );
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);

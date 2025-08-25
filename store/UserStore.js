@@ -66,6 +66,20 @@ const UserStore = create(
           set({ isLoading: false });
         }
       },
+      HealthCheckRequest: async () => {
+        try {
+          set({ isUserLogin: true });
+          set({ isLoading: true });
+          let res = await api.get("/auth/health-check/");
+          console.log(res);
+        } catch (e) {
+          console.log(e);
+          return e;
+        } finally {
+          set({ isUserLogin: false });
+          set({ isLoading: false });
+        }
+      },
 
       PrimaryCertificationRequest: async (body) => {
         try {
