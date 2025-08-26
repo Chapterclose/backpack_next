@@ -81,6 +81,20 @@ const UserStore = create(
         }
       },
 
+      // Convert Api
+      ConvertBalanceRequest: async (body) => {
+        try {
+          set({ isLoading: true });
+          let res = await api.post("/trade/convert-balance/", body);
+          return res;
+        } catch (e) {
+          console.log(e);
+          return e;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
       PrimaryCertificationRequest: async (body) => {
         try {
           set({ isLoading: true });
