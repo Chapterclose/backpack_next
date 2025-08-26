@@ -61,7 +61,7 @@ const ConvertPage = () => {
     let ws = null;
     const connectWebSocket = () => {
       ws = new WebSocket(
-        "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade/btceth@trade"
+        "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade/ethbtc@trade"
       );
 
       ws.onopen = () => {
@@ -88,9 +88,9 @@ const ConvertPage = () => {
               updated.ETH.USDT = price;
               updated.USDT.ETH = 1 / price;
               break;
-            case "btceth@trade":
-              updated.BTC.ETH = price;
-              updated.ETH.BTC = 1 / price;
+            case "ethbtc@trade":
+              updated.ETH.BTC = price;
+              updated.BTC.ETH = 1 / price;
               break;
           }
 
@@ -185,12 +185,12 @@ const ConvertPage = () => {
     const body = {
       from_asset: fromCurrency,
       to_asset: toCurrency,
-      amount,
-      current_rate: current_market_prices,
+      from_amount: amount,
+      to_amount: currentRate,
     };
     const res = await ConvertBalanceRequest(body);
-    if(res.status === 200) {
-      await GetAccountBalanceRequest()
+    if (res.status === 200) {
+      await GetAccountBalanceRequest();
       toast.success(res?.data?.message);
       setSuccessMessage("Conversion successful!");
       setTimeout(() => setSuccessMessage(""), 3000);
