@@ -7,9 +7,9 @@ import React from "react";
 import { twMerge } from "tailwind-merge";
 
 export default function FF() {
-  const { tradingData } = TradeStore();
-
-  const isNegative = Number(tradingData?.change) < 0;
+  const {  openOrders } = TradeStore();
+  console.log(openOrders);
+  const isNegative = Number(openOrders[0]?.change) < 0;
 
   // Helper function to render a single metric item
   const renderMetricItem = (label, value, icon, valueColorClass = "", labelColor = "") => (
@@ -34,21 +34,21 @@ export default function FF() {
         <div className="text-center my-8">
           <div
             className={`text-5xl font-extrabold ${
-              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+              openOrders[0]?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             }`}
           >
             {AmountWithCommas(
-              tradingData?.result_display?.status === "win"
-                ? tradingData?.profit
-                : tradingData?.amount
+              openOrders[0]?.result_display?.status === "win"
+                ? openOrders[0]?.profit
+                : openOrders[0]?.amount
             )}
           </div>
           <div
             className={`text-2xl font-bold ${
-              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+              openOrders[0]?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             }`}
           >
-            USDT{tradingData?.result_display?.status === "win" ? "+" : "-"}
+            USDT{openOrders[0]?.result_display?.status === "win" ? "+" : "-"}
           </div>
         </div>
 
@@ -56,59 +56,59 @@ export default function FF() {
         <div className="grid grid-cols-1 gap-2 mb-4">
           {renderMetricItem(
             "Action",
-            tradingData?.title,
+            openOrders[0]?.title,
             <DollarSign className="text-blue-500" />,
-            tradingData?.trade_type === "buy" ? "text-green-500" : "text-red-500"
+            openOrders[0]?.trade_type === "buy" ? "text-green-500" : "text-red-500"
           )}
           {renderMetricItem(
             "HIGH",
-            AmountWithCommas(tradingData?.high),
+            AmountWithCommas(openOrders[0]?.high),
             <TrendingUp className={isNegative ? "text-red-500" : "text-green-500"} />,
             isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "LOW",
-            AmountWithCommas(tradingData?.low),
+            AmountWithCommas(openOrders[0]?.low),
             <TrendingDown className={isNegative ? "text-red-500" : "text-green-500"} />,
             isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "VOLUME",
-            AmountWithCommas(tradingData?.volume),
+            AmountWithCommas(openOrders[0]?.volume),
             <BarChart2 className={isNegative ? "text-red-500" : "text-cyan-400"} />,
             isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "CHANGE",
-            AmountWithCommas(tradingData?.change),
+            AmountWithCommas(openOrders[0]?.change),
             <TrendingUp className={isNegative ? "text-red-500" : "text-purple-500"} />,
             isNegative ? "text-red-400" : "text-green-400"
           )}
           {renderMetricItem(
             "PURCHASE VOLUME",
-            AmountWithCommas(tradingData?.amount),
+            AmountWithCommas(openOrders[0]?.amount),
             <DollarSign className="text-yellow-500" />,
             "text-yellow-300"
           )}
           {renderMetricItem(
-            `${tradingData?.result_display?.status === "win" ? "PROFIT" : "LOSS"}`,
+            `${openOrders[0]?.result_display?.status === "win" ? "PROFIT" : "LOSS"}`,
             AmountWithCommas(
-              tradingData?.result_display?.status === "win"
-                ? tradingData?.profit
-                : tradingData?.amount
+              openOrders[0]?.result_display?.status === "win"
+                ? openOrders[0]?.profit
+                : openOrders[0]?.amount
             ),
             <DollarSign className="text-emerald-500" />,
             `${
-              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+              openOrders[0]?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             } capitalize`, // The color for the label
-            `${tradingData?.result_display?.status === "win" ? "" : "text-red-500 font-semibold"}`
+            `${openOrders[0]?.result_display?.status === "win" ? "" : "text-red-500 font-semibold"}`
           )}
           {renderMetricItem(
             "STATUS",
-            tradingData?.result_display?.status,
+            openOrders[0]?.result,
             <Clock className="text-gray-400" />,
             `${
-              tradingData?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
+              openOrders[0]?.result_display?.status === "win" ? "text-green-500" : "text-red-500"
             } capitalize`
           )}
         </div>

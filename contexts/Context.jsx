@@ -99,6 +99,7 @@ const Context = ({ children }) => {
     localStorage.removeItem("user-store");
     localStorage.removeItem("dw-store");
     localStorage.removeItem("realNameAuthStatus");
+    localStorage.removeItem("trade-store");
     toast.success("User Logged Out!");
   };
 

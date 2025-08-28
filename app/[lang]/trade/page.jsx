@@ -114,6 +114,25 @@ export default function TradePage() {
 
   // Update balances in USD
   useEffect(() => {
+    const socket = new WebSocket(
+      "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade"
+    );
+
+    socket.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      const symbol = msg?.data?.s;
+      const price = parseFloat(msg?.data?.p);
+
+      if (symbol === "BTCUSDT") {
+        setPrices((prev) => ({ ...prev, BTC: price }));
+      } else if (symbol === "ETHUSDT") {
+        setPrices((prev) => ({ ...prev, ETH: price }));
+      }
+    };
+
+    return () => socket.close();
+  }, []);
+  useEffect(() => {
     if (!AccountBalance) return;
 
     const usdtAvailable = parseFloat(AccountBalance?.USDT?.available || "0");
@@ -128,7 +147,7 @@ export default function TradePage() {
   }, [AccountBalance, prices]);
 
   if (loading) {
-    return <TradePageSkeleton />; 
+    return <TradePageSkeleton />;
   }
 
   return (
@@ -166,14 +185,12 @@ export default function TradePage() {
         volume={volume}
         change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
         candleColor={candleColor}
+        onOpen={() => setIsModalOpen(true)}
       />
 
       <BuySell
         coin={coin}
-        handleTrade={(order) => {
-          setCurrentOrder(order);
-          setIsModalOpen(true);
-        }}
+        onOpen={() => setIsModalOpen(true)}
         AccountBalance={AccountBalance}
         currentPrice={currentPrice}
         high={highPrice}
@@ -185,7 +202,7 @@ export default function TradePage() {
       <TradeConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onConfirm={() => {}}
+        onOpen={() => setIsModalOpen(true)}
         high={highPrice}
         low={lowPrice}
         volume={volume}

@@ -6,11 +6,12 @@ import TradeStore from "@/store/TradeStore";
 import { useContext, useEffect, useState } from "react";
 import FF from "./FF";
 import First from "./First";
+import LoadingSpinner from "./LoadingSpinner"; // Make sure to create or import a loading spinner component
 
 export const TradeConfirmationModal = ({
   isOpen,
   onClose,
-  onConfirm,
+  onOpen,
   high,
   low,
   volume,
@@ -18,97 +19,78 @@ export const TradeConfirmationModal = ({
   candleColor,
 }) => {
   const { countdown, setCountdown } = useContext(contextProvider);
-  const [isConfirmed, setIsConfirmed] = useState(false);
-  const [forceOpen, setForceOpen] = useState(false); //reopen after time
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     tradingDetails,
-    tradingData,
     TradeUpdateRequest,
     openOrders,
     OpenOrdersRequest,
     OrderHistoryRequest,
+    tradePopupRequest,
   } = TradeStore();
+
+  const isFinalPopup =
+    openOrders[0]?.countdown_seconds === 0 && openOrders[0]?.is_popup_open === false;
+
   useEffect(() => {
-    if (isOpen && openOrders?.length > 0) {
-      setIsConfirmed(false);
-      setCountdown(openOrders[0]?.countdown_seconds);
+    // Show loading spinner when the final popup condition is met, but countdown is not yet 0
+    // This handles the brief period before the state is updated
+    if (isFinalPopup && openOrders[0]?.countdown_seconds > 0) {
+      setIsLoading(true);
     }
-  }, [isOpen, openOrders]);
+  }, [openOrders]);
 
   useEffect(() => {
-    if (countdown <= 0) return;
+    // Once the countdown is 0 and the final popup condition is met, show the FF component
+    if (isFinalPopup && countdown === 0) {
+      setIsLoading(false); // Hide spinner
+    }
+  }, [isFinalPopup, countdown]);
 
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          setIsConfirmed(true);
-          setForceOpen(true); // 👈 reopen with confirmed view
-
-          // call async function outside of state updater
-          const updateTrade = async () => {
-            try {
-              await TradeUpdateRequest(tradingDetails?.id, {
-                high,
-                low,
-                volume,
-                change: change,
-                profit: tradingDetails?.profit,
-              });
-            } catch (err) {
-              console.error("Trade update failed:", err);
-            }
-          };
-
-          updateTrade();
-          const apiCalls = async () => {
-            try {
-              await OpenOrdersRequest();
-              await OrderHistoryRequest();
-            } catch (err) {
-              console.error("Error getting open order history", err);
-            }
-          };
-          apiCalls();
-
-          return 0;
-        }
-        return prev - 1;
+  const handleClose = async () => {
+    if (isFinalPopup) {
+      await tradePopupRequest(openOrders[0]?.id);
+      await TradeUpdateRequest(openOrders[0]?.id, {
+        high,
+        low,
+        volume,
+        change,
       });
-    }, 1000);
+      await OpenOrdersRequest();
+      await OrderHistoryRequest();
+    }
+    onClose();
+  };
 
-    return () => clearInterval(timer);
-  }, [countdown]);
+  if (!openOrders[0]) {
+    return null;
+  }
 
-  if (!tradingDetails) return null;
+  const shouldShowFinalPopup = isFinalPopup && countdown === 0;
+  const shouldShowFirstPopup = openOrders[0]?.status === "pending" && countdown !== 0;
 
   return (
-    <Dialog
-      open={isOpen || forceOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          setForceOpen(false); // allow manual closing
-          onClose();
-        }
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md mx-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-lg sm:text-xl">{``}</DialogTitle>
         </DialogHeader>
-        {!isConfirmed ? (
-          <div className="space-y-4 sm:space-y-6">
-            <First
-              tradingDetails={tradingDetails}
-              high={high}
-              low={low}
-              volume={volume}
-              change={change}
-              candleColor={candleColor}
-            />
-          </div>
-        ) : (
+
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : shouldShowFirstPopup ? (
+          <First
+            tradingDetails={tradingDetails}
+            high={high}
+            low={low}
+            volume={volume}
+            change={change}
+            candleColor={candleColor}
+          />
+        ) : shouldShowFinalPopup ? (
           <FF />
-        )}
+        ) : null}
       </DialogContent>
     </Dialog>
   );

@@ -1,12 +1,12 @@
 "use client";
 
-import DWStore from '@/store/DWStore';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import DWStore from "@/store/DWStore";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function RechargeOrder() {
-  const [activeTab, setActiveTab] = useState('Pending');
+  const [activeTab, setActiveTab] = useState("Pending");
   const { withdrawHistoryRequest, withdrawHistory, isLoading } = DWStore();
 
   const tabs = [
@@ -16,14 +16,16 @@ export default function RechargeOrder() {
   ];
 
   // Current tab object
-  const activeTabItem = tabs.find(tab => tab.id === activeTab) || tabs[1];
+  const activeTabItem = tabs.find((tab) => tab.id === activeTab) || tabs[1];
 
   // Filter data for current tab
-  const filteredData = withdrawHistory?.filter(item => item.status === activeTabItem.status) || [];
+  const filteredData =
+    withdrawHistory?.filter((item) => item.status === activeTabItem.status) || [];
 
+  // 🔹 Fetch data whenever the component mounts OR tab changes
   useEffect(() => {
     withdrawHistoryRequest();
-  }, []);
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen container py-[40px] lg:py-[60px] font-inter antialiased">
@@ -37,7 +39,6 @@ export default function RechargeOrder() {
       </div>
 
       <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg dark:shadow-2xl border border-transparent dark:border-gray-800">
-
         {/* Tabs */}
         <div className="relative flex">
           {tabs.map((tab) => (
@@ -45,7 +46,11 @@ export default function RechargeOrder() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`relative px-6 py-4 text-center text-sm font-medium transition-colors duration-300
-                ${activeTab === tab.id ? 'text-primary-200' : 'text-gray-900 dark:text-white hover:text-primary-200'}
+                ${
+                  activeTab === tab.id
+                    ? "text-primary-200"
+                    : "text-gray-900 dark:text-white hover:text-primary-200"
+                }
               `}
               disabled={isLoading} // Disable tabs while loading
             >
@@ -66,7 +71,7 @@ export default function RechargeOrder() {
             {isLoading ? (
               // Display Loading Spinner when isLoading is true
               <motion.div
-                key="loading" // Unique key for AnimatePresence
+                key="loading"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -80,7 +85,7 @@ export default function RechargeOrder() {
               </motion.div>
             ) : (
               <motion.div
-                key={activeTabItem.id} 
+                key={activeTabItem.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -88,10 +93,14 @@ export default function RechargeOrder() {
               >
                 {filteredData.length > 0 ? (
                   <div className="space-y-4">
-                    {filteredData.map(item => (
+                    {filteredData.map((item) => (
                       <div key={item.id} className="p-4 border rounded-lg dark:border-gray-700">
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">{item.currency}</p>
-                        <p className="text-lg text-gray-900 font-semibold dark:text-white">Amount: {item.amount}</p>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {item.currency}
+                        </p>
+                        <p className="text-lg text-gray-900 font-semibold dark:text-white">
+                          Amount: {item.amount}
+                        </p>
                         <p className="text-sm capitalize dark:text-white">Status: {item.status}</p>
                       </div>
                     ))}

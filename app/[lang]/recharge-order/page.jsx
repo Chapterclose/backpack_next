@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 export default function RechargeOrder() {
   const [activeTab, setActiveTab] = useState("Pending");
   const { DepositHistoryRequest, depositHistory, isLoading } = DWStore();
+
   const tabs = [
     { id: "Approved", label: "Approved", status: "approved" },
     { id: "Pending", label: "Pending", status: "pending" },
@@ -21,9 +22,15 @@ export default function RechargeOrder() {
   // Filter data for current tab
   const filteredData = depositHistory?.filter((item) => item.status === activeTabItem.status) || [];
 
+  // Call API when component loads
   useEffect(() => {
     DepositHistoryRequest();
   }, []);
+
+  // Call API whenever tab changes
+  useEffect(() => {
+    DepositHistoryRequest();
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen container py-[40px] lg:py-[60px] font-inter antialiased">
@@ -50,7 +57,7 @@ export default function RechargeOrder() {
                     : "text-gray-900 dark:text-white hover:text-primary-200"
                 }
               `}
-              disabled={isLoading} // Disable tabs while data is loading
+              disabled={isLoading}
             >
               {tab.label}
               {activeTab === tab.id && (
@@ -67,9 +74,8 @@ export default function RechargeOrder() {
         <div className="p-8">
           <AnimatePresence mode="wait">
             {isLoading ? (
-              // Display Loading Spinner when isLoading is true
               <motion.div
-                key="loading" // Unique key for AnimatePresence to animate the loading state
+                key="loading"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -82,9 +88,8 @@ export default function RechargeOrder() {
                 </div>
               </motion.div>
             ) : (
-              // Display filtered data or "no data" message
               <motion.div
-                key={activeTabItem.id} // Key based on active tab for AnimatePresence
+                key={activeTabItem.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -93,7 +98,10 @@ export default function RechargeOrder() {
                 {filteredData.length > 0 ? (
                   <div className="space-y-4">
                     {filteredData.map((item) => (
-                      <div key={item.id} className="p-4 border rounded-lg dark:border-gray-700 flex justify-between">
+                      <div
+                        key={item.id}
+                        className="p-4 border rounded-lg dark:border-gray-700 flex justify-between"
+                      >
                         <div>
                           <p className="text-lg font-semibold text-gray-900 dark:text-white">
                             {item.currency}
@@ -106,12 +114,9 @@ export default function RechargeOrder() {
                           </p>
                         </div>
                         <div>
-                          {item.screenshot !== "" && <Image
-                            src={item?.screenshot !== "" && item?.screenshot}
-                            alt="recharge"
-                            height={100}
-                            width={100}
-                          />}
+                          {item.screenshot !== "" && (
+                            <Image src={item?.screenshot} alt="recharge" height={100} width={100} />
+                          )}
                         </div>
                       </div>
                     ))}

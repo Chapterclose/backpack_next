@@ -8,7 +8,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast"; // Import react-hot-toast
 import Button from "../Form/Button";
 
-function BuySell({ coin, handleTrade, AccountBalance, currentPrice, high, low, volume, change }) {
+function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume, change }) {
   // State for managing the pop-up, selected period, and purchase volume
   const [activePopup, setActivePopup] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("60s");
@@ -180,12 +180,7 @@ function BuySell({ coin, handleTrade, AccountBalance, currentPrice, high, low, v
       const res = await TradeBuySellRequest(tradeData);
       if (res.status === 201) {
         closePopup();
-        handleTrade({
-          type: tradeType,
-          amount: amount,
-          price: 100, // This also likely needs to be dynamic
-          timeframe: selectedPeriod,
-        });
+        onOpen();
         toast.success(`Trade ${tradeType.toUpperCase()} successful!`); // Success toast
         await TradeDetailsRequest(res?.data?.trade?.id);
         await OpenOrdersRequest(); // Re-fetch open orders after a successful trade
