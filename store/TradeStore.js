@@ -99,6 +99,18 @@ const TradeStore = create(
         }
       },
 
+      transferRequest: async (body) => {
+        try {
+          set({ isLoading: true });
+          let res = await api.post(`/trade/transfer/`,body);
+          console.log(res)
+        } catch (e) {
+          console.log(e);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
 
       
     }),
