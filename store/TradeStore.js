@@ -86,6 +86,33 @@ const TradeStore = create(
           set({ isLoading: false });
         }
       },
+
+      tradePopupRequest: async (id) => {
+        try {
+          set({ isLoading: true });
+          let res = await api.patch(`/trade/trade-popup-update/${id}/`);
+          // console.log(res)
+        } catch (e) {
+          console.log(e);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      transferRequest: async (body) => {
+        try {
+          set({ isLoading: true });
+          let res = await api.post(`/trade/transfer/`,body);
+          console.log(res)
+        } catch (e) {
+          console.log(e);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+
+      
     }),
     {
       name: "trade-store",

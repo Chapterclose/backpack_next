@@ -22,7 +22,7 @@ function AssetDetails({ showBalance }) {
             <h4 className="font-medium">
               {showBalance
                 ? AccountBalance?.USDT?.available
-                  ? AmountWithCommas(AccountBalance?.USDT?.available)
+                  ? AmountWithCommas(AccountBalance?.USDT?.available, "usd")
                   : "0"
                 : "****"}
             </h4>
@@ -30,13 +30,13 @@ function AssetDetails({ showBalance }) {
           <div>
             <h4 className="text-black dark:text-white">Locked</h4>
             <h4 className="font-medium">
-              {showBalance ? AmountWithCommas(AccountBalance?.USDT?.locked) : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.USDT?.locked, "usd") : "****"}
             </h4>
           </div>
           <div>
             <h4 className="text-black dark:text-white">Total</h4>
             <h4 className="font-medium">
-              {showBalance ? AmountWithCommas(AccountBalance?.USDT?.total) : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.USDT?.total, "usd") : "****"}
             </h4>
           </div>
         </div>
@@ -50,19 +50,19 @@ function AssetDetails({ showBalance }) {
           <div>
             <h4 className="text-black dark:text-white">Available</h4>
             <h4 className="font-medium">
-              {showBalance ? AccountBalance?.BTC?.available : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.BTC?.available, "btc") : "****"}
             </h4>
           </div>
           <div>
             <h4 className="text-black dark:text-white">Locked</h4>
             <h4 className="font-medium">
-              {showBalance ? AccountBalance?.BTC?.locked : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.BTC?.locked, "btc") : "****"}
             </h4>
           </div>
           <div>
             <h4 className="text-black dark:text-white">Total</h4>
             <h4 className="font-medium">
-              {showBalance ? AccountBalance?.BTC?.total : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.BTC?.total, "btc") : "****"}
             </h4>
           </div>
         </div>
@@ -76,19 +76,19 @@ function AssetDetails({ showBalance }) {
           <div>
             <h4 className="text-black dark:text-white">Available</h4>
             <h4 className="font-medium">
-              {showBalance ? AccountBalance?.ETH?.available : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.ETH?.available, "eth") : "****"}
             </h4>
           </div>
           <div>
             <h4 className="text-black dark:text-white">Locked</h4>
             <h4 className="font-medium">
-              {showBalance ? AccountBalance?.ETH?.locked : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.ETH?.locked, "eth") : "****"}
             </h4>
           </div>
           <div>
             <h4 className="text-black dark:text-white">Total</h4>
             <h4 className="font-medium">
-              {showBalance ? AccountBalance?.ETH?.total : "****"}
+              {showBalance ? AmountWithCommas(AccountBalance?.ETH?.total, "eth") : "****"}
             </h4>
           </div>
         </div>
