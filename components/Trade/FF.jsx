@@ -7,8 +7,7 @@ import React from "react";
 import { twMerge } from "tailwind-merge";
 
 export default function FF() {
-  const {  openOrders } = TradeStore();
-  console.log(openOrders);
+  const { openOrders } = TradeStore();
   const isNegative = Number(openOrders[0]?.change) < 0;
 
   // Helper function to render a single metric item
