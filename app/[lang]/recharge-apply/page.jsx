@@ -16,7 +16,7 @@ function RechargeApply() {
   const fileInputRef = useRef(null);
   const { GeRechargeAddressRequest, rechargeAddress, RechargeDepositRequest, isLoading } =
     DWStore();
-  const navigate = useRouter()
+  const navigate = useRouter();
 
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
@@ -101,8 +101,7 @@ function RechargeApply() {
       setSelectedScreenshot(null);
       setScreenshotPreview(null); // Clear preview after successful submission
       fileInputRef.current.value = "";
-      navigate.push("/recharge-order")
-      
+      navigate.push("/recharge-order");
     } catch (error) {
       console.error("Error submitting recharge:", error.message);
       alert(`Error: ${error.message}`);
@@ -129,23 +128,25 @@ function RechargeApply() {
       </div>
 
       {rechargeAddress !== null && (
-        <QRCode
-          size={200}
-          style={{ height: "200", maxWidth: "100%", width: "200", margin: "0 auto" }}
-          value={rechargeAddress}
-          viewBox={`0 0 200 200`}
-        />
+        <div className="bg-white h-[200px] w-[200px] mx-auto p-1 rounded">
+          <QRCode
+            size={200}
+            style={{ height: "200", maxWidth: "100%", width: "200", margin: "0 auto" , paddingBottom:"7px"}}
+            value={rechargeAddress}
+            viewBox={`0 0 200 200`}
+          />
+        </div>
       )}
 
       <div className="mt-5 mb-5 relative">
         <h4 className="text-lg mb-2 block font-medium dark:text-white">
           Recharge Address (<span className="uppercase">{coin}</span>)
         </h4>
-        <p className="flex items-center gap-x-3 dark:text-white text-gray-900 text-xs lg:text-base">
-          {rechargeAddress === "" ? "Loading..." : rechargeAddress}
+        <p className="flex items-center gap-x-3 dark:text-white text-gray-900 text-[14px] lg:text-base tracking-wide">
+          {rechargeAddress === "" && isLoading ? "0xa8d2bbE4b181948B8C78709c3603E91DCd25Ff06" : rechargeAddress}
           <Copy className="text-green-500 cursor-pointer w-4 h-4" onClick={copyToClipboard} />
           {copiedMessage && (
-            <span className="absolute top-2 left-[250px] lg:left-[350px] bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+            <span className="absolute top-2 left-[270px] lg:left-[350px] bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
               Copied!
             </span>
           )}

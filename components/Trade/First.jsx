@@ -43,8 +43,8 @@ export default function First({ tradingDetails, high, low, volume, change, candl
   const progress = (countdown / 60) * 360;
 
   return (
-    <div className="flex bg-slate-900 justify-center p-2 sm:p-4 max-h-screen overflow-y-auto max-w-xl mx-auto">
-      <div className="text-white rounded-xl shadow-lg p-4 w-full">
+    <div className="flex justify-center p-2 sm:p-4 max-h-screen">
+      <div className="text-white rounded-xl shadow-lg p-4 w-full bg-slate-900">
         {/* Animated Countdown Timer */}
         <div className="relative flex justify-center items-center my-4">
           <div
