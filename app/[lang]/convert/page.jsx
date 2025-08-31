@@ -93,10 +93,16 @@ const ConvertPage = () => {
 
   const handleSwap = () => {
     if (!isFromDropdownOpen && !isToDropdownOpen) {
-      setFromCurrency(toCurrency);
-      setToCurrency(fromCurrency);
-      setFromValue(toValue);
-      setToValue(fromValue);
+      const newFromCurrency = toCurrency;
+      const newToCurrency = fromCurrency;
+
+      const formattedFromValue = formatAmountByCurrency(toValue, newFromCurrency);
+      const formattedToValue = formatAmountByCurrency(fromValue, newToCurrency);
+
+      setFromCurrency(newFromCurrency);
+      setToCurrency(newToCurrency);
+      setFromValue(formattedFromValue);
+      setToValue(formattedToValue);
     }
   };
 
@@ -104,6 +110,45 @@ const ConvertPage = () => {
     type === "from" ? setFromCurrency(currency) : setToCurrency(currency);
     type === "from" ? setIsFromDropdownOpen(false) : setIsToDropdownOpen(false);
     setSuccessMessage("");
+  };
+
+  const formatAmountByCurrency = (amount, currency) => {
+    if (amount === null || amount === undefined || amount === "") return "";
+
+    const num = Number(amount);
+    if (isNaN(num)) return "";
+
+    const lower = currency?.toLowerCase();
+    let decimalPlaces = 2; // default for USD/others
+
+    if (lower === "btc" || lower === "eth") {
+      decimalPlaces = 7;
+    }
+
+    // Truncate instead of rounding
+    const factor = Math.pow(10, decimalPlaces);
+    const truncated = Math.trunc(num * factor) / factor;
+
+    // Convert to string with fixed decimals
+    return truncated.toFixed(decimalPlaces);
+  };
+
+  const handleInputChange = (e, currency, setValue) => {
+    let value = e.target.value;
+
+    // Allow only numbers and dot
+    if (!/^\d*\.?\d*$/.test(value)) return;
+
+    const lower = currency?.toLowerCase();
+    const decimalPlaces = lower === "btc" || lower === "eth" ? 7 : 2;
+
+    // If there's a decimal, limit digits after decimal
+    if (value.includes(".")) {
+      const [intPart, decPart] = value.split(".");
+      value = intPart + "." + decPart.slice(0, decimalPlaces);
+    }
+
+    setValue(value);
   };
 
   const handleConfirm = async () => {
@@ -150,7 +195,7 @@ const ConvertPage = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-dark text-gray-700 dark:text-gray-300">
-        <p>Loading prices...</p>
+        <p>Loading convert...</p>
       </div>
     );
   }
@@ -162,7 +207,7 @@ const ConvertPage = () => {
 
         <div className="text-center mb-6">
           <p className="text-5xl font-bold mb-2 text-gray-900 dark:text-gray-100">
-            {AmountWithCommas(availableBalances[fromCurrency],fromCurrency)}
+            {AmountWithCommas(availableBalances[fromCurrency], fromCurrency)}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Available balance ({fromCurrency})
@@ -181,21 +226,26 @@ const ConvertPage = () => {
               type="number"
               placeholder="Please enter"
               value={fromValue}
-              onChange={(e) => {
-                setFromValue(e.target.value);
-                setSuccessMessage("");
-              }}
+              onChange={(e) => handleInputChange(e, fromCurrency, setFromValue)}
+              onBlur={() => setFromValue(formatAmountByCurrency(fromValue, fromCurrency))}
               className="bg-transparent text-xl font-medium w-full outline-none placeholder-gray-400 text-gray-900 dark:text-gray-100"
             />
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               <button
                 className="text-xs text-green-500 font-semibold hover:text-green-600"
-                onClick={() => setFromValue(availableBalances[fromCurrency].replace(/,/g, ""))}
+                onClick={() =>
+                  setFromValue(
+                    formatAmountByCurrency(
+                      availableBalances[fromCurrency].replace(/,/g, ""),
+                      fromCurrency
+                    )
+                  )
+                }
               >
                 Max
               </button>
               <div
-                className="flex items-center cursor-pointer gap-x-1"
+                className="flex items-center cursor-pointer gap-x-2 ml-4 pr-3"
                 onClick={() => setIsFromDropdownOpen(!isFromDropdownOpen)}
               >
                 <span className="font-bold text-gray-900 dark:text-gray-100 text-right">
@@ -261,14 +311,15 @@ const ConvertPage = () => {
             <input
               type="text"
               readOnly
-              value={AmountWithCommas(toValue,toCurrency)}
+              onChange={(e) => handleInputChange(e, toCurrency, setToValue)}
+              value={AmountWithCommas(toValue, toCurrency)}
               className="bg-transparent text-xl font-medium w-full outline-none text-gray-900 dark:text-gray-100"
             />
             <div
-              className="flex items-center cursor-pointer"
+              className="flex items-center cursor-pointer gap-x-2 pr-1 lg:pr-0"
               onClick={() => setIsToDropdownOpen(!isToDropdownOpen)}
             >
-              <span className="font-bold text-gray-900 dark:text-gray-100 min-w-[75px] text-right">
+              <span className="font-bold text-gray-900 dark:text-gray-100 text-right">
                 {toCurrency}
               </span>
               <Image

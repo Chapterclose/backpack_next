@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import FF from "./FF";
 import First from "./First";
 import LoadingSpinner from "./LoadingSpinner"; // Make sure to create or import a loading spinner component
+import UserStore from "@/store/UserStore";
 
 export const TradeConfirmationModal = ({
   isOpen,
@@ -29,6 +30,7 @@ export const TradeConfirmationModal = ({
     OrderHistoryRequest,
     tradePopupRequest,
   } = TradeStore();
+  const {GetAccountBalanceRequest} = UserStore()
 
   const isFinalPopup =
     openOrders[0]?.countdown_seconds === 0 && openOrders[0]?.is_popup_open === false;
@@ -59,6 +61,7 @@ export const TradeConfirmationModal = ({
       });
       await OpenOrdersRequest();
       await OrderHistoryRequest();
+      await GetAccountBalanceRequest()
     }
     onClose();
   };
