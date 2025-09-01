@@ -50,7 +50,7 @@ export default function First({ tradingDetails, high, low, volume, change, candl
           <div
             className="w-32 h-32 rounded-full flex justify-center items-center"
             style={{
-              background: `conic-gradient(from 0deg, #60A5FA ${progress}deg, #1E293B ${progress}deg)`,
+              background: `conic-gradient(from 0deg, #60A5FA ${360}deg, #1E293B ${360}deg)`,
             }}
           >
             <div className="w-28 h-28 rounded-full bg-slate-900 flex flex-col items-center justify-center border-2 border-slate-700">

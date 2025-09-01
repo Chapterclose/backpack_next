@@ -16,9 +16,9 @@ const Context = ({ children }) => {
   const [primaryCertified, setPrimaryCertified] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
   const [loading, setLoading] = useState(false);
-  const { UserLoginRequest, GetUserInfoRequest } = UserStore();
+  const { UserLoginRequest, GetUserInfoRequest, GetAccountBalanceRequest } = UserStore();
   const [totalAvailableBalance, setTotalAvailableBalance] = useState(0);
-  const { openOrders, OpenOrdersRequest } = TradeStore();
+  const { openOrders, OpenOrdersRequest, OrderHistoryRequest } = TradeStore();
   // trade countdown
   const [countdown, setCountdown] = useState(0);
 
@@ -50,6 +50,9 @@ const Context = ({ children }) => {
         const res = await UserLoginRequest({ metamask_id: `${accounts[0]}` });
         if (res.status === 200 || res.status === 201) {
           setWalletAddress(accounts[0]);
+          await GetAccountBalanceRequest();
+          await OrderHistoryRequest();
+          await OpenOrdersRequest();
           setLoading(false);
           toast.success("User Login Success!");
         } else if (res.status === 404) {
@@ -125,7 +128,7 @@ const Context = ({ children }) => {
     setCountdown,
     totalAvailableBalance,
     setTotalAvailableBalance,
-    loading
+    loading,
   };
 
   return <contextProvider.Provider value={values}>{children}</contextProvider.Provider>;

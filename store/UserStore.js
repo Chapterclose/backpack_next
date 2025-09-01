@@ -60,6 +60,8 @@ const UserStore = create(
           return res;
         } catch (e) {
           console.log(e);
+          e.status === 401 && set({ AccountBalance: {} });
+
           return e;
         } finally {
           set({ isUserLogin: false });

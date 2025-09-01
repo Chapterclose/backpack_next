@@ -1,5 +1,4 @@
 import api from "@/lib/utils";
-import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -67,6 +66,7 @@ const TradeStore = create(
           return res;
         } catch (e) {
           console.log(e);
+          set({ openOrders: [] });
         } finally {
           set({ isLoading: false });
         }
@@ -82,6 +82,7 @@ const TradeStore = create(
           }
         } catch (e) {
           console.log(e);
+          set({ orderHistory: [] });
         } finally {
           set({ isLoading: false });
         }
@@ -102,17 +103,14 @@ const TradeStore = create(
       transferRequest: async (body) => {
         try {
           set({ isLoading: true });
-          let res = await api.post(`/trade/transfer/`,body);
-          console.log(res)
+          let res = await api.post(`/trade/transfer/`, body);
+          console.log(res);
         } catch (e) {
           console.log(e);
         } finally {
           set({ isLoading: false });
         }
       },
-
-
-      
     }),
     {
       name: "trade-store",

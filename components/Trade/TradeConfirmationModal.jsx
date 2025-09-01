@@ -47,6 +47,7 @@ export const TradeConfirmationModal = ({
       await GetAccountBalanceRequest();
     }
     onClose();
+    // localStorage.removeItem("countdown")
   };
 
   if (!openOrders[0]) {
