@@ -34,7 +34,6 @@ function RechargeApply() {
     if (file) {
       setSelectedScreenshot(file);
       setScreenshotError(""); // Clear error if file is selected
-      // Create a URL for the selected file and set it for preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setScreenshotPreview(reader.result);
@@ -46,7 +45,6 @@ function RechargeApply() {
     }
   };
 
-  // Function to copy text to clipboard
   const copyToClipboard = async () => {
     if (rechargeAddress) {
       try {
@@ -67,7 +65,6 @@ function RechargeApply() {
   }, []);
 
   const handleSubmit = async () => {
-    // Validation
     let hasError = false;
 
     const amount = parseFloat(rechargeAmount);
@@ -86,11 +83,10 @@ function RechargeApply() {
     }
 
     if (hasError) {
-      return; // Stop if there are validation errors
+      return;
     }
     const currency = coin ? coin.toUpperCase() : "";
 
-    // Create FormData object
     const formData = new FormData();
     formData.append("currency", currency);
     formData.append("amount", amount);
@@ -99,7 +95,7 @@ function RechargeApply() {
       await RechargeDepositRequest(formData);
       setRechargeAmount("");
       setSelectedScreenshot(null);
-      setScreenshotPreview(null); // Clear preview after successful submission
+      setScreenshotPreview(null);
       fileInputRef.current.value = "";
       navigate.push("/recharge-order");
     } catch (error) {
@@ -107,6 +103,19 @@ function RechargeApply() {
       alert(`Error: ${error.message}`);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container py-[40px] lg:py-[60px]">
+        <div className="max-w-2xl mx-auto mb-5 animate-pulse">
+          <div className="h-8 w-32 bg-gray-300 rounded mb-3"></div>
+          <div className="h-6 w-20 bg-gray-300 rounded"></div>
+        </div>
+        <div className="h-72 bg-gray-200 rounded mb-10 animate-pulse"></div>
+        <div className="h-96 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-[60px]">
@@ -131,7 +140,13 @@ function RechargeApply() {
         <div className="bg-white h-[200px] w-[200px] mx-auto p-1 rounded">
           <QRCode
             size={200}
-            style={{ height: "200", maxWidth: "100%", width: "200", margin: "0 auto" , paddingBottom:"7px"}}
+            style={{
+              height: "200",
+              maxWidth: "100%",
+              width: "200",
+              margin: "0 auto",
+              paddingBottom: "7px",
+            }}
             value={rechargeAddress}
             viewBox={`0 0 200 200`}
           />
@@ -143,7 +158,9 @@ function RechargeApply() {
           Recharge Address (<span className="uppercase">{coin}</span>)
         </h4>
         <p className="flex items-center gap-x-3 dark:text-white text-gray-900 text-[14px] lg:text-base tracking-wide">
-          {rechargeAddress === "" && isLoading ? "0xa8d2bbE4b181948B8C78709c3603E91DCd25Ff06" : rechargeAddress}
+          {rechargeAddress === "" && isLoading
+            ? "0xa8d2bbE4b181948B8C78709c3603E91DCd25Ff06"
+            : rechargeAddress}
           <Copy className="text-green-500 cursor-pointer w-4 h-4" onClick={copyToClipboard} />
           {copiedMessage && (
             <span className="absolute top-2 left-[270px] lg:left-[350px] bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
@@ -170,15 +187,13 @@ function RechargeApply() {
       {amountError && <p className="text-red-500 text-sm mb-5 md:max-w-[375px]">{amountError}</p>}
 
       <div className="mb-2">
-        {" "}
-        {/* Reduced margin for error message */}
         <h4 className="text-lg mb-2 block font-medium dark:text-white">
           Upload Screenshot or payment details
         </h4>
         <div
           className={twMerge(
             "w-full px-3 py-3 border-[1px] border-gray-300 dark:border-white rounded-md shadow-sm",
-            "h-36 flex items-center justify-center cursor-pointer overflow-hidden", // Added overflow-hidden
+            "h-36 flex items-center justify-center cursor-pointer overflow-hidden",
             "hover:border-primary hover:ring-1 hover:ring-primary transition",
             "dark:bg-gray-700 dark:text-white",
             "md:max-w-[375px]",
@@ -186,7 +201,7 @@ function RechargeApply() {
           )}
           onClick={handleClick}
         >
-          {screenshotPreview ? ( // Conditionally render image preview
+          {screenshotPreview ? (
             <img
               src={screenshotPreview}
               alt="Screenshot Preview"
@@ -211,7 +226,7 @@ function RechargeApply() {
       <Button
         text="Confirm Recharge"
         className={"mt-5 w-full md:w-auto"}
-        handleFunc={handleSubmit} // Attach handleSubmit here
+        handleFunc={handleSubmit}
       />
     </div>
   );
