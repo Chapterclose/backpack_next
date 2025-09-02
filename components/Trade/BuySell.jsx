@@ -233,7 +233,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
       <div className="mt-10 lg:mt-14">
         {walletAddress === "" ? (
           <div className="text-center">
-            <Button handleFunc={connectWallet} text={"Log In"} />
+            <Button handleFunc={connectWallet} text={"Connect"} />
           </div>
         ) : (
           <div className="flex justify-center gap-x-4 fixed bottom-[90px] lg:bottom-5 left-1/2 -translate-x-1/2 z-[99]">

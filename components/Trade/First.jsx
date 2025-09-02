@@ -43,14 +43,14 @@ export default function First({ tradingDetails, high, low, volume, change, candl
   const progress = (countdown / 60) * 360;
 
   return (
-    <div className="flex bg-slate-900 justify-center p-2 sm:p-4 max-h-screen overflow-y-auto max-w-xl mx-auto">
-      <div className="text-white rounded-xl shadow-lg p-4 w-full">
+    <div className="flex justify-center p-2 sm:p-4 max-h-screen">
+      <div className="text-white rounded-xl shadow-lg p-4 w-full bg-slate-900">
         {/* Animated Countdown Timer */}
         <div className="relative flex justify-center items-center my-4">
           <div
             className="w-32 h-32 rounded-full flex justify-center items-center"
             style={{
-              background: `conic-gradient(from 0deg, #60A5FA ${progress}deg, #1E293B ${progress}deg)`,
+              background: `conic-gradient(from 0deg, #60A5FA ${360}deg, #1E293B ${360}deg)`,
             }}
           >
             <div className="w-28 h-28 rounded-full bg-slate-900 flex flex-col items-center justify-center border-2 border-slate-700">

@@ -3,11 +3,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { contextProvider } from "@/contexts/Context";
 import TradeStore from "@/store/TradeStore";
-import { useContext, useEffect, useState } from "react";
+import UserStore from "@/store/UserStore";
+import { useContext } from "react";
 import FF from "./FF";
 import First from "./First";
-import LoadingSpinner from "./LoadingSpinner"; // Make sure to create or import a loading spinner component
-import UserStore from "@/store/UserStore";
 
 export const TradeConfirmationModal = ({
   isOpen,
@@ -20,7 +19,6 @@ export const TradeConfirmationModal = ({
   candleColor,
 }) => {
   const { countdown, setCountdown } = useContext(contextProvider);
-  const [isLoading, setIsLoading] = useState(false);
 
   const {
     tradingDetails,
@@ -30,25 +28,10 @@ export const TradeConfirmationModal = ({
     OrderHistoryRequest,
     tradePopupRequest,
   } = TradeStore();
-  const {GetAccountBalanceRequest} = UserStore()
+  const { GetAccountBalanceRequest } = UserStore();
 
   const isFinalPopup =
     openOrders[0]?.countdown_seconds === 0 && openOrders[0]?.is_popup_open === false;
-
-  useEffect(() => {
-    // Show loading spinner when the final popup condition is met, but countdown is not yet 0
-    // This handles the brief period before the state is updated
-    if (isFinalPopup && openOrders[0]?.countdown_seconds > 0) {
-      setIsLoading(true);
-    }
-  }, [openOrders]);
-
-  useEffect(() => {
-    // Once the countdown is 0 and the final popup condition is met, show the FF component
-    if (isFinalPopup && countdown === 0) {
-      setIsLoading(false); // Hide spinner
-    }
-  }, [isFinalPopup, countdown]);
 
   const handleClose = async () => {
     if (isFinalPopup) {
@@ -61,9 +44,10 @@ export const TradeConfirmationModal = ({
       });
       await OpenOrdersRequest();
       await OrderHistoryRequest();
-      await GetAccountBalanceRequest()
+      await GetAccountBalanceRequest();
     }
     onClose();
+    // localStorage.removeItem("countdown")
   };
 
   if (!openOrders[0]) {
@@ -80,9 +64,7 @@ export const TradeConfirmationModal = ({
           <DialogTitle className="text-center text-lg sm:text-xl">{``}</DialogTitle>
         </DialogHeader>
 
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : shouldShowFirstPopup ? (
+        {shouldShowFirstPopup ? (
           <First
             tradingDetails={tradingDetails}
             high={high}
@@ -93,7 +75,9 @@ export const TradeConfirmationModal = ({
           />
         ) : shouldShowFinalPopup ? (
           <FF />
-        ) : null}
+        ) : (
+          <div className="text-center font-semibold pt-5 text-green-500 pb-14">Trade Loading...</div>
+        )}
       </DialogContent>
     </Dialog>
   );

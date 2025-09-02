@@ -17,7 +17,7 @@ import UserMenu from "./UserMenu";
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [error, setError] = useState(false);
-  const { isLoggedIn, setIsLoggedIn, walletAddress, setWalletAddress, connectWallet } =
+  const { isLoggedIn, setIsLoggedIn, walletAddress, setWalletAddress, connectWallet, loading } =
     useContext(contextProvider);
   const { UserData } = UserStore();
   const router = useRouter();
@@ -95,6 +95,7 @@ const Header = () => {
               </div>
             ) : (
               <button
+                disabled={loading}
                 onClick={connectWallet}
                 className="bg-primary hover:bg-primary-200 font-medium text-black p-[5px_20px] rounded cursor-pointer"
               >

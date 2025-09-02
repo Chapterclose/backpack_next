@@ -43,11 +43,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
         </div>
       </div>
       <h3 className="text-3xl font-semibold text-black dark:text-white mt-2">
-        {showBalance
-          ? AccountBalance?.USDT?.available
-            ? AmountWithCommas(totalAvailableBalance)
-            : "0"
-          : "****"}
+        {showBalance ? AmountWithCommas(totalAvailableBalance) : "****"}
       </h3>
 
       {isLoading && (

@@ -104,14 +104,16 @@ const OrderTable = ({ orders, isOpen, high, low, volume, countdown, change, cand
   return (
     <>
       {isOpen ? (
-        <First
-          tradingDetails={orders[0]}
-          high={high}
-          low={low}
-          volume={volume}
-          change={change}
-          candleColor={candleColor}
-        />
+        <div className="max-w-xl mx-auto">
+          <First
+            tradingDetails={orders[0]}
+            high={high}
+            low={low}
+            volume={volume}
+            change={change}
+            candleColor={candleColor}
+          />
+        </div>
       ) : (
         orders?.map((order, i) => <HistoryCard key={i} order={order} />)
       )}
