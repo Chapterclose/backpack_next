@@ -238,7 +238,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
         ) : (
           <div className="flex justify-center gap-x-4 fixed bottom-[90px] lg:bottom-5 left-1/2 -translate-x-1/2 z-[99]">
             <button
-              className={`px-15 lg:px-20 py-3 cursor-pointer bg-green-500 text-white font-bold rounded transition-colors ${
+              className={`px-15 lg:px-20 py-3 cursor-pointer bg-green-500 text-white font-bold rounded-lg transition-colors uppercase tracking-wider ${
                 isTradeRunning ? "opacity-80 !cursor-not-allowed" : "hover:bg-green-600"
               }`}
               onClick={() => {
@@ -255,7 +255,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
               Buy
             </button>
             <button
-              className={`px-15 lg:px-20 py-3 cursor-pointer bg-red-500 text-white font-bold rounded transition-colors ${
+              className={`px-15 lg:px-20 py-3 cursor-pointer bg-red-500 text-white font-bold rounded-lg transition-colors uppercase tracking-wider ${
                 isTradeRunning ? "opacity-80 !cursor-not-allowed" : "hover:bg-red-600"
               }`}
               onClick={() => {

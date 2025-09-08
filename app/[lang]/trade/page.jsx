@@ -3,6 +3,7 @@
 import BuySell from "@/components/Trade/BuySell";
 import OrderBook from "@/components/Trade/OrderBook";
 import { OrderHistory } from "@/components/Trade/OrderHistory";
+import RealTimePriceDisplay from "@/components/Trade/RealTimePriceDisplay";
 import StockChart from "@/components/Trade/StockChart";
 import { TradeConfirmationModal } from "@/components/Trade/TradeConfirmationModal";
 import { contextProvider } from "@/contexts/Context";
@@ -152,7 +153,7 @@ export default function TradePage() {
 
   return (
     <div className="container py-[40px] lg:py-[60px]">
-      <div className="max-w-2xl mx-auto mb-5">
+      {/* <div className="max-w-2xl mx-auto mb-5">
         <h3 className="uppercase dark:text-white font-semibold text-3xl">{coin}/USDT</h3>
         <h4
           className={`font-semibold ${
@@ -161,10 +162,17 @@ export default function TradePage() {
         >
           {priceChangePercentage}%
         </h4>
-      </div>
-
-      <OrderBook coin={coin} />
-
+      </div> */}
+      <RealTimePriceDisplay
+        currentPrice={currentPrice}
+        priceChangePercentage={priceChangePercentage}
+        highPrice={highPrice}
+        lowPrice={lowPrice}
+        volume={volume}
+        coin={coin}
+        currentCandleData={currentCandleData}
+        stockChartLegendData={stockChartLegendData}
+      />
       <div className="mt-10">
         <StockChart
           highPrice={highPrice}
@@ -178,6 +186,7 @@ export default function TradePage() {
           coin={coin}
         />
       </div>
+      <OrderBook coin={coin} />
 
       <OrderHistory
         high={highPrice}

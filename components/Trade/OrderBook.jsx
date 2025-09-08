@@ -72,7 +72,7 @@ export default function OrderBook({ coin }) {
   if (loading) return <OrderBookSkeleton coin={coin} />; // ✅ Show skeleton
 
   return (
-    <div className="grid grid-cols-2 gap-6 p-4 dark:bg-[#0d1117] text-white rounded-lg max-w-2xl mx-auto">
+    <div className="grid grid-cols-2 gap-6 p-4 dark:bg-[#0d1117] text-white rounded-lg max-w-2xl mx-auto mt-8">
       {/* Asks - Sellers */}
       <div>
         <HeadingRow />

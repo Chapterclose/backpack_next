@@ -149,7 +149,7 @@ function StockChart({
       className="relative dark:text-white h-[440px] border-gray-100   box-content mb-1"
     >
       <div className="absolute top-2 left-5 z-20 flex flex-col lg:flex-row w-full flex-wrap gap-x-2">
-        <p className="text-secondary text-xs"> </p>
+        {/* <p className="text-secondary text-xs"> </p>
         <p className="text-secondary text-xs">
           Vol: <span style={{ color: candleColor }}>{volume}</span>
         </p>
@@ -158,7 +158,7 @@ function StockChart({
         </p>
         <p className="text-secondary text-xs">
           Low: <span style={{ color: candleColor }}>{lowPrice}</span>
-        </p>
+        </p> */}
         <p className="text-secondary text-xs">
           Close:{" "}
           <span style={{ color: candleColor }}>{stockChartLegendData?.close?.toFixed(2)}</span>
@@ -186,10 +186,10 @@ function StockChart({
         <div
           className="absolute top-8 right-2 lg:right-5 z-20 font-bold"
           style={{
-            color: currentCandleData.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
+            color: currentCandleData?.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
           }}
         >
-          <span>{currentCandleData.close?.toFixed(2)}</span>
+          <span>{currentCandleData?.close?.toFixed(2)}</span>
         </div>
       )}
     </div>
