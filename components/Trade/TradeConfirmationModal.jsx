@@ -76,7 +76,9 @@ export const TradeConfirmationModal = ({
         ) : shouldShowFinalPopup ? (
           <FF />
         ) : (
-          <div className="text-center font-semibold pt-5 text-green-500 pb-14">Trade Loading...</div>
+          <div className="text-center font-semibold pt-5 text-green-500 pb-14">
+            Trade Loading...
+          </div>
         )}
       </DialogContent>
     </Dialog>
