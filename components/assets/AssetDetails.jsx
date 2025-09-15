@@ -23,7 +23,7 @@ function AssetDetails({ showBalance }) {
               {showBalance
                 ? AccountBalance?.USDT?.available
                   ? AmountWithCommas(AccountBalance?.USDT?.available, "usd")
-                  : "0"
+                  : "0.00"
                 : "****"}
             </h4>
           </div>
