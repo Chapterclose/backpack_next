@@ -2,124 +2,77 @@
 
 import { createChart } from "lightweight-charts";
 import { useTheme } from "next-themes";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+const INTERVALS = [
+  { value: "1m", label: "1m", limit: 200 },
+  { value: "5m", label: "5m", limit: 200 },
+  { value: "15m", label: "15m", limit: 200 },
+  { value: "1h", label: "1h", limit: 200 },
+  { value: "1d", label: "1d", limit: 100 },
+];
 
 function StockChart({
-  highPrice,
-  lowPrice,
-  volume,
-  hoverdCandleData,
   currentCandleData,
   stockChartLegendData,
   hoveredSetCandleData,
   setCurrentCandleData,
   coin,
 }) {
-  const { __, resolvedTheme } = useTheme();
-
+  const { resolvedTheme } = useTheme();
   const chartRef = useRef(null);
-
-  const stockChartColors =
-    resolvedTheme === "dark"
-      ? {
-          background: "#161A1E",
-          textColor: "#848e9c",
-          linesColor: "#2b3139",
-          borderColor: "#2b3139",
-        }
-      : {
-          background: "#ffffff",
-          textColor: "#848e9c",
-          linesColor: "#e9ecf2",
-          borderColor: "#e9ecf2",
-        };
+  const chartInstanceRef = useRef(null);
+  const mainSeriesRef = useRef(null);
+  const wsRef = useRef(null);
+  const tradeWsRef = useRef(null);
+  const [selectedInterval, setSelectedInterval] = useState("1m");
+  const [isConnected, setIsConnected] = useState(false);
+  const currentCandleRef = useRef(null);
 
   useEffect(() => {
-    if (!chartRef.current) return;
+    if (!chartRef.current || !coin) return;
+
+    const bgColor = resolvedTheme === "dark" ? "#161A1E" : "#ffffff";
+    const textColor = resolvedTheme === "dark" ? "#848e9c" : "#848e9c";
+    const lineColor = resolvedTheme === "dark" ? "#2b3139" : "#e9ecf2";
 
     const chart = createChart(chartRef.current, {
       layout: {
-        background: { color: stockChartColors.background },
-        textColor: stockChartColors.textColor,
+        background: { color: bgColor },
+        textColor: textColor,
       },
       grid: {
-        vertLines: { color: stockChartColors.linesColor },
-        horzLines: { color: stockChartColors.linesColor },
+        vertLines: { color: lineColor },
+        horzLines: { color: lineColor },
       },
+      width: chartRef.current.clientWidth,
+      height: 400,
     });
 
+    chartInstanceRef.current = chart;
+
     chart.priceScale("right").applyOptions({
-      borderColor: stockChartColors.borderColor,
-      ticksVisible: true,
+      borderColor: lineColor,
     });
 
     chart.timeScale().applyOptions({
-      borderColor: stockChartColors.borderColor,
-      ticksVisible: true,
+      borderColor: lineColor,
+      timeVisible: true,
     });
 
-    const mainSeries = chart.addCandlestickSeries();
-
-    mainSeries.applyOptions({
+    const mainSeries = chart.addCandlestickSeries({
       wickUpColor: "#2EBD85",
       upColor: "#2EBD85",
       wickDownColor: "#e13255",
       downColor: "#e13255",
-      borderVisible: true,
     });
 
-    const coinname = `${coin}usdt`;
-    const dailyInterval = "1d";
-    const realtimeInterval = "1m";
-
-    // 1. Fetch historical daily data first
-    fetch(
-      `${
-        process.env.NEXT_PUBLIC_BINANCE_URL
-      }/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${dailyInterval}&limit=30`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const historicalData = data.map((d) => ({
-          time: d[0] / 1000,
-          open: parseFloat(d[1]),
-          high: parseFloat(d[2]),
-          low: parseFloat(d[3]),
-          close: parseFloat(d[4]),
-        }));
-        mainSeries.setData(historicalData);
-        // Remove left-side space by calling fitContent after data is loaded
-        chart.timeScale().fitContent();
-      })
-      .catch((error) => console.error("Error fetching historical data:", error));
-
-    // 2. Connect to the WebSocket for real-time 1-minute data
-    const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coinname}@kline_${realtimeInterval}`
-    );
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.k) {
-        const candle = message.k;
-        const newCandleData = {
-          time: candle.t / 1000,
-          open: parseFloat(candle.o),
-          high: parseFloat(candle.h),
-          low: parseFloat(candle.l),
-          close: parseFloat(candle.c),
-        };
-        setCurrentCandleData(newCandleData);
-        mainSeries.update(newCandleData);
-      }
-    };
+    mainSeriesRef.current = mainSeries;
 
     const updateLegend = (param) => {
-      const validCrosshairPoint = !(param === undefined || param.time === undefined);
-
-      if (validCrosshairPoint) {
+      if (param && param.time && param.seriesData) {
         const data = param.seriesData.get(mainSeries);
-        hoveredSetCandleData(data);
+        if (data) hoveredSetCandleData(data);
       } else {
         hoveredSetCandleData(null);
       }
@@ -128,70 +81,232 @@ function StockChart({
     chart.subscribeCrosshairMove(updateLegend);
 
     const handleResize = () => {
-      chart.resize(chartRef.current.clientWidth, chartRef.current.clientHeight);
+      if (chartRef.current && chartInstanceRef.current) {
+        chartInstanceRef.current.resize(
+          chartRef.current.clientWidth,
+          chartRef.current.clientHeight
+        );
+      }
     };
 
     window.addEventListener("resize", handleResize);
 
     return () => {
-      ws.close();
       window.removeEventListener("resize", handleResize);
+      if (wsRef.current) wsRef.current.close();
+      if (tradeWsRef.current) tradeWsRef.current.close();
       chart.remove();
+      chartInstanceRef.current = null;
+      mainSeriesRef.current = null;
     };
-  }, [resolvedTheme, coin]);
+  }, [resolvedTheme, coin, hoveredSetCandleData]);
+
+  useEffect(() => {
+    if (!chartInstanceRef.current || !mainSeriesRef.current || !coin) return;
+
+    const interval = INTERVALS.find((i) => i.value === selectedInterval);
+    if (!interval) return;
+
+    const coinname = `${coin}usdt`;
+    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
+    const wsUrl = process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL;
+
+    if (!binanceUrl || !wsUrl) {
+      console.error("Environment variables not set");
+      return;
+    }
+
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+
+    if (tradeWsRef.current) {
+      tradeWsRef.current.close();
+      tradeWsRef.current = null;
+    }
+
+    setIsConnected(false);
+    currentCandleRef.current = null;
+
+    fetch(
+      `${binanceUrl}/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${selectedInterval}&limit=${
+        interval.limit
+      }`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (!mainSeriesRef.current || !Array.isArray(data) || data.length === 0) return;
+
+        const historicalData = data.map((d) => ({
+          time: d[0] / 1000,
+          open: parseFloat(d[1]),
+          high: parseFloat(d[2]),
+          low: parseFloat(d[3]),
+          close: parseFloat(d[4]),
+        }));
+
+        mainSeriesRef.current.setData(historicalData);
+        chartInstanceRef.current.timeScale().fitContent();
+
+        if (historicalData.length > 0) {
+          const lastCandle = historicalData[historicalData.length - 1];
+          currentCandleRef.current = lastCandle;
+          setCurrentCandleData(lastCandle);
+        }
+      })
+      .catch((err) => console.error("Fetch error:", err));
+
+    const ws = new WebSocket(`${wsUrl}/ws/${coinname}@kline_${selectedInterval}`);
+
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      setIsConnected(true);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.k && mainSeriesRef.current) {
+          const candle = message.k;
+          const newCandleData = {
+            time: candle.t / 1000,
+            open: parseFloat(candle.o),
+            high: parseFloat(candle.h),
+            low: parseFloat(candle.l),
+            close: parseFloat(candle.c),
+          };
+
+          currentCandleRef.current = newCandleData;
+          setCurrentCandleData(newCandleData);
+          mainSeriesRef.current.update(newCandleData);
+
+          chartInstanceRef.current.timeScale().scrollToRealTime();
+        }
+      } catch (err) {
+        console.error("WS parse error:", err);
+      }
+    };
+
+    ws.onerror = () => {
+      setIsConnected(false);
+    };
+
+    ws.onclose = () => {
+      setIsConnected(false);
+    };
+
+    if (selectedInterval === "1m") {
+      const tradeWs = new WebSocket(`${wsUrl}/ws/${coinname}@trade`);
+      tradeWsRef.current = tradeWs;
+
+      tradeWs.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.p && mainSeriesRef.current && currentCandleRef.current) {
+            const tradePrice = parseFloat(message.p);
+            const currentTime = Math.floor(Date.now() / 1000 / 60) * 60;
+
+            if (currentCandleRef.current.time === currentTime) {
+              const updatedCandle = {
+                ...currentCandleRef.current,
+                close: tradePrice,
+                high: Math.max(currentCandleRef.current.high, tradePrice),
+                low: Math.min(currentCandleRef.current.low, tradePrice),
+              };
+
+              currentCandleRef.current = updatedCandle;
+              setCurrentCandleData(updatedCandle);
+              mainSeriesRef.current.update(updatedCandle);
+            }
+          }
+        } catch (err) {
+          console.error("Trade WS error:", err);
+        }
+      };
+    }
+
+    return () => {
+      if (wsRef.current) wsRef.current.close();
+      if (tradeWsRef.current) tradeWsRef.current.close();
+    };
+  }, [selectedInterval, coin, setCurrentCandleData]);
 
   const candleColor =
     stockChartLegendData?.open > stockChartLegendData?.close ? "#e13255" : "#2EBD85";
 
-  // The JSX for the price indicator remains the same
+  const changePercent = stockChartLegendData
+    ? ((stockChartLegendData.close - stockChartLegendData.open) / stockChartLegendData.open) * 100
+    : 0;
+
   return (
-    <div
-      ref={chartRef}
-      style={{ width: "100%" }}
-      className="relative dark:text-white h-[440px] border-gray-100   box-content mb-1"
-    >
-      <div className="absolute top-2 left-5 z-20 flex flex-col lg:flex-row w-full flex-wrap gap-x-2">
-        {/* <p className="text-secondary text-xs"> </p>
-        <p className="text-secondary text-xs">
-          Vol: <span style={{ color: candleColor }}>{volume}</span>
-        </p>
-        <p className="text-secondary text-xs">
-          High: <span style={{ color: candleColor }}>{highPrice}</span>
-        </p>
-        <p className="text-secondary text-xs">
-          Low: <span style={{ color: candleColor }}>{lowPrice}</span>
-        </p> */}
-        <p className="text-secondary text-xs">
-          Close:{" "}
-          <span style={{ color: candleColor }}>{stockChartLegendData?.close?.toFixed(2)}</span>
-        </p>
-        <p className="text-secondary text-xs">
-          Change:{" "}
-          <span style={{ color: candleColor }}>
-            {(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
-          </span>
-        </p>
-        <p className="text-secondary text-xs">
-          AMPLITUDE:{" "}
-          <span style={{ color: candleColor }}>
-            {(
-              ((stockChartLegendData?.high - stockChartLegendData?.low) /
-                stockChartLegendData?.low) *
-              stockChartLegendData?.low
-            ).toFixed(2)}{" "}
-            %{" "}
-          </span>
-        </p>
+    <div className="relative dark:text-white bg-white dark:bg-[#161A1E] rounded-lg shadow-lg overflow-hidden">
+      <div className="absolute top-2 left-2 z-30 flex gap-1 bg-black/50 dark:bg-white/10 backdrop-blur-sm rounded px-1 py-1">
+        {INTERVALS.map((interval) => (
+          <button
+            key={interval.value}
+            onClick={() => setSelectedInterval(interval.value)}
+            className={`px-2 py-1 text-xs rounded ${
+              selectedInterval === interval.value
+                ? "bg-[#2EBD85] text-white font-semibold"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            {interval.label}
+          </button>
+        ))}
       </div>
-      {/* Real-time price indicator */}
+
+      <div className="absolute top-2 right-2 z-30 flex items-center gap-2 text-xs">
+        <div
+          className={`w-2 h-2 rounded-full ${
+            isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
+          }`}
+        />
+        <span className="text-gray-400">{isConnected ? "Live" : "Connecting..."}</span>
+      </div>
+
+      <div ref={chartRef} className="relative h-[400px] w-full" />
+
+      {stockChartLegendData && (
+        <div className="absolute bottom-2 left-2 z-20 flex flex-wrap gap-x-3 gap-y-1 text-xs bg-black/50 dark:bg-white/10 backdrop-blur-sm rounded px-2 py-1">
+          <div className="flex flex-col">
+            <span className="text-gray-400">Close</span>
+            <span style={{ color: candleColor }} className="font-semibold">
+              {stockChartLegendData.close?.toFixed(2) || "0.00"}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-400">High</span>
+            <span style={{ color: "#2EBD85" }} className="font-semibold">
+              {stockChartLegendData.high?.toFixed(2) || "0.00"}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-400">Low</span>
+            <span style={{ color: "#e13255" }} className="font-semibold">
+              {stockChartLegendData.low?.toFixed(2) || "0.00"}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-400">Change</span>
+            <span style={{ color: candleColor }} className="font-semibold">
+              {changePercent >= 0 ? "+" : ""}
+              {changePercent.toFixed(2)}%
+            </span>
+          </div>
+        </div>
+      )}
+
       {currentCandleData?.close && (
         <div
-          className="absolute top-8 right-2 lg:right-5 z-20 font-bold"
+          className="absolute top-10 right-2 z-20 font-bold text-lg transition-all"
           style={{
-            color: currentCandleData?.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
+            color: currentCandleData.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
           }}
         >
-          <span>{currentCandleData?.close?.toFixed(2)}</span>
+          {currentCandleData.close.toFixed(2)}
         </div>
       )}
     </div>
