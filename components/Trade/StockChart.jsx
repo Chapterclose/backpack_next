@@ -74,7 +74,7 @@ function StockChart({
 
     // 1. Fetch historical daily data first
     fetch(
-      `https://${
+      `${
         process.env.NEXT_PUBLIC_BINANCE_URL
       }/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${dailyInterval}&limit=30`
     )
@@ -95,7 +95,7 @@ function StockChart({
 
     // 2. Connect to the WebSocket for real-time 1-minute data
     const ws = new WebSocket(
-      `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/${coinname}@kline_${realtimeInterval}`
+      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coinname}@kline_${realtimeInterval}`
     );
 
     ws.onmessage = (event) => {

@@ -61,7 +61,7 @@ const ConvertPage = () => {
     let ws = null;
     const connectWebSocket = () => {
       ws = new WebSocket(
-        `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/stream?streams=btcusdt@trade/ethusdt@trade/ethbtc@trade`
+        `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade/ethbtc@trade`
       );
 
       ws.onopen = () => {

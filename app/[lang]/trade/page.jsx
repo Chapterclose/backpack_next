@@ -86,7 +86,7 @@ export default function TradePage() {
       }
 
       wsRef.current = new WebSocket(
-        `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/${coin}usdt@ticker`
+        `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coin}usdt@ticker`
       );
       wsRef.current.onopen = () => {
         console.log("Binance Ticker WebSocket Connected");
@@ -117,7 +117,9 @@ export default function TradePage() {
 
   // Update balances in USD
   useEffect(() => {
-    const socket = new WebSocket(`ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/stream?streams=btcusdt@trade/ethusdt@trade`);
+    const socket = new WebSocket(
+      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
+    );
 
     socket.onmessage = (event) => {
       const msg = JSON.parse(event.data);

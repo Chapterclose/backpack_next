@@ -23,7 +23,7 @@ export default function useAssetBalance() {
   useEffect(() => {
     // The WebSocket URL for BTC and ETH trade streams.
     const socket = new WebSocket(
-      `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
+      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
     );
 
     // Listener for incoming WebSocket messages.

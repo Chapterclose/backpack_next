@@ -49,7 +49,7 @@ export default function OrderBook({ coin }) {
 
   useEffect(() => {
     const ws = new WebSocket(
-      `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/${coin}usdt@depth20@100ms`
+      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coin}usdt@depth20@100ms`
     );
 
     ws.onmessage = (event) => {

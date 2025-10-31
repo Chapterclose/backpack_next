@@ -14,7 +14,7 @@ const HeroSectionTab = () => {
     // Extract only the symbols for the WebSocket connection
     const watchedSymbols = marketData.map((data) => data.symbol);
 
-    const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/!ticker@arr`);
+    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/!ticker@arr`);
 
     ws.onmessage = (event) => {
       const updates = JSON.parse(event.data);
