@@ -29,7 +29,7 @@ export default function BinanceMarkets() {
   useEffect(() => {
     const watchedSymbols = marketData.map((data) => data.symbol);
 
-    const ws = new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+    const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/!ticker@arr`);
 
     ws.onmessage = (event) => {
       const updates = JSON.parse(event.data);

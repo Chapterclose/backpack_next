@@ -55,8 +55,12 @@ const ConvertPage = () => {
     const fetchPrices = async () => {
       try {
         const [btcRes, ethRes] = await Promise.all([
-          fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"),
-          fetch("https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT"),
+          fetch(
+            `https://${process.env.NEXT_PUBLIC_BINANCE_URL}/api/v3/ticker/price?symbol=BTCUSDT`
+          ),
+          fetch(
+            `https://${process.env.NEXT_PUBLIC_BINANCE_URL}/api/v3/ticker/price?symbol=ETHUSDT`
+          ),
         ]);
 
         const btcData = await btcRes.json();

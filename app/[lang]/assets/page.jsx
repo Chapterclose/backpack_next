@@ -64,9 +64,7 @@ function AssetsPage() {
   }, []);
 
   useEffect(() => {
-    const socket = new WebSocket(
-      "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade"
-    );
+    const socket = new WebSocket(`ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/stream?streams=btcusdt@trade/ethusdt@trade`);
 
     socket.onmessage = (event) => {
       const msg = JSON.parse(event.data);

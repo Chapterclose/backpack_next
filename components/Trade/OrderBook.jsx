@@ -48,7 +48,9 @@ export default function OrderBook({ coin }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${coin}usdt@depth20@100ms`);
+    const ws = new WebSocket(
+      `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/${coin}usdt@depth20@100ms`
+    );
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);

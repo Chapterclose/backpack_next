@@ -74,7 +74,9 @@ function StockChart({
 
     // 1. Fetch historical daily data first
     fetch(
-      `https://api.binance.com/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${dailyInterval}&limit=30`
+      `https://${
+        process.env.NEXT_PUBLIC_BINANCE_URL
+      }/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${dailyInterval}&limit=30`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -93,7 +95,7 @@ function StockChart({
 
     // 2. Connect to the WebSocket for real-time 1-minute data
     const ws = new WebSocket(
-      `wss://stream.binance.com:9443/ws/${coinname}@kline_${realtimeInterval}`
+      `ws://${process.env.NEXT_PUBLIC_BINANCE_URL}/ws/${coinname}@kline_${realtimeInterval}`
     );
 
     ws.onmessage = (event) => {
