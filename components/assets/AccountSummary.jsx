@@ -54,6 +54,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
 
       <div className="flex items-center text-center gap-x-5 mt-10">
         <Link
+          prefetch
           href="/recharge-deposit"
           className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800"
         >
@@ -63,6 +64,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
           </h4>
         </Link>
         <Link
+          prefetch
           href="/withdraw"
           className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800"
         >
@@ -72,6 +74,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
           </h4>
         </Link>
         <Link
+          prefetch
           href="/convert"
           className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800"
         >
@@ -81,6 +84,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
           </h4>
         </Link>
         <Link
+          prefetch
           href="/transfer"
           className="w-[90px] h-[90px] flex items-center flex-col justify-center shadow-lg rounded cursor-pointer dark:bg-gray-800"
         >

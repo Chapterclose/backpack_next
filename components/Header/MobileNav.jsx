@@ -72,7 +72,7 @@ const MobileNav = () => {
       {/* Header */}
       <header className="py-3 flex items-center justify-between px-5">
         <div className="logo mr-10">
-          <Link href="/">
+          <Link prefetch href="/">
             <Image src={Logo} alt="logo" className="w-[140px] h-[50px]" />
           </Link>
         </div>
@@ -108,6 +108,7 @@ const MobileNav = () => {
 
           return (
             <Link
+              prefetch
               key={item.href}
               href={item.href}
               className={`text-center py-5 ${

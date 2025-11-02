@@ -62,6 +62,7 @@ const HeroSectionTab = () => {
                   <tr key={item.symbol}>
                     <td className="pr-10">
                       <Link
+                        prefetch
                         href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`}
                         className="flex items-center gap-x-3 mb-2"
                       >
@@ -106,6 +107,7 @@ const HeroSectionTab = () => {
                   <tr key={item.symbol}>
                     <td className="pr-10">
                       <Link
+                        prefetch
                         href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`}
                         className="flex items-center gap-x-3 mb-2"
                       >

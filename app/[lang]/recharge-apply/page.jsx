@@ -129,6 +129,7 @@ function RechargeApply() {
         </h4>
 
         <Link
+          prefetch
           href="/recharge-order"
           className="flex items-center gap-x-1 lg:text-xl font-semibold border border-primary-100 p-[2px_10px] lg:p-[5px_15px] rounded hover:border-primary-200 duration-300 mt-[-10px] lg:mt0 dark:text-white"
         >

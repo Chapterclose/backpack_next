@@ -54,13 +54,14 @@ const Header = () => {
         <div className="py-3 lg:flex items-center justify-between relative hidden">
           <div className="flex items-center">
             <div className="logo mr-10">
-              <Link href="/">
+              <Link prefetch href="/">
                 <Image src={Logo} alt="logo" className="w-[180px] h-[60px]" />
               </Link>
             </div>
             <div className="hidden lg:block">
               <ul className="flex gap-x-8">
                 <Link
+                  prefetch
                   href="/en/markets"
                   className="font-semibold p-1 hover:text-primary-100 duration-300"
                 >
@@ -68,6 +69,7 @@ const Header = () => {
                 </Link>
                 {/* Apply conditional class for Trade link */}
                 <Link
+                  prefetch
                   href="/en/trade?symbol=btc"
                   className={`font-semibold p-1 hover:text-primary-100 duration-300 ${
                     isTradeLinkActive ? "text-primary-100" : ""
@@ -76,6 +78,7 @@ const Header = () => {
                   Trade
                 </Link>
                 <Link
+                  prefetch
                   href="/en/assets"
                   className="font-semibold p-1 hover:text-primary-100 duration-300"
                 >

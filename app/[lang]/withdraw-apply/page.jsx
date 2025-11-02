@@ -136,6 +136,7 @@ function WithdrawApply() {
         </h4>
 
         <Link
+          prefetch
           href="/withdraw-order"
           className="flex items-center gap-x-1 lg:text-xl font-semibold border border-primary-100 p-[2px_10px] lg:p-[5px_15px] rounded hover:border-primary-200 duration-300 mt-[-10px] lg:mt0 dark:text-white"
         >
@@ -223,6 +224,7 @@ function WithdrawApply() {
         <p className="mt-5 dark:text-white">
           If you don't have password then go to this link,{" "}
           <Link
+            prefetch
             href={"set-fund-password"}
             className="underline text-blue-500 hover:text-blue-600 duration-300"
           >
