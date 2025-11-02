@@ -3,101 +3,113 @@
 import MarketTable from "@/components/common/MarketTable";
 import { marketData } from "@/constant/marketArr";
 import { contextProvider } from "@/contexts/Context";
-import { useContext, useEffect, useState } from "react";
-
-// ✅ Skeleton Loader
-function MarketSkeleton() {
-  return (
-    <div className="container py-[40px] lg:py-[80px]">
-      <div className="h-10 w-64 bg-gray-300 dark:bg-gray-700 rounded mb-8 animate-pulse"></div>
-      <div className="space-y-4">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-12 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
-          ></div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import { useContext, useEffect, useRef } from "react";
 
 export default function BinanceMarkets() {
   const { markets, setMarkets } = useContext(contextProvider);
-  const [loading, setLoading] = useState(true); // ✅ loading state
+  const wsRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
   useEffect(() => {
     const watchedSymbols = marketData.map((data) => data.symbol);
     const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
 
-    // Fetch initial ticker data from REST API (faster than waiting for WebSocket)
+    // Create AbortController for cleanup
+    abortControllerRef.current = new AbortController();
+
+    // Fetch only needed symbols using batch endpoint (much faster than fetching all tickers)
     const fetchInitialData = async () => {
       try {
-        // Fetch all tickers at once using the 24hr ticker endpoint
-        const response = await fetch(`${binanceUrl}/api/v3/ticker/24hr`);
-        const allTickers = await response.json();
+        // Use batch endpoint to fetch only needed symbols - much faster than all tickers
+        const symbolsParam = watchedSymbols.map(s => `"${s}"`).join(',');
+        const response = await fetch(
+          `${binanceUrl}/api/v3/ticker/24hr?symbols=[${symbolsParam}]`,
+          { signal: abortControllerRef.current.signal }
+        );
         
-        // Filter for watched symbols and format data
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`);
+        }
+        
+        const tickers = await response.json();
+        
+        // Build markets object from results
         const initialMarkets = {};
-        allTickers.forEach((ticker) => {
-          if (watchedSymbols.includes(ticker.symbol)) {
-            initialMarkets[ticker.symbol] = {
-              price: parseFloat(ticker.lastPrice || ticker.c || 0).toFixed(2),
-              change: parseFloat(ticker.priceChangePercent || ticker.P || 0).toFixed(2),
-            };
-          }
+        tickers.forEach((ticker) => {
+          initialMarkets[ticker.symbol] = {
+            price: parseFloat(ticker.lastPrice || ticker.c || 0).toFixed(2),
+            change: parseFloat(ticker.priceChangePercent || ticker.P || 0).toFixed(2),
+          };
         });
 
+        // Update markets immediately with available data
         if (Object.keys(initialMarkets).length > 0) {
-          setMarkets(initialMarkets);
-          setLoading(false);
+          setMarkets((prev) => ({ ...prev, ...initialMarkets }));
         }
       } catch (error) {
-        console.error("Error fetching initial market data:", error);
-        // Continue to WebSocket even if API fails
+        if (error.name !== 'AbortError') {
+          console.error("Error fetching initial market data:", error);
+        }
       }
     };
 
+    // Start fetching immediately
     fetchInitialData();
 
-    // Then connect WebSocket for real-time updates
-    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/!ticker@arr`);
+    // Connect WebSocket immediately for real-time updates (don't wait for REST API)
+    const wsUrl = process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL;
+    if (wsUrl) {
+      wsRef.current = new WebSocket(`${wsUrl}/ws/!ticker@arr`);
 
-    let lastUpdate = 0;
-    ws.onmessage = (event) => {
-      const now = Date.now();
-      if (now - lastUpdate < 500) return; // Throttle to 500ms
-      lastUpdate = now;
+      let lastUpdate = 0;
+      wsRef.current.onmessage = (event) => {
+        const now = Date.now();
+        if (now - lastUpdate < 500) return; // Throttle to 500ms
+        lastUpdate = now;
 
-      const updates = JSON.parse(event.data);
+        try {
+          const updates = JSON.parse(event.data);
+          const filtered = updates.filter((ticker) =>
+            watchedSymbols.includes(ticker.s)
+          );
 
-      const filtered = updates.filter((ticker) => watchedSymbols.includes(ticker.s));
+          setMarkets((prev) => {
+            const updated = { ...prev };
+            filtered.forEach((ticker) => {
+              updated[ticker.s] = {
+                price: parseFloat(ticker.c).toFixed(2),
+                change: parseFloat(ticker.P).toFixed(2),
+              };
+            });
+            return updated;
+          });
+        } catch (error) {
+          console.error("Error parsing WebSocket data:", error);
+        }
+      };
 
-      setMarkets((prev) => {
-        const updated = { ...prev };
-        filtered.forEach((ticker) => {
-          updated[ticker.s] = {
-            price: parseFloat(ticker.c).toFixed(2),
-            change: parseFloat(ticker.P).toFixed(2),
-          };
-        });
-        return updated;
-      });
+      wsRef.current.onerror = (event) => {
+        console.error("Markets WebSocket Error:", event);
+      };
+    }
 
-      // ✅ Once we get first data, stop loading
-      if (loading) setLoading(false);
+    // Cleanup function
+    return () => {
+      // Abort fetch requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      // Close WebSocket
+      if (wsRef.current) {
+        if (
+          wsRef.current.readyState === WebSocket.OPEN ||
+          wsRef.current.readyState === WebSocket.CONNECTING
+        ) {
+          wsRef.current.close();
+        }
+      }
     };
-
-    ws.onerror = (event) => {
-      console.error("Markets WebSocket Error:", event);
-    };
-
-    return () => ws.close();
-  }, [setMarkets, loading]);
-
-  if (loading) {
-    return <MarketSkeleton />; // ✅ show skeleton until data comes
-  }
+  }, [setMarkets]); // Removed 'loading' from dependencies
 
   return (
     <div className="container py-[40px] lg:py-[80px]">
