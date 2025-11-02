@@ -121,7 +121,12 @@ export default function TradePage() {
       `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
     );
 
+    let lastPriceUpdate = 0;
     socket.onmessage = (event) => {
+      const now = Date.now();
+      if (now - lastPriceUpdate < 500) return; // Throttle to 500ms
+      lastPriceUpdate = now;
+      
       const msg = JSON.parse(event.data);
       const symbol = msg?.data?.s;
       const price = parseFloat(msg?.data?.p);

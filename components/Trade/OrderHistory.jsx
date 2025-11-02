@@ -30,7 +30,7 @@ export const OrderHistory = ({ high, low, volume, change, candleColor, onOpen })
     if (countdown === 0) {
       OpenOrdersRequest();
     }
-  }, [countdown]);
+  }, [countdown, OpenOrdersRequest]);
 
   const isFinalPopup =
     openOrders[0]?.countdown_seconds === 0 && openOrders[0]?.is_popup_open === false;

@@ -201,7 +201,12 @@ function StockChart({
       const tradeWs = new WebSocket(`${wsUrl}/ws/${coinname}@trade`);
       tradeWsRef.current = tradeWs;
 
+      let lastTradeUpdate = 0;
       tradeWs.onmessage = (event) => {
+        const now = Date.now();
+        if (now - lastTradeUpdate < 50) return; // Throttle to 50ms
+        lastTradeUpdate = now;
+        
         try {
           const message = JSON.parse(event.data);
           if (message.p && mainSeriesRef.current && currentCandleRef.current) {

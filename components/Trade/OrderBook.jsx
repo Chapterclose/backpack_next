@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import React from "react";
 
 // ✅ Skeleton loader
 function OrderBookSkeleton({ coin }) {
@@ -42,17 +43,24 @@ function OrderBookSkeleton({ coin }) {
   );
 }
 
-export default function OrderBook({ coin }) {
+function OrderBook({ coin }) {
   const [bids, setBids] = useState([]);
   const [asks, setAsks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!coin) return;
+    
+    let lastUpdate = 0;
     const ws = new WebSocket(
       `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coin}usdt@depth20@100ms`
     );
 
     ws.onmessage = (event) => {
+      const now = Date.now();
+      if (now - lastUpdate < 200) return; // Throttle to 200ms
+      lastUpdate = now;
+      
       const data = JSON.parse(event.data);
 
       setAsks(data?.asks?.slice(0, 10)); // Asks (sell orders)
@@ -103,3 +111,5 @@ export default function OrderBook({ coin }) {
     </div>
   );
 }
+
+export default React.memo(OrderBook);
