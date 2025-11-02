@@ -4,7 +4,7 @@ import { marketData } from "@/constant/marketArr";
 import { contextProvider } from "@/contexts/Context";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
+import React, { useContext } from "react";
 
 function MarketTable({ss,se}) {
     const {markets} = useContext(contextProvider)
@@ -25,18 +25,17 @@ function MarketTable({ss,se}) {
                     </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-dark">
-                    {marketData.slice(ss, se).map((item, index) => {
+                    {marketData.slice(ss, se).map((item) => {
                         const symbol = item.symbol;
-                        const iconSrc = item.icon;
                         const data = markets[symbol];
 
                         // Determine if the change is positive
                         const isPositiveChange = data?.change && parseFloat(data.change) >= 0;
                         return (
-                            <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <tr key={symbol} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                             <td className="px-1 md:px-2 lg:px-6 py-4 whitespace-nowrap">
                                 <Link href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`} className="flex items-center">
-                                    <Image src={item?.icon} alt="icon" className="w-[20px] h-[20px] lg:w-[30px] lg:h-[30px]" />
+                                    <Image src={item?.icon} alt="icon" width={30} height={30} className="w-[20px] h-[20px] lg:w-[30px] lg:h-[30px]" />
                                     <div className="ml-4">
                                         <div className="text-base lg:text-lg font-medium text-black dark:text-white">{item.symbol}</div>
                                     </div>
@@ -64,4 +63,4 @@ function MarketTable({ss,se}) {
      );
 }
 
-export default MarketTable;
+export default React.memo(MarketTable);

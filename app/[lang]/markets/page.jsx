@@ -31,7 +31,12 @@ export default function BinanceMarkets() {
 
     const ws = new WebSocket(`${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/!ticker@arr`);
 
+    let lastUpdate = 0;
     ws.onmessage = (event) => {
+      const now = Date.now();
+      if (now - lastUpdate < 500) return; // Throttle to 500ms
+      lastUpdate = now;
+
       const updates = JSON.parse(event.data);
 
       const filtered = updates.filter((ticker) => watchedSymbols.includes(ticker.s));
@@ -49,6 +54,10 @@ export default function BinanceMarkets() {
 
       // ✅ Once we get first data, stop loading
       if (loading) setLoading(false);
+    };
+
+    ws.onerror = (event) => {
+      console.error("Markets WebSocket Error:", event);
     };
 
     return () => ws.close();
