@@ -28,7 +28,39 @@ export default function BinanceMarkets() {
 
   useEffect(() => {
     const watchedSymbols = marketData.map((data) => data.symbol);
+    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
 
+    // Fetch initial ticker data from REST API (faster than waiting for WebSocket)
+    const fetchInitialData = async () => {
+      try {
+        // Fetch all tickers at once using the 24hr ticker endpoint
+        const response = await fetch(`${binanceUrl}/api/v3/ticker/24hr`);
+        const allTickers = await response.json();
+        
+        // Filter for watched symbols and format data
+        const initialMarkets = {};
+        allTickers.forEach((ticker) => {
+          if (watchedSymbols.includes(ticker.symbol)) {
+            initialMarkets[ticker.symbol] = {
+              price: parseFloat(ticker.lastPrice || ticker.c || 0).toFixed(2),
+              change: parseFloat(ticker.priceChangePercent || ticker.P || 0).toFixed(2),
+            };
+          }
+        });
+
+        if (Object.keys(initialMarkets).length > 0) {
+          setMarkets(initialMarkets);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching initial market data:", error);
+        // Continue to WebSocket even if API fails
+      }
+    };
+
+    fetchInitialData();
+
+    // Then connect WebSocket for real-time updates
     const ws = new WebSocket(`${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/!ticker@arr`);
 
     let lastUpdate = 0;
