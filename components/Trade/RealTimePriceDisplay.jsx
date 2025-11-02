@@ -28,6 +28,13 @@ function RealTimePriceDisplay({
   const priceChangeColor = priceChangePercentage >= 0 ? "text-green-500" : "text-red-500";
   const priceColor = currentCandleData?.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255";
 
+  // Use dummy data if real data not available yet
+  const displayPrice = currentPrice === "0.00" ? (stockChartLegendData?.close || 50000).toFixed(2) : currentPrice;
+  const displayChange = priceChangePercentage === "0.00" ? (stockChartLegendData ? ((stockChartLegendData.close - stockChartLegendData.open) / stockChartLegendData.open * 100).toFixed(2) : "0.00") : priceChangePercentage;
+  const displayHigh = highPrice === "0.00" ? (stockChartLegendData?.high || 51000).toFixed(2) : highPrice;
+  const displayLow = lowPrice === "0.00" ? (stockChartLegendData?.low || 49000).toFixed(2) : lowPrice;
+  const displayVolume = volume === 0 ? (stockChartLegendData ? formatNumber(stockChartLegendData.close * 1000) : "0") : formatNumber(volume);
+
   return (
     <div className="relative overflow-hidden">
       {/* Gradient Background */}
@@ -41,8 +48,8 @@ function RealTimePriceDisplay({
               {coin}/USDT
             </h3>
             <div className="flex items-center gap-2 mt-1">
-              <span className={`text-sm md:text-base font-semibold ${priceChangeColor}`}>
-                {priceChangePercentage >= 0 ? "+" : ""}{priceChangePercentage}%
+              <span className={`text-sm md:text-base font-semibold ${displayChange >= 0 ? "text-green-500" : "text-red-500"}`}>
+                {displayChange >= 0 ? "+" : ""}{displayChange}%
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400">24h</span>
             </div>
@@ -52,7 +59,7 @@ function RealTimePriceDisplay({
         {/* Price Display */}
         <div className="mb-6">
           <div className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2" style={{ color: priceColor }}>
-            ${parseFloat(currentPrice).toLocaleString()}
+            ${parseFloat(displayPrice).toLocaleString()}
           </div>
         </div>
 
@@ -61,19 +68,19 @@ function RealTimePriceDisplay({
           <div className="text-center md:text-left">
             <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">24h High</div>
             <div className="text-base md:text-lg font-semibold text-black dark:text-white">
-              ${parseFloat(highPrice).toLocaleString()}
+              ${parseFloat(displayHigh).toLocaleString()}
             </div>
           </div>
           <div className="text-center md:text-left">
             <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">24h Low</div>
             <div className="text-base md:text-lg font-semibold text-black dark:text-white">
-              ${parseFloat(lowPrice).toLocaleString()}
+              ${parseFloat(displayLow).toLocaleString()}
             </div>
           </div>
           <div className="text-center md:text-left">
             <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">24h Volume</div>
             <div className="text-base md:text-lg font-semibold text-black dark:text-white">
-              {formatNumber(volume)}
+              {displayVolume}
             </div>
           </div>
         </div>
