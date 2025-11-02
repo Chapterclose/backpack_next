@@ -4,37 +4,12 @@ import { contextProvider } from "@/contexts/Context";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 const homePageTabs = [{ title: "Popular" }, { title: "New Listing" }];
 
 const HeroSectionTab = () => {
-  const { markets, setMarkets } = useContext(contextProvider);
-
-  useEffect(() => {
-    // Extract only the symbols for the WebSocket connection
-    const watchedSymbols = marketData.map((data) => data.symbol);
-
-    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/!ticker@arr`);
-
-    ws.onmessage = (event) => {
-      const updates = JSON.parse(event.data);
-
-      const filtered = updates.filter((ticker) => watchedSymbols.includes(ticker.s));
-
-      setMarkets((prev) => {
-        const updated = { ...prev };
-        filtered.forEach((ticker) => {
-          updated[ticker.s] = {
-            price: parseFloat(ticker.c).toFixed(2),
-            change: parseFloat(ticker.P).toFixed(2),
-          };
-        });
-        return updated;
-      });
-    };
-
-    return () => ws.close();
-  }, [setMarkets]);
+  // Use shared markets data from Context (WebSocket connection is managed globally)
+  const { markets } = useContext(contextProvider);
   return (
     <TabGroup manual defaultIndex={0} className={"shadow-2xl p-3 lg:py-3 lg:px-5 rounded-lg"}>
       <TabList className="mb-5">

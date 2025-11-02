@@ -1,15 +1,10 @@
 "use client";
 
 import { contextProvider } from "@/contexts/Context";
-import UserStore from "@/store/UserStore";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Button from "../Form/Button";
 
 function EarningToday() {
-  const { HealthCheckRequest } = UserStore();
-  useEffect(() => {
-    HealthCheckRequest();
-  }, []);
   const { walletAddress, connectWallet } = useContext(contextProvider);
   return (
     <div className="bg-gray-100 dark:bg-dark">
