@@ -219,14 +219,14 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
 
   // Tailwind CSS Classes for styling - now using the mapped classes
   const overlayClass =
-    "fixed inset-0 bg-black/40 dark:bg-black/50 bg-opacity-50 flex items-end justify-center z-[9999]";
+    "fixed inset-0 bg-black/60 dark:bg-black/70 backdrop-blur-sm flex items-end justify-center z-[9999]";
   const popupContentClass =
-    "bg-[#1E1E1E] dark:bg-gray-900 w-full max-w-md p-4 lg:p-6 rounded-t-lg shadow-lg transform transition-transform duration-300 ease-out";
-  const buttonGridClass = "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mt-4";
+    "bg-white dark:bg-gray-900 w-full max-w-md p-6 md:p-8 rounded-t-2xl md:rounded-t-3xl shadow-2xl transform transition-all duration-300 ease-out border-t-4";
+  const buttonGridClass = "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mt-4";
   const scrollableContainerClass = "overflow-x-auto whitespace-nowrap scrollbar-hide no-scrollbar";
-  const periodButtonsWrapperClass = "inline-flex flex-nowrap gap-2 md:gap-4 mt-4 pb-2 px-2";
+  const periodButtonsWrapperClass = "inline-flex flex-nowrap gap-2 md:gap-3 mt-4 pb-2 px-2";
   const baseInputButtonClass =
-    "text-white py-3 px-2 sm:px-4 rounded text-center cursor-pointer transition-colors text-xs sm:text-sm md:text-base flex-shrink-0 min-w-[80px]";
+    "text-white py-2.5 px-3 sm:px-4 rounded-lg text-center cursor-pointer transition-all duration-200 text-xs sm:text-sm md:text-base flex-shrink-0 min-w-[70px] hover:scale-105 active:scale-95";
 
   return (
     <div>
@@ -293,7 +293,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
               </button>
             </div>
 
-            <h4 className="text-gray-300 text-lg mb-3">Select Period</h4>
+            <h4 className="text-black dark:text-white text-base md:text-lg font-semibold mb-3">Select Period</h4>
             <div className={scrollableContainerClass}>
               <div ref={periodButtonsContainerRef} className={periodButtonsWrapperClass}>
                 {allPeriods.map((period) => {
@@ -302,37 +302,41 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
                     <button
                       key={period.value}
                       className={`${baseInputButtonClass} ${
-                        isSelected ? popupAccentClasses.bgConfirm : "bg-[#333] hover:bg-[#444]"
+                        isSelected 
+                          ? `${popupAccentClasses.bgConfirm} shadow-lg scale-105` 
+                          : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
                       }`}
                       onClick={() => handlePeriodSelect(period.value)}
                     >
                       {period.text}
                       <br />
-                      {period.percentage}%
+                      <span className="text-xs">+{period.percentage}%</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <h4 className="text-gray-300 text-lg mt-6 mb-3">Purchase volume</h4>
+            <h4 className="text-black dark:text-white text-base md:text-lg font-semibold mt-6 mb-3">Purchase Volume</h4>
             <input
               type="number"
-              placeholder={`Least ${minPurchaseVolume} USDT`}
-              className={`w-full p-3 bg-[#333] text-gray-300 rounded focus:outline-none focus:ring-2 ${popupAccentClasses.focusRing}`}
+              placeholder={`Minimum ${minPurchaseVolume} USDT`}
+              className={`w-full p-4 bg-gray-100 dark:bg-gray-800 text-black dark:text-white rounded-xl border-2 focus:outline-none focus:ring-2 transition-all ${
+                errorMessage ? 'border-red-500 focus:border-red-500' : 'border-transparent focus:border-primary'
+              } ${popupAccentClasses.focusRing}`}
               value={purchaseVolume}
               onChange={handleVolumeInputChange}
             />
-            {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+            {errorMessage && <p className="text-red-500 text-sm mt-2 font-medium">{errorMessage}</p>}
 
             <div className={`${buttonGridClass} mt-4`}>
               {[50, 100, 500, 1000, 2000, 5000, 10000, 20000].map((volumeNum) => (
                 <button
                   key={volumeNum}
-                  className={`${baseInputButtonClass.replace("min-w-[80px]", "")} ${
+                  className={`py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
                     purchaseVolume === volumeNum.toString()
-                      ? popupAccentClasses.bgConfirm
-                      : "bg-[#333] hover:bg-[#444]"
+                      ? `${popupAccentClasses.bgConfirm} text-white shadow-lg`
+                      : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
                   }`}
                   onClick={() => handleVolumeSelect(volumeNum)}
                 >
@@ -341,18 +345,20 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
               ))}
             </div>
 
-            <p className="text-gray-400 mt-6 text-sm">
-              Available balance:{" "}
-              <span className="text-white font-bold">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 mt-6">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
+                Available Balance
+              </p>
+              <p className="text-black dark:text-white text-xl font-bold">
                 {AmountWithCommas(totalAvailableBalance)} USDT
-              </span>
-            </p>
+              </p>
+            </div>
 
             <button
-              className={`w-full ${popupAccentClasses.bgConfirm} text-white py-4 mt-6 rounded text-lg font-bold ${popupAccentClasses.bgConfirmHover} transition-colors`}
+              className={`w-full ${popupAccentClasses.bgConfirm} text-white py-4 mt-6 rounded-xl text-lg font-bold ${popupAccentClasses.bgConfirmHover} transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95`}
               onClick={() => handleConfirm()}
             >
-              Confirm
+              Confirm {isBuy ? "Buy" : "Sell"}
             </button>
           </div>
         </div>

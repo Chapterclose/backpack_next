@@ -6,44 +6,20 @@ import Button from "@/components/Form/Button";
 import { contextProvider } from "@/contexts/Context";
 import UserStore from "@/store/UserStore";
 import { useContext, useEffect, useState } from "react";
+import { BiWallet } from "react-icons/bi";
 
 // Skeleton component for the loading state
 const AssetsPageSkeleton = () => (
-  <div className="container py-[80px] dark:text-gray-200 animate-pulse">
-    {/* Account Summary Skeleton */}
-    <div className="bg-gray-200 dark:bg-gray-700 h-48 rounded-lg p-6 mb-8 flex flex-col justify-between">
-      <div>
-        <div className="h-6 w-3/4 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
-        <div className="h-10 w-1/2 bg-gray-300 dark:bg-gray-600 rounded"></div>
+  <div className="container py-12 md:py-16 lg:py-20">
+    <div className="animate-pulse space-y-8">
+      {/* Account Summary Skeleton */}
+      <div className="bg-gray-200 dark:bg-gray-700 h-64 rounded-2xl p-6 md:p-8"></div>
+      {/* Asset Details Skeleton */}
+      <div className="space-y-4">
+        {[...Array(3)].map((_, index) => (
+          <div key={index} className="bg-gray-200 dark:bg-gray-700 h-32 rounded-xl"></div>
+        ))}
       </div>
-      <div className="flex justify-between items-center mt-4">
-        <div className="h-10 w-24 bg-gray-300 dark:bg-gray-600 rounded"></div>
-        <div className="h-10 w-24 bg-gray-300 dark:bg-gray-600 rounded"></div>
-      </div>
-    </div>
-
-    {/* Asset Details Skeleton */}
-    <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-6">
-      <div className="flex justify-between items-center mb-4">
-        <div className="h-8 w-1/4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-        <div className="h-8 w-1/6 bg-gray-300 dark:bg-gray-600 rounded"></div>
-      </div>
-      {[...Array(3)].map((_, index) => (
-        <div
-          key={index}
-          className="flex items-center space-x-4 py-4 border-b border-gray-300 dark:border-gray-600 last:border-b-0"
-        >
-          <div className="h-12 w-12 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-          <div className="flex-1">
-            <div className="h-4 w-1/3 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
-            <div className="h-4 w-1/4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-          </div>
-          <div className="text-right">
-            <div className="h-4 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
-            <div className="h-4 w-20 bg-gray-300 dark:bg-gray-600 rounded"></div>
-          </div>
-        </div>
-      ))}
     </div>
   </div>
 );
@@ -55,6 +31,7 @@ function AssetsPage() {
   const { walletAddress, connectWallet, totalAvailableBalance, setTotalAvailableBalance } =
     useContext(contextProvider);
   const { GetAccountBalanceRequest, AccountBalance, isLoading } = UserStore();
+  
   const toggleBalanceVisibility = () => {
     setShowBalance(!showBalance);
   };
@@ -68,7 +45,12 @@ function AssetsPage() {
       `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
     );
 
+    let lastUpdate = 0;
     socket.onmessage = (event) => {
+      const now = Date.now();
+      if (now - lastUpdate < 500) return; // Throttle to 500ms
+      lastUpdate = now;
+      
       const msg = JSON.parse(event.data);
       const symbol = msg?.data?.s;
       const price = parseFloat(msg?.data?.p);
@@ -97,10 +79,9 @@ function AssetsPage() {
     const total = usdtValue + btcValue + ethValue;
     setTotalAvailableBalance(total);
 
-    // Set a timeout to delay the transition
     setTimeout(() => {
       setIsBalanceCalculated(true);
-    }, 1500); // 1-second delay
+    }, 1500);
   }, [AccountBalance, prices]);
 
   // Conditional rendering for skeleton loader
@@ -109,25 +90,41 @@ function AssetsPage() {
   }
 
   return (
-    <>
+    <div className="container py-8 md:py-12 lg:py-16">
       {walletAddress !== "" ? (
-        <div className="container py-[80px] dark:text-white">
+        <>
           <AccountSummary
             totalAvailableBalance={totalAvailableBalance}
             showBalance={showBalance}
             toggleBalanceVisibility={toggleBalanceVisibility}
           />
           <AssetDetails showBalance={showBalance} />
-        </div>
+        </>
       ) : (
-        <div className="flex flex-col text-center items-center justify-center py-[60px] lg:py-[100px] px-5 lg:px-0">
-          <h2 className="text-3xl lg:text-4xl font-semibold capitalize mb-5 dark:text-white">
-            Let's start you crypto journey with us.
-          </h2>
-          <Button text={"Connect Now"} handleFunc={connectWallet} />
+        <div className="relative overflow-hidden">
+          {/* Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent dark:from-primary/20" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          
+          <div className="relative flex flex-col items-center justify-center py-20 md:py-32 px-6 text-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary-200 to-primary rounded-full flex items-center justify-center mb-6 shadow-xl">
+              <BiWallet className="text-5xl text-black" />
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4">
+              Start Your Crypto Journey
+            </h2>
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-md">
+              Connect your wallet to view and manage your crypto assets
+            </p>
+            <Button 
+              text="Connect Wallet" 
+              handleFunc={connectWallet}
+              className="px-8 py-4 text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            />
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

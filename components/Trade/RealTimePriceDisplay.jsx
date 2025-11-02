@@ -26,58 +26,57 @@ function RealTimePriceDisplay({
   stockChartLegendData,
 }) {
   const priceChangeColor = priceChangePercentage >= 0 ? "text-green-500" : "text-red-500";
+  const priceColor = currentCandleData?.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255";
 
   return (
-    <div className="shadow-lg dark:shadow-2xl rounded py-3 px-5 lg:px-10 dark:text-white">
-      <h3 className="text-lg lg:text-xl font-semibold mb-3 uppercase">{coin}/usdt</h3>
-      <div className="flex justify-between">
-        <div className="mb-5 lg:mb-0">
-          <h3
-            className="text-3xl lg:text-5xl font-bold"
-            style={{
-              color: currentCandleData?.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
-            }}
-          >
-            {currentPrice}
-          </h3>
-          <h4
-            style={{
-              color: currentCandleData?.close >= stockChartLegendData?.open ? "#2EBD85" : "#e13255",
-            }}
-            className={`${priceChangeColor} font-bold`}
-          >
-            {priceChangePercentage}%
-          </h4>
+    <div className="relative overflow-hidden">
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent dark:from-primary/10" />
+      
+      <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg md:text-xl font-bold text-black dark:text-white uppercase tracking-wide">
+              {coin}/USDT
+            </h3>
+            <div className="flex items-center gap-2 mt-1">
+              <span className={`text-sm md:text-base font-semibold ${priceChangeColor}`}>
+                {priceChangePercentage >= 0 ? "+" : ""}{priceChangePercentage}%
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">24h</span>
+            </div>
+          </div>
         </div>
 
-        <table className="w-full max-w-[140px]">
-          <tbody>
-            <tr>
-              <td className="text-left py-1 pr-2 text-black dark:text-white">
-                <h4>High</h4>
-              </td>
-              <td className="text-right py-1 font-semibold">
-                <h4>{highPrice}</h4>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-left py-1 pr-2 text-black dark:text-white">
-                <h4>Low</h4>
-              </td>
-              <td className="text-right py-1 font-semibold">
-                <h4>{lowPrice}</h4>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-left py-1 pr-2 text-black dark:text-white">
-                <h4>Vol</h4>
-              </td>
-              <td className="text-right py-1 font-semibold">
-                <h4>{volume}</h4>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {/* Price Display */}
+        <div className="mb-6">
+          <div className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2" style={{ color: priceColor }}>
+            ${parseFloat(currentPrice).toLocaleString()}
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-3 gap-4 md:gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="text-center md:text-left">
+            <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">24h High</div>
+            <div className="text-base md:text-lg font-semibold text-black dark:text-white">
+              ${parseFloat(highPrice).toLocaleString()}
+            </div>
+          </div>
+          <div className="text-center md:text-left">
+            <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">24h Low</div>
+            <div className="text-base md:text-lg font-semibold text-black dark:text-white">
+              ${parseFloat(lowPrice).toLocaleString()}
+            </div>
+          </div>
+          <div className="text-center md:text-left">
+            <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">24h Volume</div>
+            <div className="text-base md:text-lg font-semibold text-black dark:text-white">
+              {formatNumber(volume)}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

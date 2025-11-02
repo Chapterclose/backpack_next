@@ -15,13 +15,13 @@ import { useContext, useEffect, useRef, useState } from "react";
 // ✅ Skeleton loader
 function TradePageSkeleton() {
   return (
-    <div className="container py-[40px] lg:py-[60px]">
-      <div className="max-w-2xl mx-auto mb-5 animate-pulse">
-        <div className="h-8 w-32 bg-gray-300 rounded mb-3"></div>
-        <div className="h-6 w-20 bg-gray-300 rounded"></div>
+    <div className="container py-8 md:py-12 lg:py-16">
+      <div className="max-w-2xl mx-auto mb-6 animate-pulse">
+        <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-3"></div>
+        <div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
       </div>
-      <div className="h-72 bg-gray-200 rounded mb-10 animate-pulse"></div>
-      <div className="h-96 bg-gray-200 rounded animate-pulse"></div>
+      <div className="h-72 bg-gray-200 dark:bg-gray-700 rounded-xl mb-10 animate-pulse"></div>
+      <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
     </div>
   );
 }
@@ -37,7 +37,7 @@ export default function TradePage() {
   const [volume, setVolume] = useState(0);
   const [error, setError] = useState(null);
 
-  const [loading, setLoading] = useState(true); // ✅ loading state
+  const [loading, setLoading] = useState(true);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -140,6 +140,7 @@ export default function TradePage() {
 
     return () => socket.close();
   }, []);
+  
   useEffect(() => {
     if (!AccountBalance) return;
 
@@ -159,28 +160,23 @@ export default function TradePage() {
   }
 
   return (
-    <div className="container py-[40px] lg:py-[60px]">
-      {/* <div className="max-w-2xl mx-auto mb-5">
-        <h3 className="uppercase dark:text-white font-semibold text-3xl">{coin}/USDT</h3>
-        <h4
-          className={`font-semibold ${
-            priceChangePercentage >= 0 ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {priceChangePercentage}%
-        </h4>
-      </div> */}
-      <RealTimePriceDisplay
-        currentPrice={currentPrice}
-        priceChangePercentage={priceChangePercentage}
-        highPrice={highPrice}
-        lowPrice={lowPrice}
-        volume={volume}
-        coin={coin}
-        currentCandleData={currentCandleData}
-        stockChartLegendData={stockChartLegendData}
-      />
-      <div className="mt-10">
+    <div className="container py-8 md:py-12 lg:py-16">
+      {/* Price Display */}
+      <div className="mb-6 md:mb-8">
+        <RealTimePriceDisplay
+          currentPrice={currentPrice}
+          priceChangePercentage={priceChangePercentage}
+          highPrice={highPrice}
+          lowPrice={lowPrice}
+          volume={volume}
+          coin={coin}
+          currentCandleData={currentCandleData}
+          stockChartLegendData={stockChartLegendData}
+        />
+      </div>
+
+      {/* Chart */}
+      <div className="mb-6 md:mb-8">
         <StockChart
           highPrice={highPrice}
           lowPrice={lowPrice}
@@ -193,17 +189,23 @@ export default function TradePage() {
           coin={coin}
         />
       </div>
+
+      {/* Order Book */}
       <OrderBook coin={coin} />
 
-      <OrderHistory
-        high={highPrice}
-        low={lowPrice}
-        volume={volume}
-        change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
-        candleColor={candleColor}
-        onOpen={() => setIsModalOpen(true)}
-      />
+      {/* Order History */}
+      <div className="mt-8 md:mt-10">
+        <OrderHistory
+          high={highPrice}
+          low={lowPrice}
+          volume={volume}
+          change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
+          candleColor={candleColor}
+          onOpen={() => setIsModalOpen(true)}
+        />
+      </div>
 
+      {/* Buy/Sell Buttons */}
       <BuySell
         coin={coin}
         onOpen={() => setIsModalOpen(true)}
@@ -215,6 +217,7 @@ export default function TradePage() {
         change={(stockChartLegendData?.close - stockChartLegendData?.open).toFixed(2)}
       />
 
+      {/* Confirmation Modal */}
       <TradeConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
