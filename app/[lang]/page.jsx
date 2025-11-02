@@ -6,11 +6,11 @@ import PopularCrypto from "@/components/Home/PopularCrypto";
 
 export default function Home() {
   return (
-    <>
+    <main className="min-h-screen">
       <HeroSection/>
       <PopularCrypto/>
-      <HomeFaq />
       <EarningToday/>
-    </>
+      <HomeFaq />
+    </main>
   );
 }
