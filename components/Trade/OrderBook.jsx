@@ -50,7 +50,32 @@ function OrderBook({ coin }) {
 
   useEffect(() => {
     if (!coin) return;
-    
+
+    const symbol = `${coin}usdt`.toUpperCase();
+    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
+
+    // Fetch initial order book snapshot from REST API (faster than waiting for WebSocket)
+    const fetchInitialData = async () => {
+      try {
+        const response = await fetch(
+          `${binanceUrl}/api/v3/depth?symbol=${symbol}&limit=20`
+        );
+        const data = await response.json();
+        
+        if (data.asks && data.bids) {
+          setAsks(data.asks.slice(0, 10));
+          setBids(data.bids.slice(0, 10));
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching order book:", error);
+        // Continue to WebSocket even if API fails
+      }
+    };
+
+    fetchInitialData();
+
+    // Then connect WebSocket for real-time updates
     let lastUpdate = 0;
     const ws = new WebSocket(
       `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coin}usdt@depth20@100ms`
@@ -63,10 +88,14 @@ function OrderBook({ coin }) {
       
       const data = JSON.parse(event.data);
 
-      setAsks(data?.asks?.slice(0, 10)); // Asks (sell orders)
-      setBids(data?.bids?.slice(0, 10)); // Bids (buy orders)
+      setAsks(data?.asks?.slice(0, 10) || []);
+      setBids(data?.bids?.slice(0, 10) || []);
 
       if (loading) setLoading(false);
+    };
+
+    ws.onerror = (event) => {
+      console.error("OrderBook WebSocket Error:", event);
     };
 
     return () => ws.close();
