@@ -27,7 +27,6 @@ const AssetsPageSkeleton = () => (
 function AssetsPage() {
   const [showBalance, setShowBalance] = useState(true);
   const [prices, setPrices] = useState({ USDT: 1, BTC: null, ETH: null });
-  const [isBalanceCalculated, setIsBalanceCalculated] = useState(false);
   const { walletAddress, connectWallet, totalAvailableBalance, setTotalAvailableBalance } =
     useContext(contextProvider);
   const { GetAccountBalanceRequest, AccountBalance, isLoading } = UserStore();
@@ -36,11 +35,40 @@ function AssetsPage() {
     setShowBalance(!showBalance);
   };
 
+  // Fetch account balance immediately
   useEffect(() => {
     GetAccountBalanceRequest();
-  }, []);
+  }, [GetAccountBalanceRequest]);
 
+  // Fetch initial BTC/ETH prices via REST API immediately (much faster than waiting for WebSocket)
   useEffect(() => {
+    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
+    
+    const fetchInitialPrices = async () => {
+      try {
+        // Fetch both prices in parallel for faster loading
+        const [btcResponse, ethResponse] = await Promise.all([
+          fetch(`${binanceUrl}/api/v3/ticker/price?symbol=BTCUSDT`),
+          fetch(`${binanceUrl}/api/v3/ticker/price?symbol=ETHUSDT`)
+        ]);
+
+        const btcData = await btcResponse.json();
+        const ethData = await ethResponse.json();
+
+        setPrices({
+          USDT: 1,
+          BTC: parseFloat(btcData.price),
+          ETH: parseFloat(ethData.price)
+        });
+      } catch (error) {
+        console.error("Error fetching initial prices:", error);
+        // Continue with WebSocket fallback
+      }
+    };
+
+    fetchInitialPrices();
+
+    // Then connect WebSocket for real-time updates
     const socket = new WebSocket(
       `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
     );
@@ -62,9 +90,14 @@ function AssetsPage() {
       }
     };
 
+    socket.onerror = (error) => {
+      console.error("Price WebSocket Error:", error);
+    };
+
     return () => socket.close();
   }, []);
 
+  // Calculate balance immediately when AccountBalance or prices change
   useEffect(() => {
     if (!AccountBalance) return;
 
@@ -73,19 +106,17 @@ function AssetsPage() {
     const ethAvailable = parseFloat(AccountBalance?.ETH?.available || "0");
 
     const usdtValue = usdtAvailable * prices.USDT;
+    // Use current prices, or 0 if not yet loaded (will update when prices arrive)
     const btcValue = btcAvailable * (prices.BTC || 0);
     const ethValue = ethAvailable * (prices.ETH || 0);
 
     const total = usdtValue + btcValue + ethValue;
     setTotalAvailableBalance(total);
+  }, [AccountBalance, prices, setTotalAvailableBalance]);
 
-    setTimeout(() => {
-      setIsBalanceCalculated(true);
-    }, 1500);
-  }, [AccountBalance, prices]);
-
-  // Conditional rendering for skeleton loader
-  if (walletAddress !== "" && (!isBalanceCalculated || isLoading)) {
+  // Show skeleton only while AccountBalance is loading
+  // Don't wait for prices - show content immediately with balance, prices will update
+  if (walletAddress !== "" && isLoading) {
     return <AssetsPageSkeleton />;
   }
 
