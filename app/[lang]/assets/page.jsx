@@ -114,8 +114,6 @@ function AssetsPage() {
     setTotalAvailableBalance(total);
   }, [AccountBalance, prices, setTotalAvailableBalance]);
 
-  // Show skeleton only while AccountBalance is loading
-  // Don't wait for prices - show content immediately with balance, prices will update
   if (walletAddress !== "" && isLoading) {
     return <AssetsPageSkeleton />;
   }

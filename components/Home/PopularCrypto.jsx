@@ -12,15 +12,12 @@ const PopularCrypto = () => {
   const { markets } = useContext(contextProvider);
 
   return (
-    <div className="container py-12 md:py-16 lg:py-20">
-      <div className="flex items-center justify-between mb-8 md:mb-12">
+    <div className="container py-5 md:py-16 lg:py-20">
+      <div className="flex items-center justify-between mb-4 md:mb-12">
         <div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-2">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-2">
             Popular Cryptocurrencies
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-            Trade the most popular cryptocurrencies with real-time prices
-          </p>
         </div>
         <Link
           prefetch
@@ -32,7 +29,7 @@ const PopularCrypto = () => {
       </div>
 
       {/* Mobile Card Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4 mb-6">
+      <div className=" grid-cols-1 sm:grid-cols-2 hidden gap-4 mb-6">
         {marketData.slice(0, 6).map((item) => {
           const symbol = item.symbol;
           const data = markets[symbol];
@@ -85,7 +82,7 @@ const PopularCrypto = () => {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block">
+      <div className="">
         <MarketTable ss={0} se={12} />
       </div>
 
