@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useContext } from "react";
 
-import { FaCodiepie, FaReceipt, FaSeedling, FaWallet } from "react-icons/fa";
+import { FaCodiepie, FaDollarSign, FaDownload, FaReceipt, FaSeedling, FaUpload, FaWallet } from "react-icons/fa";
 
 function HeroSection() {
   const { walletAddress, connectWallet, markets } = useContext(contextProvider);
@@ -31,10 +31,10 @@ function HeroSection() {
 
   // Action buttons for My Wallet section
   const walletActions = [
-    { label: "Send", icon: FaSeedling, href: "/send" },
-    { label: "Receive", icon: FaReceipt, href: "/receive" },
+    { label: "Send", icon: FaUpload, href: "/send" },
+    { label: "Receive", icon: FaDownload, href: "/receive" },
     { label: "Buy", icon: FaWallet, href: "/buy" },
-    { label: "Convert", icon: FaCodiepie, href: "/convert" },
+    { label: "Convert", icon: FaDollarSign, href: "/convert" },
   ];
 
   const cardGradients = [

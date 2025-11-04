@@ -119,7 +119,7 @@ function AssetsPage() {
   }
 
   return (
-    <div className="container py-8 md:py-12 lg:py-16">
+    <div className="container py-5 md:py-12 lg:py-16">
       {walletAddress !== "" ? (
         <>
           <AccountSummary

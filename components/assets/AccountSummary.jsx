@@ -53,7 +53,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
   ];
 
   return (
-    <div className="relative overflow-hidden mb-8 md:mb-12">
+    <div className="relative overflow-hidden mb-5 md:mb-12">
       <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 md:p-8">
         {/* Header */}
         <div className="flex items-center justify-between">
