@@ -1,294 +1,359 @@
-"use client"
+"use client";
 
 import Button from "@/components/Form/Button";
 import FormInput from "@/components/Form/FormInput";
 import UserStore from "@/store/UserStore";
-import { Banknote, Cross, CrossIcon, Delete, Edit, Loader2, X } from "lucide-react"; // Import Loader2 icon for spinner
+import { Banknote, Edit, Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 function BindCardBack() {
-    // isAddingOrEditingBankCard now controls showing the form (true) vs. showing bank list (false)
-    const [isAddingOrEditingBankCard, setIsAddingOrEditingBankCard] = useState(false)
-    // Destructure isLoading directly from UserStore
-    const { GetBankInfoRequest, bankInfo, CreateBankAccountRequest, isLoading, BankAccountEditRequest , BankAccountDeleteRequest} = UserStore()
-    // Required fields with their states and error states
-    const [cardNumber, setCardNumber] = useState("")
-    const [cardNumberError, setCardNumberError] = useState("")
-    const [affiliatedBank, setAffiliatedBank] = useState("")
-    const [affiliatedBankError, setAffiliatedBankError] = useState("")
+  const [isAddingOrEditingBankCard, setIsAddingOrEditingBankCard] = useState(false);
+  const {
+    GetBankInfoRequest,
+    bankInfo,
+    CreateBankAccountRequest,
+    isLoading,
+    BankAccountEditRequest,
+    BankAccountDeleteRequest,
+  } = UserStore();
 
-    // Optional fields with their states
-    const [bankBranch, setBankBranch] = useState("")
-    const [cardHandlingBankAddress, setCardHandlingBankAddress] = useState("")
-    const [bankInternationalCode, setBankInternationalCode] = useState("")
-    const [homeAddress, setHomeAddress] = useState("")
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardNumberError, setCardNumberError] = useState("");
+  const [expirationDate, setExpirationDate] = useState("");
+  const [expirationDateError, setExpirationDateError] = useState("");
+  const [securityCode, setSecurityCode] = useState("");
+  const [securityCodeError, setSecurityCodeError] = useState("");
+  const [nameOnCard, setNameOnCard] = useState("");
+  const [nameOnCardError, setNameOnCardError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [editingBankCard, setEditingBankCard] = useState(null);
+  const [editId, setEditId] = useState(null);
 
-    // State for overall form submission success/failure
-    const [submitSuccess, setSubmitSuccess] = useState(false);
-    const [submitError, setSubmitError] = useState("");
+  const handleAddBankAccount = async () => {
+    setCardNumberError("");
+    setExpirationDateError("");
+    setSecurityCodeError("");
+    setNameOnCardError("");
+    setSubmitSuccess(false);
+    setSubmitError("");
 
-    // State to hold the bank card being edited, if any
-    const [editingBankCard, setEditingBankCard] = useState(null);
-    const [editId, setEditId] = useState(null)
+    let hasError = false;
+    const rawCardNumber = cardNumber.replace(/\s/g, "");
+    const rawSecurityCode = securityCode.trim();
+    const rawNameOnCard = nameOnCard.trim();
+    const rawExpirationDate = expirationDate.trim();
 
-    const handleAddBankAccount = async () => {
-        // Reset previous errors and submission status
-        setCardNumberError("");
-        setAffiliatedBankError("");
-        setSubmitSuccess(false);
-        setSubmitError("");
-
-        let hasError = false;
-
-        // Validate Bank Card Number
-        if (!cardNumber.trim()) {
-            setCardNumberError("Bank card number cannot be empty.");
-            hasError = true;
-        } else if (!/^\d{13,19}$/.test(cardNumber.replace(/\s/g, ''))) {
-            setCardNumberError("Please enter a valid bank card number (13-19 digits).");
-            hasError = true;
-        }
-
-        // Validate Affiliated Bank
-        if (!affiliatedBank.trim()) {
-            setAffiliatedBankError("Affiliated bank cannot be empty.");
-            hasError = true;
-        }
-
-        if (hasError) {
-            return; // Stop if validation fails
-        }
-
-        try {
-            const payload = {
-                card_number: cardNumber.replace(/\s/g, ''),
-                bank_name: affiliatedBank,
-                bank_branch: bankBranch,
-                bank_address: cardHandlingBankAddress,
-                bank_international_code: bankInternationalCode,
-                home_address: homeAddress,
-            };
-            
-            if(!editingBankCard){
-                const response = await CreateBankAccountRequest(payload);
-                setSubmitSuccess(true);
-                setCardNumber("");
-                setAffiliatedBank("");
-                setBankBranch("");
-                setCardHandlingBankAddress("");
-                setBankInternationalCode("");
-                setHomeAddress("");
-                setEditingBankCard(null); 
-                await GetBankInfoRequest();
-                // Go back to the list view after successful submission
-                setIsAddingOrEditingBankCard(false);
-                window.scrollTo({top:0})
-            }else {
-                await BankAccountEditRequest(payload,editId)
-
-                setSubmitSuccess(true);
-                setCardNumber("");
-                setAffiliatedBank("");
-                setBankBranch("");
-                setCardHandlingBankAddress("");
-                setBankInternationalCode("");
-                setHomeAddress("");
-                setEditingBankCard(null); 
-                await GetBankInfoRequest();
-                // Go back to the list view after successful submission
-                setIsAddingOrEditingBankCard(false);
-                window.scrollTo({top:0})
-            }
-            
-        } catch (error) {
-            console.error("Error adding/updating bank account:", error);
-            setSubmitError("An unexpected error occurred. Please try again later.");
-        }
+    if (!rawCardNumber) {
+      setCardNumberError("Card number cannot be empty.");
+      hasError = true;
+    } else if (!/^\d{16}$/.test(rawCardNumber)) {
+      setCardNumberError("Please enter a valid 16-digit card number.");
+      hasError = true;
     }
 
-    useEffect(() => {
-        GetBankInfoRequest();
-    }, [])
-
-    // Function to handle editing an existing bank card
-    const handleEditBankCard = (card) => {
-        setEditId(card.id)
-        setEditingBankCard(card);
-        setCardNumber(card.card_number);
-        setAffiliatedBank(card.bank_name);
-        setBankBranch(card.bank_branch || "");
-        setCardHandlingBankAddress(card.bank_address || "");
-        setBankInternationalCode(card.bank_international_code || "");
-        setHomeAddress(card.home_address || "");
-        setIsAddingOrEditingBankCard(true);
-        setSubmitSuccess(false);
-        setSubmitError("");
-    };
-
-    const handleAddButtonClick = () => {
-        setEditingBankCard(null);
-        setCardNumber("");
-        setAffiliatedBank("");
-        setBankBranch("");
-        setCardHandlingBankAddress("");
-        setBankInternationalCode("");
-        setHomeAddress("");
-        setIsAddingOrEditingBankCard(true);
-        setSubmitSuccess(false);
-        setSubmitError("");
-    };
-
-    // delete 
-    const handleDeleteBankCard= async(id)=>{
-        if (window.confirm("Are you sure you want to delete this item?")) {
-            const res = await BankAccountDeleteRequest(id)
-            if(res.status === 200){
-                await GetBankInfoRequest()
-            }
-        } else {
-            toast.error("Deletion cancelled.");
-        }
+    if (!rawExpirationDate) {
+      setExpirationDateError("Expiration date cannot be empty.");
+      hasError = true;
+    } else if (!/^(0[1-9]|1[0-2])\/\d{4}$/.test(rawExpirationDate)) {
+      setExpirationDateError("Please enter a valid format (MM/YYYY).");
+      hasError = true;
     }
 
-    return (
-        <div className="container py-[40px] lg:py-[80px]">
-            <div className="text-center mb-10">
-                <h2 className="text-4xl font-semibold mb-3 text-gray-700 dark:text-white">Bind Bank Card</h2>
-            </div>
+    if (!rawSecurityCode) {
+      setSecurityCodeError("Security code cannot be empty.");
+      hasError = true;
+    } else if (!/^\d{3,4}$/.test(rawSecurityCode)) {
+      setSecurityCodeError("Please enter a valid security code (3 or 4 digits).");
+      hasError = true;
+    }
 
+    if (!rawNameOnCard) {
+      setNameOnCardError("Name on card cannot be empty.");
+      hasError = true;
+    }
+
+    if (hasError) {
+      return; // Stop if validation fails
+    }
+
+    try {
+      const payload = {
+        card_number: rawCardNumber,
+        bank_name: rawNameOnCard,
+        bank_branch: rawExpirationDate,
+        bank_address: rawSecurityCode,
+        bank_international_code: "",
+        home_address: "",
+      };
+
+      if (!editingBankCard) {
+        const response = await CreateBankAccountRequest(payload);
+        toast.success("Card binding successful!");
+      } else {
+        await BankAccountEditRequest(payload, editId);
+        toast.success("Card update successful!");
+      }
+
+      setSubmitSuccess(true);
+      // Clear form fields
+      setCardNumber("");
+      setExpirationDate("");
+      setSecurityCode("");
+      setNameOnCard("");
+      setEditingBankCard(null);
+      await GetBankInfoRequest();
+      // Go back to the list view after successful submission
+      setIsAddingOrEditingBankCard(false);
+      window.scrollTo({ top: 0 });
+    } catch (error) {
+      console.error("Error adding/updating bank account:", error);
+      setSubmitError(
+        "An unexpected error occurred. Please try again later. (Check console for details)"
+      );
+      toast.error("Operation failed.");
+    }
+  };
+
+  useEffect(() => {
+    GetBankInfoRequest();
+  }, []);
+
+  const handleEditBankCard = (card) => {
+    setEditId(card.id);
+    setEditingBankCard(card);
+
+    setCardNumber(card.card_number || "");
+    setNameOnCard(card.bank_name || ""); // Mapped from bank_name
+    setExpirationDate(card.bank_branch || ""); // Mapped from bank_branch
+    setSecurityCode(card.bank_address || ""); // Mapped from bank_address
+
+    setIsAddingOrEditingBankCard(true);
+    setSubmitSuccess(false);
+    setSubmitError("");
+  };
+
+  const handleAddButtonClick = () => {
+    setEditingBankCard(null);
+    setCardNumber("");
+    setExpirationDate("");
+    setSecurityCode("");
+    setNameOnCard("");
+
+    setIsAddingOrEditingBankCard(true);
+    setSubmitSuccess(false);
+    setSubmitError("");
+  };
+
+  // delete
+  const handleDeleteBankCard = async (id) => {
+    if (window.confirm("Are you sure you want to delete this card?")) {
+      const res = await BankAccountDeleteRequest(id);
+      if (res.status === 200) {
+        toast.success("Card deleted successfully.");
+        await GetBankInfoRequest();
+      } else {
+        toast.error("Failed to delete card.");
+      }
+    } else {
+      toast.error("Deletion cancelled.");
+    }
+  };
+
+  return (
+    <div className="container py-[40px] lg:py-[80px]">
+      <div className="text-center mb-10">
+        <h2 className="text-4xl font-semibold mb-3 text-gray-700 dark:text-white">
+          Bind Payment Card
+        </h2>
+      </div>
+
+      <div>
+        {isLoading && !isAddingOrEditingBankCard ? (
+          <div className="flex justify-center items-center h-[200px] text-green-500">
+            <Loader2 className="animate-spin h-10 w-10 mr-3" />
+            <span className="text-lg">Loading card data...</span>
+          </div>
+        ) : isAddingOrEditingBankCard ? (
+          // Form for adding/editing bank card
+          <div className="grid lg:grid-cols-3 gap-5">
+            <div></div>
             <div>
-                {isLoading && !isAddingOrEditingBankCard ? (
-                    // Only show global loading spinner when not in the form and data is loading
-                    <div className="flex justify-center items-center h-[200px] text-green-500">
-                        <Loader2 className="animate-spin h-10 w-10 mr-3" />
-                        <span className="text-lg">Loading bank data...</span>
-                    </div>
-                ) : isAddingOrEditingBankCard ? (
-                    // Form for adding/editing bank card
-                    <div className="grid lg:grid-cols-3 gap-5">
-                        <div></div>
-                        <div>
-                            <h3 className="text-2xl font-semibold mb-5 dark:text-white text-gray-700">
-                                {editingBankCard ? "Edit Bank Card" : "Add New Bank Card"}
-                            </h3>
-                            <FormInput
-                                label="Bank card number"
-                                placeholder="Enter bank card number"
-                                className="mb-0"
-                                value={cardNumber}
-                                onChange={(e) => {
-                                    setCardNumber(e.target.value);
-                                    setCardNumberError("");
-                                    setSubmitError("");
-                                }}
-                            />
-                            {cardNumberError && <p className="text-red-500 text-sm mt-1 mb-4">{cardNumberError}</p>}
+              <h3 className="text-2xl font-semibold mb-5 dark:text-white text-gray-700">
+                {editingBankCard ? "Edit Payment Card" : "Add New Payment Card"}
+              </h3>
 
-                            <FormInput
-                                label="Affiliated bank"
-                                placeholder="Enter affiliated bank"
-                                className="mb-0"
-                                value={affiliatedBank}
-                                onChange={(e) => {
-                                    setAffiliatedBank(e.target.value);
-                                    setAffiliatedBankError("");
-                                    setSubmitError("");
-                                }}
-                            />
-                            {affiliatedBankError && <p className="text-red-500 text-sm mt-1 mb-4">{affiliatedBankError}</p>}
+              {/* Card Number Input */}
+              <FormInput
+                label="Card number"
+                placeholder="0000 0000 0000 0000"
+                className="mb-0"
+                value={cardNumber}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/\s/g, "").slice(0, 16); // Strict 16 digit limit
+                  const formattedValue = value.replace(/(\d{4})/g, "$1 ").trim();
+                  setCardNumber(formattedValue);
+                  setCardNumberError("");
+                  setSubmitError("");
+                }}
+                maxLength={19} // Max 16 digits + 3 spaces = 19 characters
+              />
+              {cardNumberError && (
+                <p className="text-red-500 text-sm mt-1 mb-4">{cardNumberError}</p>
+              )}
 
-                            <FormInput
-                                label="Bank branch (Optional)"
-                                placeholder="Please Enter"
-                                className="mb-5"
-                                value={bankBranch}
-                                onChange={(e) => setBankBranch(e.target.value)}
-                            />
-                            <FormInput
-                                label="Card handling bank address or number (optional)"
-                                placeholder="Please Enter"
-                                className="mb-5"
-                                value={cardHandlingBankAddress}
-                                onChange={(e) => setCardHandlingBankAddress(e.target.value)}
-                            />
-                            <FormInput
-                                label="Bank international code (optional)"
-                                placeholder="Please Enter"
-                                className="mb-5"
-                                value={bankInternationalCode}
-                                onChange={(e) => setBankInternationalCode(e.target.value)}
-                            />
-                            <FormInput
-                                label="Home address (optional)"
-                                placeholder="Please Enter"
-                                className="mb-5"
-                                value={homeAddress}
-                                onChange={(e) => setHomeAddress(e.target.value)}
-                            />
+              {/* Expiration Date and Security Code Group */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Expiration Date Input */}
+                <div>
+                  <FormInput
+                    label="Expiration date"
+                    placeholder="MM/YYYY"
+                    className="mb-0"
+                    value={expirationDate}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                      if (value.length > 2) {
+                        value = `${value.substring(0, 2)}/${value.substring(2, 6)}`;
+                      }
+                      setExpirationDate(value.substring(0, 7)); // Limit to MM/YYYY (7 chars)
+                      setExpirationDateError("");
+                      setSubmitError("");
+                    }}
+                    maxLength={7}
+                  />
+                  {expirationDateError && (
+                    <p className="text-red-500 text-sm mt-1 mb-4">{expirationDateError}</p>
+                  )}
+                </div>
 
-                            {submitError && <p className="text-red-500 text-sm mt-1 mb-4 text-center">{submitError}</p>}
-                            {submitSuccess && <p className="text-green-500 text-sm mt-1 mb-4 text-center">Bank account operation successful!</p>}
+                {/* Security Code Input */}
+                <div>
+                  <FormInput
+                    label="Security code"
+                    placeholder="CVV/CVC"
+                    className="mb-0"
+                    value={securityCode}
+                    onChange={(e) => {
+                      setSecurityCode(e.target.value.replace(/\D/g, "")); // Only allow digits
+                      setSecurityCodeError("");
+                      setSubmitError("");
+                    }}
+                    maxLength={4} // Max 4 digits (for AMEX)
+                  />
+                  {securityCodeError && (
+                    <p className="text-red-500 text-sm mt-1 mb-4">{securityCodeError}</p>
+                  )}
+                </div>
+              </div>
 
-                            <Button
-                                text={editingBankCard ? "Update Bank Card" : "Submit"}
-                                className="w-full"
-                                handleFunc={handleAddBankAccount}
-                                disabled={isLoading} 
-                            />
-                            <Button
-                                text="Cancel"
-                                className="w-full mt-3 bg-gray-500 hover:bg-gray-600"
-                                handleFunc={() => setIsAddingOrEditingBankCard(false)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div></div>
-                    </div>
-                ) : (
-                    <div className="max-w-xl mx-auto">
-                        {bankInfo && Array.isArray(bankInfo) && bankInfo.length > 0 ? (
-                            bankInfo.map((card, index) => (
-                                <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-md mb-4 dark:text-white">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <h4 className="text-xl font-semibold flex items-center gap-x-2">
-                                            {card.name || 'Account Holder'} <span className="text-sm text-gray-400">({card.card_number.slice(-4)})</span>
-                                        </h4>
-                                        <div>
-                                            <button onClick={() => handleEditBankCard(card)} className="text-green-400 hover:text-green-500 mr-3 cursor-pointer">
-                                            <Edit size={20} />
-                                            </button>
-                                            <button onClick={() => handleDeleteBankCard(card?.id)} className="text-red-400 hover:text-red-500 cursor-pointer">
-                                            <X size={20} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <p className="text-lg font-medium">{card.bank_name}</p>
-                                    <p className="text-gray-400 text-sm">{card.bank_branch ? `Branch: ${card.bank_branch}` : ''}</p>
-                                    <p className="text-gray-400 text-sm">{card.bank_address ? `Address: ${card.bank_address}` : ''}</p>
-                                    <div className="flex justify-between items-center mt-4 border-t border-gray-700 pt-3">
-                                        <p className="text-sm text-gray-300">Account: {card.card_number}</p>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center">
-                                <Banknote className="w-[150px] h-[150px] mx-auto mt-[100px] text-green-500" />
-                                <h4 className="text-gray-700 dark:text-white text-xl mb-8">Unbound Bank Card</h4>
-                            </div>
-                        )}
+              {/* Name on Card Input */}
+              <FormInput
+                label="Name on card"
+                placeholder="Name and surname"
+                className="mb-5"
+                value={nameOnCard}
+                onChange={(e) => {
+                  setNameOnCard(e.target.value);
+                  setNameOnCardError("");
+                  setSubmitError("");
+                }}
+              />
+              {nameOnCardError && (
+                <p className="text-red-500 text-sm mt-1 mb-4">{nameOnCardError}</p>
+              )}
 
-                        <Button
-                            text={bankInfo && Array.isArray(bankInfo) && bankInfo.length > 0 ? "+ Add New Bank Card" : "Add Bank Card"}
-                            handleFunc={handleAddButtonClick}
-                            className="w-full mt-5"
-                            disabled={isLoading}
-                        />
-                    </div>
-                )}
+              {submitError && (
+                <p className="text-red-500 text-sm mt-1 mb-4 text-center">{submitError}</p>
+              )}
+              {submitSuccess && (
+                <p className="text-green-500 text-sm mt-1 mb-4 text-center">
+                  Card operation successful!
+                </p>
+              )}
+
+              <Button
+                text={editingBankCard ? "Update Card" : "Submit"}
+                className="w-full"
+                handleFunc={handleAddBankAccount}
+                disabled={isLoading}
+              />
+              <Button
+                text="Cancel"
+                className="w-full mt-3 bg-gray-500 hover:bg-gray-600"
+                handleFunc={() => {
+                  setIsAddingOrEditingBankCard(false);
+                  setEditingBankCard(null); // Clear editing state on cancel
+                }}
+                disabled={isLoading}
+              />
             </div>
-        </div>
-    );
+            <div></div>
+          </div>
+        ) : (
+          <div className="max-w-xl mx-auto">
+            {/* List View */}
+            {bankInfo && Array.isArray(bankInfo) && bankInfo.length > 0 ? (
+              bankInfo.map((card, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-800 p-4 rounded-lg shadow-md mb-4 dark:text-white"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="text-xl font-semibold flex items-center gap-x-2">
+                      {card.bank_name || "Card Holder"}{" "}
+                      <span className="text-sm text-gray-400">({card.card_number.slice(-4)})</span>
+                    </h4>
+                    <div>
+                      <button
+                        onClick={() => handleEditBankCard(card)}
+                        className="text-green-400 hover:text-green-500 mr-3 cursor-pointer"
+                      >
+                        <Edit size={20} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteBankCard(card?.id)}
+                        className="text-red-400 hover:text-red-500 cursor-pointer"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+                  </div>
+                  {/* Displaying Expiration and Security Code which were mapped to bank_branch and bank_address */}
+                  <p className="text-gray-400 text-sm">
+                    {card.bank_branch ? `Expires: ${card.bank_branch}` : ""}
+                    {card.bank_address ? ` | CVV: ${card.bank_address}` : ""}
+                  </p>
+                  <div className="flex justify-between items-center mt-4 border-t border-gray-700 pt-3">
+                    <p className="text-sm text-gray-300">Card Number: {card.card_number}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center">
+                <Banknote className="w-[150px] h-[150px] mx-auto mt-[100px] text-green-500" />
+                <h4 className="text-gray-700 dark:text-white text-xl mb-8">
+                  No Payment Cards Bound
+                </h4>
+              </div>
+            )}
+
+            <Button
+              text={
+                bankInfo && Array.isArray(bankInfo) && bankInfo.length > 0
+                  ? "+ Add New Card"
+                  : "Add Card"
+              }
+              handleFunc={handleAddButtonClick}
+              className="w-full mt-5"
+              disabled={isLoading}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default BindCardBack;
