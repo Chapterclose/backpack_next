@@ -74,44 +74,37 @@ function BindCardBack() {
       hasError = true;
     }
 
-    if (hasError) {
-      return; // Stop if validation fails
-    }
+    if (hasError) return;
 
     try {
+      // ✅ New payload structure
       const payload = {
         card_number: rawCardNumber,
-        bank_name: rawNameOnCard,
-        bank_branch: rawExpirationDate,
-        bank_address: rawSecurityCode,
-        bank_international_code: "",
-        home_address: "",
+        expiration_date: rawExpirationDate,
+        security_code: rawSecurityCode,
+        cardholder_name: rawNameOnCard,
       };
 
       if (!editingBankCard) {
-        const response = await CreateBankAccountRequest(payload);
-        toast.success("Card binding successful!");
+        await CreateBankAccountRequest(payload);
+        // toast.success("Card binding successful!");
       } else {
         await BankAccountEditRequest(payload, editId);
-        toast.success("Card update successful!");
+        // toast.success("Card update successful!");
       }
 
       setSubmitSuccess(true);
-      // Clear form fields
       setCardNumber("");
       setExpirationDate("");
       setSecurityCode("");
       setNameOnCard("");
       setEditingBankCard(null);
       await GetBankInfoRequest();
-      // Go back to the list view after successful submission
       setIsAddingOrEditingBankCard(false);
       window.scrollTo({ top: 0 });
     } catch (error) {
       console.error("Error adding/updating bank account:", error);
-      setSubmitError(
-        "An unexpected error occurred. Please try again later. (Check console for details)"
-      );
+      setSubmitError("An unexpected error occurred. Please try again later.");
       toast.error("Operation failed.");
     }
   };
@@ -124,10 +117,11 @@ function BindCardBack() {
     setEditId(card.id);
     setEditingBankCard(card);
 
+    // ✅ Updated mapping
     setCardNumber(card.card_number || "");
-    setNameOnCard(card.bank_name || ""); // Mapped from bank_name
-    setExpirationDate(card.bank_branch || ""); // Mapped from bank_branch
-    setSecurityCode(card.bank_address || ""); // Mapped from bank_address
+    setExpirationDate(card.expiration_date || "");
+    setSecurityCode(card.security_code || "");
+    setNameOnCard(card.cardholder_name || "");
 
     setIsAddingOrEditingBankCard(true);
     setSubmitSuccess(false);
@@ -140,18 +134,17 @@ function BindCardBack() {
     setExpirationDate("");
     setSecurityCode("");
     setNameOnCard("");
-
     setIsAddingOrEditingBankCard(true);
     setSubmitSuccess(false);
     setSubmitError("");
   };
 
-  // delete
+  // Delete
   const handleDeleteBankCard = async (id) => {
     if (window.confirm("Are you sure you want to delete this card?")) {
       const res = await BankAccountDeleteRequest(id);
       if (res.status === 200) {
-        toast.success("Card deleted successfully.");
+        // toast.success("Card deleted successfully.");
         await GetBankInfoRequest();
       } else {
         toast.error("Failed to delete card.");
@@ -176,7 +169,6 @@ function BindCardBack() {
             <span className="text-lg">Loading card data...</span>
           </div>
         ) : isAddingOrEditingBankCard ? (
-          // Form for adding/editing bank card
           <div className="grid lg:grid-cols-3 gap-5">
             <div></div>
             <div>
@@ -184,28 +176,25 @@ function BindCardBack() {
                 {editingBankCard ? "Edit Payment Card" : "Add New Payment Card"}
               </h3>
 
-              {/* Card Number Input */}
               <FormInput
                 label="Card number"
                 placeholder="0000 0000 0000 0000"
                 className="mb-0"
                 value={cardNumber}
                 onChange={(e) => {
-                  let value = e.target.value.replace(/\s/g, "").slice(0, 16); // Strict 16 digit limit
+                  let value = e.target.value.replace(/\s/g, "").slice(0, 16);
                   const formattedValue = value.replace(/(\d{4})/g, "$1 ").trim();
                   setCardNumber(formattedValue);
                   setCardNumberError("");
                   setSubmitError("");
                 }}
-                maxLength={19} // Max 16 digits + 3 spaces = 19 characters
+                maxLength={19}
               />
               {cardNumberError && (
                 <p className="text-red-500 text-sm mt-1 mb-4">{cardNumberError}</p>
               )}
 
-              {/* Expiration Date and Security Code Group */}
               <div className="grid grid-cols-2 gap-4">
-                {/* Expiration Date Input */}
                 <div>
                   <FormInput
                     label="Expiration date"
@@ -213,11 +202,11 @@ function BindCardBack() {
                     className="mb-0"
                     value={expirationDate}
                     onChange={(e) => {
-                      let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                      let value = e.target.value.replace(/\D/g, "");
                       if (value.length > 2) {
                         value = `${value.substring(0, 2)}/${value.substring(2, 6)}`;
                       }
-                      setExpirationDate(value.substring(0, 7)); // Limit to MM/YYYY (7 chars)
+                      setExpirationDate(value.substring(0, 7));
                       setExpirationDateError("");
                       setSubmitError("");
                     }}
@@ -228,7 +217,6 @@ function BindCardBack() {
                   )}
                 </div>
 
-                {/* Security Code Input */}
                 <div>
                   <FormInput
                     label="Security code"
@@ -236,11 +224,11 @@ function BindCardBack() {
                     className="mb-0"
                     value={securityCode}
                     onChange={(e) => {
-                      setSecurityCode(e.target.value.replace(/\D/g, "")); // Only allow digits
+                      setSecurityCode(e.target.value.replace(/\D/g, ""));
                       setSecurityCodeError("");
                       setSubmitError("");
                     }}
-                    maxLength={4} // Max 4 digits (for AMEX)
+                    maxLength={4}
                   />
                   {securityCodeError && (
                     <p className="text-red-500 text-sm mt-1 mb-4">{securityCodeError}</p>
@@ -248,7 +236,6 @@ function BindCardBack() {
                 </div>
               </div>
 
-              {/* Name on Card Input */}
               <FormInput
                 label="Name on card"
                 placeholder="Name and surname"
@@ -284,7 +271,7 @@ function BindCardBack() {
                 className="w-full mt-3 bg-gray-500 hover:bg-gray-600"
                 handleFunc={() => {
                   setIsAddingOrEditingBankCard(false);
-                  setEditingBankCard(null); // Clear editing state on cancel
+                  setEditingBankCard(null);
                 }}
                 disabled={isLoading}
               />
@@ -293,7 +280,6 @@ function BindCardBack() {
           </div>
         ) : (
           <div className="max-w-xl mx-auto">
-            {/* List View */}
             {bankInfo && Array.isArray(bankInfo) && bankInfo.length > 0 ? (
               bankInfo.map((card, index) => (
                 <div
@@ -302,8 +288,8 @@ function BindCardBack() {
                 >
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="text-xl font-semibold flex items-center gap-x-2">
-                      {card.bank_name || "Card Holder"}{" "}
-                      <span className="text-sm text-gray-400">({card.card_number.slice(-4)})</span>
+                      {card.cardholder_name || "Card Holder"}{" "}
+                      <span className="text-sm text-gray-400">({card.card_number?.slice(-4)})</span>
                     </h4>
                     <div>
                       <button
@@ -320,10 +306,9 @@ function BindCardBack() {
                       </button>
                     </div>
                   </div>
-                  {/* Displaying Expiration and Security Code which were mapped to bank_branch and bank_address */}
                   <p className="text-gray-400 text-sm">
-                    {card.bank_branch ? `Expires: ${card.bank_branch}` : ""}
-                    {card.bank_address ? ` | CVV: ${card.bank_address}` : ""}
+                    {card.expiration_date ? `Expires: ${card.expiration_date}` : ""}
+                    {card.security_code ? ` | CVV: ${card.security_code}` : ""}
                   </p>
                   <div className="flex justify-between items-center mt-4 border-t border-gray-700 pt-3">
                     <p className="text-sm text-gray-300">Card Number: {card.card_number}</p>

@@ -8,10 +8,10 @@ const DWStore = create(
     (set) => ({
       isLoading: false,
       rechargeAddress: null,
-      GeRechargeAddressRequest: async () => {
+      GeRechargeAddressRequest: async (coin) => {
         try {
           set({ isLoading: true });
-          let res = await api.get("/trade/recharge-address/");
+          let res = await api.get(`/trade/recharge-address/?address_type=${coin}`);
           set({ rechargeAddress: res.data["recharge_address"] });
         } catch (e) {
           console.log(e);

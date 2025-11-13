@@ -18,30 +18,28 @@ function RechargeApply() {
     DWStore();
   const navigate = useRouter();
 
+  // ✅ Default to TRC20
+  const [networkType, setNetworkType] = useState("USDT-TRC20");
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
-  const [screenshotPreview, setScreenshotPreview] = useState(null); // New state for image preview
+  const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [copiedMessage, setCopiedMessage] = useState(false);
   const [amountError, setAmountError] = useState("");
   const [screenshotError, setScreenshotError] = useState("");
 
-  const handleClick = () => {
-    fileInputRef?.current?.click();
-  };
+  const handleClick = () => fileInputRef?.current?.click();
 
   const handleFileChange = (e) => {
     const file = e.target?.files[0];
     if (file) {
       setSelectedScreenshot(file);
-      setScreenshotError(""); // Clear error if file is selected
+      setScreenshotError("");
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setScreenshotPreview(reader.result);
-      };
+      reader.onloadend = () => setScreenshotPreview(reader.result);
       reader.readAsDataURL(file);
     } else {
       setSelectedScreenshot(null);
-      setScreenshotPreview(null); // Clear preview if no file is selected
+      setScreenshotPreview(null);
     }
   };
 
@@ -50,9 +48,7 @@ function RechargeApply() {
       try {
         await navigator.clipboard.writeText(rechargeAddress);
         setCopiedMessage(true);
-        setTimeout(() => {
-          setCopiedMessage(false);
-        }, 2000);
+        setTimeout(() => setCopiedMessage(false), 2000);
       } catch (err) {
         console.error("Failed to copy text: ", err);
         alert("Failed to copy address. Please try manually.");
@@ -60,37 +56,34 @@ function RechargeApply() {
     }
   };
 
+  // ✅ Call API when component mounts (TRC20 by default) and whenever networkType changes
   useEffect(() => {
-    GeRechargeAddressRequest();
-  }, []);
+    if (coin) {
+      GeRechargeAddressRequest(networkType);
+    }
+  }, [coin, networkType]);
 
   const handleSubmit = async () => {
     let hasError = false;
-
     const amount = parseFloat(rechargeAmount);
+
     if (isNaN(amount) || amount <= 0) {
       setAmountError("Please enter a valid recharge amount (greater than 0).");
       hasError = true;
-    } else {
-      setAmountError("");
-    }
+    } else setAmountError("");
 
     if (!selectedScreenshot) {
       setScreenshotError("Please upload a screenshot of your payment.");
       hasError = true;
-    } else {
-      setScreenshotError("");
-    }
+    } else setScreenshotError("");
 
-    if (hasError) {
-      return;
-    }
-    const currency = coin ? coin.toUpperCase() : "";
+    if (hasError) return;
 
     const formData = new FormData();
-    formData.append("currency", currency);
+    formData.append("currency", networkType); // ✅ Send networkType
     formData.append("amount", amount);
     formData.append("screenshot", selectedScreenshot);
+
     try {
       await RechargeDepositRequest(formData);
       setRechargeAmount("");
@@ -104,26 +97,14 @@ function RechargeApply() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="container py-[40px] lg:py-[60px]">
-        <div className="max-w-2xl mx-auto mb-5 animate-pulse">
-          <div className="h-8 w-32 bg-gray-300 rounded mb-3"></div>
-          <div className="h-6 w-20 bg-gray-300 rounded"></div>
-        </div>
-        <div className="h-72 bg-gray-200 rounded mb-10 animate-pulse"></div>
-        <div className="h-96 bg-gray-200 rounded animate-pulse"></div>
-      </div>
-    );
-  }
-
+  // === JSX Below ===
   return (
     <div className="container py-[60px]">
+      {/* Heading */}
       <div className="flex items-center justify-between mb-5">
         <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-black mb-4 flex gap-x-3">
           <button onClick={() => window.history.back()}>
-            {" "}
-            <ArrowLeft className="pt-1 cursor-pointer" />{" "}
+            <ArrowLeft className="pt-1 cursor-pointer" />
           </button>
           Recharge <span className="uppercase">{coin}</span>
         </h4>
@@ -137,31 +118,46 @@ function RechargeApply() {
         </Link>
       </div>
 
-      {rechargeAddress !== null && (
-        <div className="bg-white h-[200px] w-[200px] mx-auto p-1 rounded">
-          <QRCode
-            size={200}
-            style={{
-              height: "200",
-              maxWidth: "100%",
-              width: "200",
-              margin: "0 auto",
-              paddingBottom: "7px",
-            }}
-            value={rechargeAddress}
-            viewBox={`0 0 200 200`}
-          />
+      {/* ✅ Network Tabs */}
+      {coin?.toLowerCase() === "usdt" && (
+        <div className="flex justify-center gap-2 mb-5">
+          <button
+            onClick={() => setNetworkType("USDT-TRC20")}
+            className={`px-4 py-2 rounded-md border transition ${
+              networkType === "USDT-TRC20"
+                ? "bg-[#00B894] text-white border-[#00B894]"
+                : "bg-white text-[#00B894] border-[#00B894]"
+            }`}
+          >
+            TRC20
+          </button>
+          <button
+            onClick={() => setNetworkType("USDT-ERC20")}
+            className={`px-4 py-2 rounded-md border transition ${
+              networkType === "USDT-ERC20"
+                ? "bg-[#00B894] text-white border-[#00B894]"
+                : "bg-white text-[#00B894] border-[#00B894]"
+            }`}
+          >
+            ERC20
+          </button>
         </div>
       )}
 
+      {/* QR Code */}
+      {rechargeAddress && (
+        <div className="bg-white h-[200px] w-[200px] mx-auto p-1 rounded">
+          <QRCode value={rechargeAddress} size={200} />
+        </div>
+      )}
+
+      {/* Address + Copy */}
       <div className="mt-5 mb-5 relative">
         <h4 className="text-lg mb-2 block font-medium dark:text-white">
-          Recharge Address (<span className="uppercase">{coin}</span>)
+          Recharge Address ({networkType})
         </h4>
         <p className="flex items-center gap-x-3 dark:text-white text-gray-900 text-[14px] lg:text-base tracking-wide">
-          {rechargeAddress === "" && isLoading
-            ? "0xa8d2bbE4b181948B8C78709c3603E91DCd25Ff06"
-            : rechargeAddress}
+          {rechargeAddress}
           <Copy className="text-green-500 cursor-pointer w-4 h-4" onClick={copyToClipboard} />
           {copiedMessage && (
             <span className="absolute top-2 left-[270px] lg:left-[350px] bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
@@ -171,6 +167,7 @@ function RechargeApply() {
         </p>
       </div>
 
+      {/* Amount */}
       <FormInput
         label="Recharge Amount"
         placeholder="Please enter"
@@ -178,15 +175,14 @@ function RechargeApply() {
         value={rechargeAmount}
         onChange={(e) => {
           const value = e.target.value;
-          if (/^\d*\.?\d*$/.test(value) || value === "") {
-            setRechargeAmount(value);
-          }
+          if (/^\d*\.?\d*$/.test(value) || value === "") setRechargeAmount(value);
           setAmountError("");
         }}
         className="md:max-w-[375px] mb-2"
       />
       {amountError && <p className="text-red-500 text-sm mb-5 md:max-w-[375px]">{amountError}</p>}
 
+      {/* Screenshot Upload */}
       <div className="mb-2">
         <h4 className="text-lg mb-2 block font-medium dark:text-white">
           Upload Screenshot or payment details
