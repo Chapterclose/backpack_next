@@ -2,16 +2,98 @@
 
 import { marketData } from "@/constant/marketArr";
 import { contextProvider } from "@/contexts/Context";
+import { AmountWithCommas } from "@/lib/utils";
+import UserStore from "@/store/UserStore";
 import { motion } from "framer-motion";
 import { LucideActivity } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
-import { FaCodiepie, FaDollarSign, FaDownload, FaReceipt, FaSeedling, FaUpload, FaWallet } from "react-icons/fa";
+import { FaDollarSign, FaDownload, FaUpload, FaWallet } from "react-icons/fa";
 
 function HeroSection() {
-  const { walletAddress, connectWallet, markets } = useContext(contextProvider);
+  const [prices, setPrices] = useState({ USDT: 1, BTC: null, ETH: null });
+  const { walletAddress, connectWallet, markets, totalAvailableBalance, setTotalAvailableBalance } =
+    useContext(contextProvider);
+  const { GetAccountBalanceRequest, AccountBalance, isLoading } = UserStore();
+
+  useEffect(() => {
+    GetAccountBalanceRequest();
+  }, [GetAccountBalanceRequest]);
+
+  useEffect(() => {
+    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
+
+    const fetchInitialPrices = async () => {
+      try {
+        // Fetch both prices in parallel for faster loading
+        const [btcResponse, ethResponse] = await Promise.all([
+          fetch(`${binanceUrl}/api/v3/ticker/price?symbol=BTCUSDT`),
+          fetch(`${binanceUrl}/api/v3/ticker/price?symbol=ETHUSDT`),
+        ]);
+
+        const btcData = await btcResponse.json();
+        const ethData = await ethResponse.json();
+
+        setPrices({
+          USDT: 1,
+          BTC: parseFloat(btcData.price),
+          ETH: parseFloat(ethData.price),
+        });
+      } catch (error) {
+        console.error("Error fetching initial prices:", error);
+        // Continue with WebSocket fallback
+      }
+    };
+
+    fetchInitialPrices();
+
+    // Then connect WebSocket for real-time updates
+    const socket = new WebSocket(
+      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
+    );
+
+    let lastUpdate = 0;
+    socket.onmessage = (event) => {
+      const now = Date.now();
+      if (now - lastUpdate < 500) return; // Throttle to 500ms
+      lastUpdate = now;
+
+      const msg = JSON.parse(event.data);
+      const symbol = msg?.data?.s;
+      const price = parseFloat(msg?.data?.p);
+
+      if (symbol === "BTCUSDT") {
+        setPrices((prev) => ({ ...prev, BTC: price }));
+      } else if (symbol === "ETHUSDT") {
+        setPrices((prev) => ({ ...prev, ETH: price }));
+      }
+    };
+
+    socket.onerror = (error) => {
+      console.error("Price WebSocket Error:", error);
+    };
+
+    return () => socket.close();
+  }, []);
+
+  // Calculate balance immediately when AccountBalance or prices change
+  useEffect(() => {
+    if (!AccountBalance) return;
+
+    const usdtAvailable = parseFloat(AccountBalance?.USDT?.available || "0");
+    const btcAvailable = parseFloat(AccountBalance?.BTC?.available || "0");
+    const ethAvailable = parseFloat(AccountBalance?.ETH?.available || "0");
+
+    const usdtValue = usdtAvailable * prices.USDT;
+    // Use current prices, or 0 if not yet loaded (will update when prices arrive)
+    const btcValue = btcAvailable * (prices.BTC || 0);
+    const ethValue = ethAvailable * (prices.ETH || 0);
+
+    const total = usdtValue + btcValue + ethValue;
+    setTotalAvailableBalance(total);
+  }, [AccountBalance, prices, setTotalAvailableBalance]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -31,9 +113,9 @@ function HeroSection() {
 
   // Action buttons for My Wallet section
   const walletActions = [
-    { label: "Send", icon: FaUpload, href: "/send" },
-    { label: "Receive", icon: FaDownload, href: "/receive" },
-    { label: "Buy", icon: FaWallet, href: "/buy" },
+    { label: "Send", icon: FaUpload, href: "/withdraw" },
+    { label: "Receive", icon: FaDownload, href: "/recharge-deposit" },
+    { label: "Buy", icon: FaWallet, href: "/en/trade?symbol=btc" },
     { label: "Convert", icon: FaDollarSign, href: "/convert" },
   ];
 
@@ -62,7 +144,9 @@ function HeroSection() {
         {/* ************ My Wallet Section ************ */}
         <motion.div variants={itemVariants} className="mb-4">
           <h2 className="text-2xl md:text-3xl font-bold text-green-500 mb-2">My Assets</h2>
-          <p className="text-4xl md:text-5xl font-bold mb-5">$0.00</p>
+          <p className="text-4xl md:text-5xl font-bold mb-5">
+            ${AmountWithCommas(totalAvailableBalance)}
+          </p>
 
           {/* Wallet Action Buttons */}
           <div className="grid grid-cols-4 gap-4">
