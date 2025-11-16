@@ -115,7 +115,7 @@ function HeroSection() {
   const walletActions = [
     { label: "Send", icon: FaUpload, href: "/withdraw" },
     { label: "Receive", icon: FaDownload, href: "/recharge-deposit" },
-    { label: "Buy", icon: FaWallet, href: "/en/trade?symbol=btc" },
+    { label: "Buy", icon: FaWallet, href: "/buy" },
     { label: "Convert", icon: FaDollarSign, href: "/convert" },
   ];
 

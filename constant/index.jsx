@@ -1,4 +1,22 @@
-import { BadgeInfo, CircleUserRound, CreditCard, FileLock, Layers, Mail, ShieldCheck } from "lucide-react";
+import banxa from "@/assets/logos/banxa.png";
+import binance from "@/assets/logos/binance.png";
+import coinbase from "@/assets/logos/coinbase.png";
+import crypto from "@/assets/logos/crypto.png";
+import houbi from "@/assets/logos/houbi.png";
+import kraken from "@/assets/logos/kraken.png";
+import okx from "@/assets/logos/okx.png";
+import paybis from "@/assets/logos/paybis.png";
+import ramp from "@/assets/logos/ramp.png";
+import simplex from "@/assets/logos/simplex.png";
+import {
+  BadgeInfo,
+  CircleUserRound,
+  CreditCard,
+  FileLock,
+  Layers,
+  Mail,
+  ShieldCheck,
+} from "lucide-react";
 import { AiOutlineCloseSquare, AiOutlineSetting } from "react-icons/ai";
 import {
   BiBarChart,
@@ -14,23 +32,36 @@ import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import { TbHexagons } from "react-icons/tb";
 
 export const navItems = [
-    {
-      href: "/en/primary-certification",
-      icon: ShieldCheck,
-      label: "Primary Certification",
-    },
-    {
-      href: "/en/real-name-authentication",
-      icon: CircleUserRound,
-      label: "Real-name Authentication",
-      protected: true,
-    },
-    { href: "/en/bind-card-bank", icon: CreditCard, label: "Bind Bank Card" },
-    { href: "/en/set-fund-password", icon: FileLock, label: "Set Password" },
-    { href: "/en/email-authentication", icon: Mail, label: "Email Authentication" },
-    { href: "/en/service-terms", icon: Layers, label: "Service Terms" },
-    { href: "/en/help-center", icon: BadgeInfo, label: "Help Center" },
-  ];
+  {
+    href: "/en/primary-certification",
+    icon: ShieldCheck,
+    label: "Primary Certification",
+  },
+  {
+    href: "/en/real-name-authentication",
+    icon: CircleUserRound,
+    label: "Real-name Authentication",
+    protected: true,
+  },
+  { href: "/en/bind-card-bank", icon: CreditCard, label: "Bind Bank Card" },
+  { href: "/en/set-fund-password", icon: FileLock, label: "Set Password" },
+  { href: "/en/email-authentication", icon: Mail, label: "Email Authentication" },
+  { href: "/en/service-terms", icon: Layers, label: "Service Terms" },
+  { href: "/en/help-center", icon: BadgeInfo, label: "Help Center" },
+];
+
+export const cryptoSites = [
+  { name: "Paybis", url: "https://paybis.com/", logo: paybis },
+  { name: "Binance", url: "https://www.binance.com/", logo: binance },
+  { name: "Huobi", url: "https://www.huobi.com/", logo: houbi },
+  { name: "Kraken", url: "https://www.kraken.com/", logo: kraken },
+  { name: "Ramp", url: "https://ramp.network/", logo: ramp },
+  { name: "Banxa", url: "https://banxa.com/", logo: banxa },
+  { name: "Simplex", url: "https://www.simplex.com/", logo: simplex },
+  { name: "Crypto.com", url: "https://crypto.com/", logo: crypto },
+  { name: "Coinbase", url: "https://www.coinbase.com/", logo: coinbase },
+  { name: "OKX", url: "https://www.okx.com/", logo: okx },
+];
 
 // User Dashboard Menus
 export const userDashboardMenus = [
@@ -175,10 +206,7 @@ export const homeFaqData = [
 ];
 
 // trade page - Market trades and my trades tab
-export const marketAndMyTradesTabs = [
-  { title: "Market Trades" },
-  { title: "My Trades" },
-];
+export const marketAndMyTradesTabs = [{ title: "Market Trades" }, { title: "My Trades" }];
 
 // Footer Data
 export const footerUrls = [
