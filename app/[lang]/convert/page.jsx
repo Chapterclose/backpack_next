@@ -201,7 +201,7 @@ const ConvertPage = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-dark font-inter">
+    <div className="flex justify-center items-center py-14 px-3 bg-gray-50 dark:bg-dark font-inter">
       <div className="w-full max-w-xl bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <Heading text="Convert" />
 

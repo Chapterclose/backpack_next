@@ -9,7 +9,6 @@ import Image from "next/image";
 
 function AssetDetails({ showBalance }) {
   const { AccountBalance } = UserStore();
-
   const assets = [
     {
       symbol: "USDT",
@@ -87,9 +86,9 @@ function AssetDetails({ showBalance }) {
 
   const getBalance = (asset, type) => {
     if (!showBalance) return "****";
-    const balance = AccountBalance?.[asset.symbol]?.[type];
+    const balance = AccountBalance?.[asset.name]?.[type];
     if (!balance) return "0.00";
-    return AmountWithCommas(balance, asset.symbol.toLowerCase());
+    return AmountWithCommas(balance, asset.name.toLowerCase());
   };
 
   return (

@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 const TradeStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       isLoading: false,
       tradingData: null,
 
@@ -17,7 +17,16 @@ const TradeStore = create(
           set({ isLoading: true });
           let res = await api.post("/trade/buy-sell/", body);
           // console.log(res)
-          set({ tradingData: res.data?.trade });
+          
+          // Optimistically update openOrders
+          const currentOpenOrders = get().openOrders || [];
+          const newTrade = res.data?.trade;
+          
+          set({ 
+            tradingData: newTrade,
+            openOrders: [newTrade, ...currentOpenOrders]
+          });
+          
           // toast.success(res.data["message"]);
           return res;
         } catch (e) {
@@ -71,6 +80,8 @@ const TradeStore = create(
           set({ isLoading: false });
         }
       },
+
+      clearOpenOrders: () => set({ openOrders: [] }),
 
       orderHistory: null,
       OrderHistoryRequest: async () => {

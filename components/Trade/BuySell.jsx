@@ -183,7 +183,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
         onOpen();
         toast.success(`Trade ${tradeType.toUpperCase()} successful!`); // Success toast
         await TradeDetailsRequest(res?.data?.trade?.id);
-        await OpenOrdersRequest(); // Re-fetch open orders after a successful trade
+        // await OpenOrdersRequest(); // Re-fetch open orders after a successful trade
       }
     } catch (error) {
       console.error("Trade request failed:", error);
