@@ -7,10 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react"; // Import useEffect
 
-import btcImg from "@/assets/markets/1.png";
-import ethImg from "@/assets/markets/2.png";
-import usdtImg from "@/assets/markets/usdt.png";
 import FormPassword from "@/components/Form/FormPassword";
+import { marketDataAssets } from "@/constant/marketArr";
 import { AmountWithCommas } from "@/lib/utils";
 import DWStore from "@/store/DWStore";
 import UserStore from "@/store/UserStore";
@@ -39,14 +37,18 @@ function WithdrawApply() {
   };
 
   let currentBalance = 0;
+  console.log(AccountBalance)
   if (AccountBalance && coin) {
     if (coin === "btc") {
       currentBalance = AccountBalance.BTC?.available;
     } else if (coin === "eth") {
       currentBalance = AccountBalance.ETH?.available;
-    } else if (coin === "usdt-erc" || coin === "usdt-trc") {
+    } else if (coin === "usdt") {
       currentBalance = AccountBalance.USDT?.available;
     }
+    // } else if (coin === "usdt-erc" || coin === "usdt-trc") {
+    //   currentBalance = AccountBalance.USDT?.available;
+    // }
   }
 
   // Set default wallet address when coin changes or on initial load
@@ -62,6 +64,16 @@ function WithdrawApply() {
 
   const handleClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setWalletAddress(text);
+      setAddressError("");
+    } catch (err) {
+      toast.error("Failed to paste from clipboard");
+    }
   };
 
   const handleFileChange = (e) => {
@@ -124,6 +136,9 @@ function WithdrawApply() {
     }
   };
 
+
+  const currentCoin = marketDataAssets.find((item) => item.name.toLowerCase() === coin);
+
   return (
     <div className="container py-[60px]">
       <div className="flex items-center justify-between mb-5">
@@ -147,7 +162,7 @@ function WithdrawApply() {
       <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg py-5 px-2 lg:p-5">
         <div className="border-b pb-10 mb-10 border-gray-200 dark:border-gray-700 text-center">
           <h4 className="text-6xl mb-2 dark:text-white text-black font-semibold">
-            {AmountWithCommas(currentBalance || 0)}
+            {AmountWithCommas(currentBalance || 0, coin)}
           </h4>
           <p className="text-black dark:text-white font-medium">
             Available Balance(<span className="uppercase">{coin}</span>)
@@ -165,10 +180,7 @@ function WithdrawApply() {
           >
             <Image
               src={
-                (coin === "usdt-trc" && usdtImg) ||
-                (coin === "usdt-erc" && usdtImg) ||
-                (coin === "btc" && btcImg) ||
-                (coin === "eth" && ethImg)
+                currentCoin?.icon
               }
               width={25}
               height={25}
@@ -198,15 +210,24 @@ function WithdrawApply() {
           </span>
         </div>
 
-        <FormInput
-          label="Withdrawal address"
-          placeholder="Please enter"
-          value={walletAddress} // Bind value to new walletAddress state
-          onChange={(e) => {
-            setWalletAddress(e.target.value);
-            setAddressError(""); // Clear error when typing
-          }}
-        />
+        <div className="relative">
+          <FormInput
+            label="Withdrawal address"
+            placeholder="Please enter"
+            value={walletAddress} // Bind value to new walletAddress state
+            onChange={(e) => {
+              setWalletAddress(e.target.value);
+              setAddressError(""); // Clear error when typing
+            }}
+          />
+          <button
+            type="button"
+            onClick={handlePaste}
+            className="absolute right-3 bottom-3 text-primary-200 font-semibold hover:text-primary-300 transition-colors"
+          >
+            Paste
+          </button>
+        </div>
         {addressError && <p className="text-red-500 text-sm">{addressError}</p>}
 
         <FormPassword
