@@ -189,8 +189,9 @@ function HeroSection() {
               const changeTextColor = isPositiveChange ? "text-green-500" : "text-red-500";
 
               return (
-                <div
+                <Link
                   key={index}
+                  href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`}
                   className="flex-shrink-0 w-[120px] md:w-[200px] p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col justify-between"
                   style={{ background: cardGradient }}
                 >
@@ -227,7 +228,7 @@ function HeroSection() {
                       {data?.change ? `${data.change}%` : "--"}
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

@@ -105,7 +105,7 @@ const Header = () => {
                 Connect
               </button>
             )}
-            <ThemeSwitcher />
+            {/* <ThemeSwitcher /> */}
           </div>
         </div>
       </div>

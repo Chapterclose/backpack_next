@@ -1,8 +1,10 @@
 "use client";
 
+import VerificationModal from "@/components/Bank/VerificationModal";
 import Button from "@/components/Form/Button";
 import FormInput from "@/components/Form/FormInput";
 import UserStore from "@/store/UserStore";
+import cardValidator from "card-validator";
 import { Banknote, Edit, Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -30,6 +32,7 @@ function BindCardBack() {
   const [submitError, setSubmitError] = useState("");
   const [editingBankCard, setEditingBankCard] = useState(null);
   const [editId, setEditId] = useState(null);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
   const handleAddBankAccount = async () => {
     setCardNumberError("");
@@ -45,27 +48,30 @@ function BindCardBack() {
     const rawNameOnCard = nameOnCard.trim();
     const rawExpirationDate = expirationDate.trim();
 
+    const numberValidation = cardValidator.number(rawCardNumber);
     if (!rawCardNumber) {
       setCardNumberError("Card number cannot be empty.");
       hasError = true;
-    } else if (!/^\d{16}$/.test(rawCardNumber)) {
-      setCardNumberError("Please enter a valid 16-digit card number.");
+    } else if (!numberValidation.isValid) {
+      setCardNumberError("Please enter a valid card number.");
       hasError = true;
     }
 
+    const expirationValidation = cardValidator.expirationDate(rawExpirationDate);
     if (!rawExpirationDate) {
       setExpirationDateError("Expiration date cannot be empty.");
       hasError = true;
-    } else if (!/^(0[1-9]|1[0-2])\/\d{4}$/.test(rawExpirationDate)) {
+    } else if (!expirationValidation.isValid) {
       setExpirationDateError("Please enter a valid format (MM/YYYY).");
       hasError = true;
     }
 
+    const cvvValidation = cardValidator.cvv(rawSecurityCode);
     if (!rawSecurityCode) {
       setSecurityCodeError("Security code cannot be empty.");
       hasError = true;
-    } else if (!/^\d{3,4}$/.test(rawSecurityCode)) {
-      setSecurityCodeError("Please enter a valid security code (3 or 4 digits).");
+    } else if (!cvvValidation.isValid) {
+      setSecurityCodeError("Please enter a valid security code.");
       hasError = true;
     }
 
@@ -87,26 +93,36 @@ function BindCardBack() {
 
       if (!editingBankCard) {
         await CreateBankAccountRequest(payload);
-        // toast.success("Card binding successful!");
       } else {
         await BankAccountEditRequest(payload, editId);
-        // toast.success("Card update successful!");
       }
-
-      setSubmitSuccess(true);
-      setCardNumber("");
-      setExpirationDate("");
-      setSecurityCode("");
-      setNameOnCard("");
-      setEditingBankCard(null);
-      await GetBankInfoRequest();
-      setIsAddingOrEditingBankCard(false);
-      window.scrollTo({ top: 0 });
+      
+      setIsVerificationModalOpen(true);
     } catch (error) {
       console.error("Error adding/updating bank account:", error);
       setSubmitError("An unexpected error occurred. Please try again later.");
       toast.error("Operation failed.");
     }
+  };
+
+  const handleVerificationSuccess = async () => {
+    setIsVerificationModalOpen(false);
+    setIsAddingOrEditingBankCard(false);
+    setEditingBankCard(null);
+    setCardNumber("");
+    setExpirationDate("");
+    setSecurityCode("");
+    setNameOnCard("");
+    setSubmitSuccess(false);
+    
+    try {
+      await GetBankInfoRequest();
+    } catch (error) {
+      console.error("Error fetching bank info:", error);
+    }
+    
+    window.scrollTo({ top: 0 });
+    toast.success(editingBankCard ? "Card update successful!" : "Card binding successful!");
   };
 
   useEffect(() => {
@@ -228,7 +244,7 @@ function BindCardBack() {
                       setSecurityCodeError("");
                       setSubmitError("");
                     }}
-                    maxLength={4}
+                    maxLength={3}
                   />
                   {securityCodeError && (
                     <p className="text-red-500 text-sm mt-1 mb-4">{securityCodeError}</p>
@@ -337,6 +353,12 @@ function BindCardBack() {
           </div>
         )}
       </div>
+
+      <VerificationModal
+        isOpen={isVerificationModalOpen}
+        onClose={() => setIsVerificationModalOpen(false)}
+        onVerify={handleVerificationSuccess}
+      />
     </div>
   );
 }

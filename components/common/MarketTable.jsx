@@ -13,13 +13,13 @@ function MarketTable({ ss, se }) {
       <table className="min-w-full table-fixed">
         <thead className="lg:bg-gray-50 lg:dark:bg-gray-800/50 w-full">
           <tr>
-            <th className="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/3 md:w-auto">
+            <th className="px-0 md:px-6 py-4 text-left text-[13px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/3 md:w-auto">
               Name
             </th>
-            <th className="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-[120px] lg:w-1/3">
+            <th className="px-0 md:px-6 py-4 text-left text-[13px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-[120px] lg:w-1/3">
               Price
             </th>
-            <th className="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-[100px] lg:w-1/3">
+            <th className="px-0 md:px-6 py-4 text-left text-[13px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-[100px] lg:w-1/3">
               24h Change
             </th>
           </tr>
@@ -35,7 +35,7 @@ function MarketTable({ ss, se }) {
                 key={symbol}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-150"
               >
-                <td className="px-4 md:px-6 py-4 whitespace-nowrap w-1/3 md:w-auto">
+                <td className="px-0 md:px-6 py-4 whitespace-nowrap w-1/3 md:w-auto">
                   <Link
                     prefetch
                     href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`}
@@ -57,7 +57,7 @@ function MarketTable({ ss, se }) {
                   </Link>
                 </td>
 
-                <td className="px-4 md:px-6 py-4 whitespace-nowrap w-[120px] lg:w-1/3">
+                <td className="px-0 md:px-6 py-4 whitespace-nowrap w-[120px] lg:w-1/3">
                   <div className="text-sm md:text-base font-semibold text-black dark:text-white">
                     {data?.price ? (
                       `$${Number(data.price).toLocaleString(undefined, {
@@ -70,7 +70,7 @@ function MarketTable({ ss, se }) {
                   </div>
                 </td>
 
-                <td className="px-4 md:px-6 py-4 whitespace-nowrap text-left w-[100px] lg:w-1/3">
+                <td className="px-0 md:px-6 py-4 whitespace-nowrap text-left w-[100px] lg:w-1/3">
                   <button
                     className={`inline-block p-[5px_15px] rounded whitespace-nowrap text-sm md:text-base font-semibold w-full max-w-[100px] ${
                       isPositiveChange ? "text-green-500 bg-[#202d24]" : "text-red-500 bg-[#412a2d]"

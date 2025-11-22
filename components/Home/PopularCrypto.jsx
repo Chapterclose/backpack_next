@@ -16,7 +16,7 @@ const PopularCrypto = () => {
       <div className="flex items-center justify-between mb-4 md:mb-12">
         <div>
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-2">
-            Popular Cryptocurrencies
+           Popular Crypto
           </h2>
         </div>
         <Link
