@@ -161,13 +161,13 @@ const MobileNav = () => {
                 Connect
               </button>
             )}
-            <ThemeSwitcher />
+            {/* <ThemeSwitcher /> */}
           </div>
         </div>
       </header>
 
       {/* Bottom Tab Nav - Uses your original bottom items */}
-      <div className="fixed bottom-0 bg-gray-900 w-full grid grid-cols-4 gap-x-2 z-[200]">
+      <div className="fixed bottom-0 bg-gray-900 w-full grid grid-cols-4 gap-x-2 z-[200] py-1">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.dynamicPath
@@ -179,7 +179,7 @@ const MobileNav = () => {
               prefetch
               key={item.href}
               href={item.href}
-              className={`text-center py-2 text-xs ${
+              className={`text-center py-2 text-sm ${
                 isActive ? "text-green-500 font-semibold" : "text-white"
               }`}
               onClick={() => setMobileMenuOpen(false)}
