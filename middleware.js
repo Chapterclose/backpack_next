@@ -10,7 +10,20 @@ function getLocale(request) {
   const headers = { "accept-language": acceptedLanguage };
   const languages = new Negotiator({ headers }).languages();
 
-  return match(languages, locales, defaultLocale); // en or bn
+  const validLanguages = languages.filter((lang) => {
+    try {
+      Intl.getCanonicalLocales(lang);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  });
+
+  try {
+    return match(validLanguages, locales, defaultLocale);
+  } catch (error) {
+    return defaultLocale;
+  }
 }
 
 export function middleware(request) {
