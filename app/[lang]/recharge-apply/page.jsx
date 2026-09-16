@@ -18,8 +18,11 @@ function RechargeApply() {
     DWStore();
   const navigate = useRouter();
 
-  // ✅ Default to TRC20
-  const [networkType, setNetworkType] = useState("USDT-TRC20");
+  // ✅ Default network type based on coin
+  const [networkType, setNetworkType] = useState(
+    coin?.toUpperCase() === "USDT" ? "USDT-TRC20" : coin?.toUpperCase() || "USDT-TRC20"
+  );
+  
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
   const [screenshotPreview, setScreenshotPreview] = useState(null);
@@ -56,12 +59,24 @@ function RechargeApply() {
     }
   };
 
-  // ✅ Call API when component mounts (TRC20 by default) and whenever networkType changes
+  // ✅ Sync networkType if coin changes from URL
   useEffect(() => {
     if (coin) {
+      const upperCoin = coin.toUpperCase();
+      if (upperCoin === "USDT") {
+        setNetworkType((prev) => (prev.startsWith("USDT") ? prev : "USDT-TRC20"));
+      } else {
+        setNetworkType(upperCoin);
+      }
+    }
+  }, [coin]);
+
+  // ✅ Call API whenever networkType changes
+  useEffect(() => {
+    if (networkType) {
       GeRechargeAddressRequest(networkType);
     }
-  }, [coin, networkType]);
+  }, [networkType]);
 
   const handleSubmit = async () => {
     let hasError = false;

@@ -51,12 +51,21 @@ function WithdrawApply() {
     // }
   }
 
-  // Set default wallet address when coin changes or on initial load
+  // Set default wallet address when networkType changes
   useEffect(() => {
-    if (coin && defaultAddresses[coin]) {
-      setWalletAddress(defaultAddresses[coin]);
+    if (networkType) {
+      const key = networkType.toLowerCase();
+      if (key === "usdt-trc20") {
+        setWalletAddress(defaultAddresses["usdt-trc"]);
+      } else if (key === "usdt-erc20") {
+        setWalletAddress(defaultAddresses["usdt-erc"]);
+      } else if (defaultAddresses[key]) {
+        setWalletAddress(defaultAddresses[key]);
+      } else {
+        setWalletAddress("");
+      }
     }
-  }, [coin]);
+  }, [networkType]);
 
   useEffect(() => {
     GetAccountBalanceRequest();
@@ -81,6 +90,24 @@ function WithdrawApply() {
     console.log("Selected file:", file);
     // You can show a preview or handle upload here
   };
+
+  const currentCoin = marketDataAssets.find((item) => item.name.toLowerCase() === coin);
+
+  // Default network type
+  const [networkType, setNetworkType] = useState(
+    coin?.toUpperCase() === "USDT" ? "USDT-TRC20" : coin?.toUpperCase() || ""
+  );
+
+  useEffect(() => {
+    if (coin) {
+      const upperCoin = coin.toUpperCase();
+      if (upperCoin === "USDT") {
+        setNetworkType((prev) => (prev.startsWith("USDT") ? prev : "USDT-TRC20"));
+      } else {
+        setNetworkType(upperCoin);
+      }
+    }
+  }, [coin]);
 
   const handleSubmit = async () => {
     // Reset previous errors
@@ -107,10 +134,11 @@ function WithdrawApply() {
     }
 
     // Validate wallet address
-    const expectedAddress = defaultAddresses[coin];
-    if (walletAddress !== expectedAddress) {
-      setAddressError(`Please insert the right wallet address for ${coin.toUpperCase()}.`);
-      toast.error(`Please insert the right wallet address for ${coin.toUpperCase()}.`);
+    // We remove the default address strict check since users should be able to withdraw to ANY address they own
+    // Just ensure it's not empty
+    if (!walletAddress) {
+      setAddressError(`Please insert the right wallet address for ${networkType}.`);
+      toast.error(`Please insert the right wallet address for ${networkType}.`);
       hasError = true;
     }
 
@@ -119,9 +147,9 @@ function WithdrawApply() {
     }
 
     const payload = {
-      currency: coin.toUpperCase(),
+      currency: networkType,
       amount: parseFloat(withdrawAmount),
-      crypto_address: walletAddress, // Use the walletAddress state here
+      crypto_address: walletAddress,
       withdraw_password: withdrawPassword,
     };
     const res = await WithdrawRequestApi(payload);
@@ -135,9 +163,6 @@ function WithdrawApply() {
       navigate.push("/withdraw-order");
     }
   };
-
-
-  const currentCoin = marketDataAssets.find((item) => item.name.toLowerCase() === coin);
 
   return (
     <div className="container py-[60px]">
@@ -189,6 +214,32 @@ function WithdrawApply() {
             <h4 className="uppercase dark:text-white">{coin}</h4>
           </div>
         </div>
+
+        {/* ✅ Network Tabs */}
+        {coin?.toLowerCase() === "usdt" && (
+          <div className="flex justify-center gap-2 mb-5">
+            <button
+              onClick={() => setNetworkType("USDT-TRC20")}
+              className={`px-4 py-2 rounded-md border transition ${
+                networkType === "USDT-TRC20"
+                  ? "bg-[#00B894] text-white border-[#00B894]"
+                  : "bg-white text-[#00B894] border-[#00B894]"
+              }`}
+            >
+              TRC20
+            </button>
+            <button
+              onClick={() => setNetworkType("USDT-ERC20")}
+              className={`px-4 py-2 rounded-md border transition ${
+                networkType === "USDT-ERC20"
+                  ? "bg-[#00B894] text-white border-[#00B894]"
+                  : "bg-white text-[#00B894] border-[#00B894]"
+              }`}
+            >
+              ERC20
+            </button>
+          </div>
+        )}
 
         <div className="relative">
           <FormInput
