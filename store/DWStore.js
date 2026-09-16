@@ -11,7 +11,7 @@ const DWStore = create(
       GeRechargeAddressRequest: async (coin) => {
         try {
           set({ isLoading: true });
-          let res = await api.get(`/trade/recharge-address/?address_type=${coin}`);
+          let res = await api.get(`/trade/recharge-address/?address_type=${coin}&t=${new Date().getTime()}`);
           set({ rechargeAddress: res.data["recharge_address"] });
         } catch (e) {
           console.log(e);
@@ -92,7 +92,6 @@ const DWStore = create(
     {
       name: "dw-store",
       partialize: (state) => ({
-        rechargeAddress: state.rechargeAddress,
         depositHistory: state.depositHistory,
         withdrawHistory: state.withdrawHistory,
       }),
