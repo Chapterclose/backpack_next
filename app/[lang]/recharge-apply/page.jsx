@@ -167,19 +167,22 @@ function RechargeApply() {
       )}
 
       {/* Address + Copy */}
-      <div className="mt-5 mb-5 relative">
+      <div className="mt-5 mb-5 md:max-w-[375px]">
         <h4 className="text-lg mb-2 block font-medium dark:text-white">
           Recharge Address ({networkType})
         </h4>
-        <p className="flex items-center gap-x-3 dark:text-white text-gray-900 text-[14px] lg:text-base tracking-wide">
-          {rechargeAddress}
-          <Copy className="text-green-500 cursor-pointer w-4 h-4" onClick={copyToClipboard} />
-          {copiedMessage && (
-            <span className="absolute top-2 left-[270px] lg:left-[350px] bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-              Copied!
-            </span>
-          )}
-        </p>
+        <div className="flex flex-col gap-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+          <p className="dark:text-white text-gray-900 text-[14px] lg:text-base tracking-wide break-all">
+            {rechargeAddress}
+          </p>
+          <button
+            onClick={copyToClipboard}
+            className="flex items-center justify-center gap-2 bg-[#00B894] hover:bg-[#009b7c] text-white px-4 py-2 rounded-md transition-colors w-full"
+          >
+            <Copy className="w-4 h-4" />
+            <span className="text-sm font-medium">{copiedMessage ? "Copied!" : "Copy Address"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Amount */}

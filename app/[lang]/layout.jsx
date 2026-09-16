@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className="dark:bg-dark dark:text-white">
       <body className={`${poppins.variable} antialiased`} suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem enableColorScheme>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableColorScheme>
           <Context>
             <ClientLayout>
               {children}
