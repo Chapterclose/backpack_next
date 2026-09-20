@@ -202,14 +202,14 @@ const ConvertPage = () => {
 
   return (
     <div className="flex justify-center items-center py-14 px-3 bg-gray-50 dark:bg-dark font-inter">
-      <div className="w-full max-w-xl bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full max-w-xl bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
         <Heading text="Convert" />
 
         <div className="text-center mb-6">
           <p className="text-5xl font-bold mb-2 text-gray-900 dark:text-gray-100">
             {AmountWithCommas(availableBalances[fromCurrency], fromCurrency)}
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-400">
             Available balance ({fromCurrency})
           </p>
         </div>
@@ -260,7 +260,7 @@ const ConvertPage = () => {
             </div>
           </div>
           {isFromDropdownOpen && (
-            <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
+            <div className="absolute z-10 w-full mt-2 bg-gray-700 rounded-xl shadow-lg border border-gray-600 py-2">
               {currencies
                 .filter((c) => c.name !== toCurrency)
                 .map((c) => (
@@ -281,7 +281,7 @@ const ConvertPage = () => {
         <div className="flex justify-center mb-4">
           <button
             onClick={handleSwap}
-            className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full border shadow-md flex items-center justify-center"
+            className="w-12 h-12 bg-gray-800 rounded-full border shadow-md flex items-center justify-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -330,7 +330,7 @@ const ConvertPage = () => {
             </div>
           </div>
           {isToDropdownOpen && (
-            <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
+            <div className="absolute z-10 w-full mt-2 bg-gray-700 rounded-xl shadow-lg border border-gray-600 py-2">
               {currencies
                 .filter((c) => c.name !== fromCurrency)
                 .map((c) => (
@@ -348,7 +348,7 @@ const ConvertPage = () => {
         </div>
 
         {/* Exchange Rate Display */}
-        <div className="text-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <div className="text-center text-sm text-gray-400 mb-4">
           Today's exchange rate: 1 {fromCurrency} ={" "}
           {rates[fromCurrency] && rates[toCurrency]
             ? ((1 * rates[fromCurrency]) / rates[toCurrency]).toFixed(7)

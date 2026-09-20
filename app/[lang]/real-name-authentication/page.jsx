@@ -196,7 +196,7 @@ function RealNameAuthentication() {
               <span>{isIdCardDropdownOpen ? "▲" : "▼"}</span>
             </div>
             {isIdCardDropdownOpen && (
-              <div className="absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-800 shadow-lg border border-gray-600">
+              <div className="absolute z-10 mt-1 w-full rounded-md bg-gray-800 shadow-lg border border-gray-600">
                 <ul className="py-1">
                   {lendingProducts.map((product) => (
                     <li
@@ -235,7 +235,7 @@ function RealNameAuthentication() {
               <span>{isCountryDropdownOpen ? "▲" : "▼"}</span>
             </div>
             {isCountryDropdownOpen && (
-              <div className="absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-800 shadow-lg border border-gray-600">
+              <div className="absolute z-10 mt-1 w-full rounded-md bg-gray-800 shadow-lg border border-gray-600">
                 <ul className="py-1">
                   {countryArr.map((country) => (
                     <li

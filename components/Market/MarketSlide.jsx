@@ -21,7 +21,7 @@ function MarketSlide() {
           height={24}
           className="w-6 h-6 rounded-full group-hover:scale-110 transition-transform duration-200"
         />
-        <div className="text-sm md:text-base font-semibold text-black dark:text-white">
+        <div className="text-sm md:text-base font-semibold text-white">
           {data?.price ? (
             `$${Number(data.price).toLocaleString(undefined, {
               minimumFractionDigits: 2,

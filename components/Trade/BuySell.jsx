@@ -221,7 +221,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
   const overlayClass =
     "fixed inset-0 bg-black/60 dark:bg-black/70 backdrop-blur-sm flex items-end justify-center z-[9999]";
   const popupContentClass =
-    "bg-white dark:bg-gray-900 w-full max-w-md p-6 md:p-8 rounded-t-2xl md:rounded-t-3xl shadow-2xl transform transition-all duration-300 ease-out border-t-4";
+    "bg-gray-900 w-full max-w-md p-6 md:p-8 rounded-t-2xl md:rounded-t-3xl shadow-2xl transform transition-all duration-300 ease-out border-t-4";
   const buttonGridClass = "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mt-4";
   const scrollableContainerClass = "overflow-x-auto whitespace-nowrap scrollbar-hide no-scrollbar";
   const periodButtonsWrapperClass = "inline-flex flex-nowrap gap-2 md:gap-3 mt-4 pb-2 px-2";
@@ -293,7 +293,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
               </button>
             </div>
 
-            <h4 className="text-black dark:text-white text-base md:text-lg font-semibold mb-3">Select Period</h4>
+            <h4 className="text-white text-base md:text-lg font-semibold mb-3">Select Period</h4>
             <div className={scrollableContainerClass}>
               <div ref={periodButtonsContainerRef} className={periodButtonsWrapperClass}>
                 {allPeriods.map((period) => {
@@ -317,11 +317,11 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
               </div>
             </div>
 
-            <h4 className="text-black dark:text-white text-base md:text-lg font-semibold mt-6 mb-3">Purchase Volume</h4>
+            <h4 className="text-white text-base md:text-lg font-semibold mt-6 mb-3">Purchase Volume</h4>
             <input
               type="number"
               placeholder={`Minimum ${minPurchaseVolume} USDT`}
-              className={`w-full p-4 bg-gray-100 dark:bg-gray-800 text-black dark:text-white rounded-xl border-2 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full p-4 bg-gray-100 dark:bg-gray-800 text-white rounded-xl border-2 focus:outline-none focus:ring-2 transition-all ${
                 errorMessage ? 'border-red-500 focus:border-red-500' : 'border-transparent focus:border-primary'
               } ${popupAccentClasses.focusRing}`}
               value={purchaseVolume}
@@ -349,7 +349,7 @@ function BuySell({ coin, onOpen, AccountBalance, currentPrice, high, low, volume
               <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
                 Available Balance
               </p>
-              <p className="text-black dark:text-white text-xl font-bold">
+              <p className="text-white text-xl font-bold">
                 {AmountWithCommas(totalAvailableBalance)} USDT
               </p>
             </div>

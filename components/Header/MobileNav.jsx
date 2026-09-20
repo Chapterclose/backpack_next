@@ -156,7 +156,7 @@ const MobileNav = () => {
             ) : (
               <button
                 onClick={connectWallet}
-                className="bg-primary hover:bg-primary-200 font-medium text-black p-[5px_20px] rounded cursor-pointer"
+                className="bg-primary hover:bg-primary-200 font-medium text-white p-[5px_20px] rounded cursor-pointer"
               >
                 Connect
               </button>
@@ -211,7 +211,7 @@ const MobileNav = () => {
         {/* User info - Styled like the image */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
           <div className="flex items-center gap-x-3">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center font-bold text-lg text-black">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center font-bold text-lg text-white">
               {UserData?.email?.charAt(0).toUpperCase() || "T"}
             </div>
             <div>

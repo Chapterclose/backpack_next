@@ -188,16 +188,16 @@ const TransferPage = () => {
 
   return (
     <div className="flex justify-center items-center bg-gray-50 dark:bg-dark py-10 px-5 font-inter">
-      <div className="w-full max-w-xl bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full max-w-xl bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-gray-700">
         <Heading text={"Transfer"} />
 
         {/* From / To with Swap */}
         <div className="relative flex items-center space-x-4 mb-6">
-          <div className="flex-grow bg-gray-50 dark:bg-gray-700 p-4 rounded-xl shadow-inner border border-gray-200 dark:border-gray-600">
+          <div className="flex-grow bg-gray-50 dark:bg-gray-700 p-4 rounded-xl shadow-inner border border-gray-600">
             {/* From dropdown */}
             <div className="relative from-dropdown-container">
               <div
-                className="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-600 cursor-pointer"
+                className="flex items-center justify-between pb-2 border-b border-gray-600 cursor-pointer"
                 onClick={() => setIsFromDropdownOpen(!isFromDropdownOpen)}
               >
                 <span className="text-sm font-medium text-gray-500">From</span>
@@ -213,7 +213,7 @@ const TransferPage = () => {
                 </div>
               </div>
               {isFromDropdownOpen && (
-                <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
+                <div className="absolute z-10 w-full mt-2 bg-gray-800 rounded-xl shadow-lg border border-gray-600 py-2">
                   {assetTypes
                     .filter((asset) => asset !== toAsset)
                     .map((asset) => (
@@ -251,7 +251,7 @@ const TransferPage = () => {
                 </div>
               </div>
               {isToDropdownOpen && (
-                <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
+                <div className="absolute z-10 w-full mt-2 bg-gray-800 rounded-xl shadow-lg border border-gray-600 py-2">
                   {assetTypes
                     .filter((asset) => asset !== fromAsset)
                     .map((asset) => (
@@ -283,7 +283,7 @@ const TransferPage = () => {
         {/* Input */}
         <div className="mb-6">
           <p className="text-sm font-medium dark:text-white text-gray-500 mb-2">Transfer amount</p>
-          <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-xl p-3 shadow-inner border border-gray-200 dark:border-gray-600">
+          <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-xl p-3 shadow-inner border border-gray-600">
             <input
               type="text"
               placeholder="0"
@@ -305,7 +305,7 @@ const TransferPage = () => {
         </div>
 
         {/* Available balance */}
-        <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-sm text-gray-400">
           Available balance:{" "}
           <span className="font-bold text-gray-800 dark:text-white">
             {availableBalances[fromAsset]}

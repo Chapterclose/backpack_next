@@ -36,7 +36,7 @@ export default function VerificationModal({ isOpen, onClose, onVerify }) {
           <DialogTitle>Security Verification</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-400">
             Please enter the 4-digit verification code sent to your device.
           </p>
           <FormInput

@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 body {
-  color: #202630;
+  color: white;
+  background-color: var(--color-dark);
 }
 
 @theme {

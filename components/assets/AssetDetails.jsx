@@ -93,7 +93,7 @@ function AssetDetails({ showBalance }) {
 
   return (
     <div className="space-y-2">
-      <h4 className="text-2xl md:text-3xl font-bold text-black dark:text-white mb-6">Asset List</h4>
+      <h4 className="text-2xl md:text-3xl font-bold text-white mb-6">Asset List</h4>
 
       <div className="space-y-2">
         {marketDataAssets?.slice(0,10).map((asset, index) => (
@@ -114,8 +114,8 @@ function AssetDetails({ showBalance }) {
                   />
                 </div>
                 <div>
-                  <h4 className="text-lg text-black dark:text-white">{asset.name}</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{asset.subname}</p>
+                  <h4 className="text-lg text-white">{asset.name}</h4>
+                  <p className="text-sm text-gray-400">{asset.subname}</p>
                 </div>
               </div>
 
@@ -125,7 +125,7 @@ function AssetDetails({ showBalance }) {
                   <div className="text-xs md:text-sm text-gray-500 dark:text-primary mb-1">
                     Available
                   </div>
-                  <div className="text-xs md:text-lg text-black dark:text-white">
+                  <div className="text-xs md:text-lg text-white">
                     {getBalance(asset, "available")}
                   </div>
                 </div>
@@ -133,7 +133,7 @@ function AssetDetails({ showBalance }) {
                   <div className="text-xs md:text-sm text-gray-500 dark:text-primary mb-1">
                     Frozen
                   </div>
-                  <div className="text-xs md:text-lg text-black dark:text-white">
+                  <div className="text-xs md:text-lg text-white">
                     {getBalance(asset, "locked")}
                   </div>
                 </div>
@@ -141,7 +141,7 @@ function AssetDetails({ showBalance }) {
                   <div className="text-xs md:text-sm text-gray-500 dark:text-primary mb-1">
                     Equivalent(USDT)
                   </div>
-                  <div className="text-xs md:text-lg text-black dark:text-white">
+                  <div className="text-xs md:text-lg text-white">
                     {getBalance(asset, "total")}
                   </div>
                 </div>

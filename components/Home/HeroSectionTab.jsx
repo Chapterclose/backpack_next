@@ -13,11 +13,11 @@ const HeroSectionTab = () => {
   
   return (
     <TabGroup manual defaultIndex={0}>
-      <TabList className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+      <TabList className="flex gap-2 mb-6 border-b border-gray-700">
         {homePageTabs?.map((item) => (
           <Tab
             key={item.title}
-            className="px-4 py-2 text-sm md:text-base font-semibold text-gray-500 dark:text-gray-400 data-[selected]:text-primary-200 dark:data-[selected]:text-primary data-[selected]:border-b-2 data-[selected]:border-primary transition-colors duration-200 focus:outline-none"
+            className="px-4 py-2 text-sm md:text-base font-semibold text-gray-400 data-[selected]:text-primary-200 dark:data-[selected]:text-primary data-[selected]:border-b-2 data-[selected]:border-primary transition-colors duration-200 focus:outline-none"
           >
             {item.title}
           </Tab>
@@ -49,16 +49,16 @@ const HeroSectionTab = () => {
                       />
                     </div>
                     <div>
-                      <div className="font-semibold text-black dark:text-white text-sm md:text-base">
+                      <div className="font-semibold text-white text-sm md:text-base">
                         {item.symbol.replace("USDT", "")}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-gray-400">
                         {item.subname}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-semibold text-black dark:text-white text-sm md:text-base">
+                    <div className="font-semibold text-white text-sm md:text-base">
                       {data?.price ? `$${parseFloat(data.price).toLocaleString()}` : (
                         <span className="text-gray-400 animate-pulse">Loading...</span>
                       )}
@@ -102,16 +102,16 @@ const HeroSectionTab = () => {
                       />
                     </div>
                     <div>
-                      <div className="font-semibold text-black dark:text-white text-sm md:text-base">
+                      <div className="font-semibold text-white text-sm md:text-base">
                         {item.symbol.replace("USDT", "")}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-gray-400">
                         {item.subname}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-semibold text-black dark:text-white text-sm md:text-base">
+                    <div className="font-semibold text-white text-sm md:text-base">
                       {data?.price ? `$${parseFloat(data.price).toLocaleString()}` : (
                         <span className="text-gray-400 animate-pulse">Loading...</span>
                       )}

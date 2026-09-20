@@ -9,7 +9,7 @@ import React, { useContext } from "react";
 function MarketTable({ ss, se }) {
   const { markets } = useContext(contextProvider);
   return (
-    <div className="overflow-x-auto bg-white dark:bg-dark rounded-xl shadow-lg">
+    <div className="overflow-x-auto bg-dark rounded-xl shadow-lg">
       <table className="min-w-full table-fixed">
         <thead className="lg:bg-gray-50 lg:dark:bg-gray-800/50 w-full">
           <tr>
@@ -24,7 +24,7 @@ function MarketTable({ ss, se }) {
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-dark">
+        <tbody className="bg-dark">
           {marketData.slice(ss, se).map((item) => {
             const symbol = item.symbol;
             const data = markets[symbol];
@@ -49,16 +49,16 @@ function MarketTable({ ss, se }) {
                       className="w-6 h-6 md:w-10 md:h-10 rounded-full mr-3 group-hover:scale-110 transition-transform duration-200"
                     />
                     <div>
-                      <div className="text-sm md:text-base font-semibold text-black dark:text-white group-hover:text-primary transition-colors">
+                      <div className="text-sm md:text-base font-semibold text-white group-hover:text-primary transition-colors">
                         {item.symbol.replace("USDT", "")}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">{item.subname}</div>
+                      <div className="text-xs text-gray-400">{item.subname}</div>
                     </div>
                   </Link>
                 </td>
 
                 <td className="px-0 md:px-6 py-4 whitespace-nowrap w-[120px] lg:w-1/3">
-                  <div className="text-sm md:text-base font-semibold text-black dark:text-white">
+                  <div className="text-sm md:text-base font-semibold text-white">
                     {data?.price ? (
                       `$${Number(data.price).toLocaleString(undefined, {
                         minimumFractionDigits: 2,

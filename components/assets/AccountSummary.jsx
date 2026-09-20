@@ -54,11 +54,11 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
 
   return (
     <div className="relative overflow-hidden mb-5 md:mb-12">
-      <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 md:p-8">
+      <div className="relative bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-700 p-4 md:p-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="text-xl md:text-2xl lg:text-3xl font-bold text-black dark:text-white mb-2">
+            <h4 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2">
               Total Assets <span className="font-normal">(USDT)</span>
             </h4>
           </div>
@@ -86,7 +86,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
 
         {/* Balance Display */}
         <div className="mb-8">
-          <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-black dark:text-white mb-2">
+          <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
             {showBalance ? (
               <span className="bg-gradient-to-r from-primary-200 to-primary bg-clip-text text-transparent">
                 ${AmountWithCommas(totalAvailableBalance)}
@@ -111,7 +111,7 @@ function AccountSummary({ totalAvailableBalance, showBalance, toggleBalanceVisib
               >
                 {action.icon}
               </div>
-              <h4 className="text-sm md:text-base font-semibold text-black dark:text-white text-center">
+              <h4 className="text-sm md:text-base font-semibold text-white text-center">
                 {action.label}
               </h4>
             </Link>

@@ -57,18 +57,18 @@ const MobileFooterLinks = () => {
             onClick={() => handleCollapse(i)}
           >
             {getTitleByIndex(i)}
-            <span className="text-xl text-black/20 dark:text-white/20">
+            <span className="text-xl text-white/20 dark:text-white/20">
               {" "}
               {/* Added dark:text-white/20 for consistency */}
               {activeCollapse === i ? (
                 <FaMinus
                   className={cn(
-                    "text-black dark:text-white",
+                    "text-white",
                     activeCollapse === i && "bg-primary w-8 h-8 p-2 rounded-full"
                   )}
                 />
               ) : (
-                <FaPlus className={cn("text-black dark:text-white")} />
+                <FaPlus className={cn("text-white")} />
               )}
             </span>
           </h5>

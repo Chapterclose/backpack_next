@@ -30,7 +30,7 @@ export default function RechargeOrder() {
   return (
     <div className="min-h-screen container py-[40px] lg:py-[60px] font-inter antialiased">
       <div>
-        <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-black mb-4 flex gap-x-3">
+        <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-white mb-4 flex gap-x-3">
           <button onClick={() => window.history.back()}>
             <ArrowLeft className="pt-1 cursor-pointer" />
           </button>

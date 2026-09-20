@@ -15,7 +15,7 @@ const PopularCrypto = () => {
     <div className="container py-5 md:py-16 lg:py-20">
       <div className="flex items-center justify-between mb-4 md:mb-12">
         <div>
-          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-2">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
            Popular Crypto
           </h2>
         </div>
@@ -40,7 +40,7 @@ const PopularCrypto = () => {
               key={item.symbol}
               prefetch
               href={`/en/trade?symbol=${item.name.toLocaleLowerCase()}`}
-              className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary/20 transition-all duration-200"
+              className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:shadow-lg hover:border-primary/20 transition-all duration-200"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -52,17 +52,17 @@ const PopularCrypto = () => {
                     className="w-10 h-10 rounded-full"
                   />
                   <div>
-                    <div className="font-semibold text-black dark:text-white text-sm">
+                    <div className="font-semibold text-white text-sm">
                       {item.symbol.replace("USDT", "")}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-gray-400">
                       {item.subname}
                     </div>
                   </div>
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="font-bold text-lg text-black dark:text-white">
+                <div className="font-bold text-lg text-white">
                   {data?.price ? `$${parseFloat(data.price).toLocaleString()}` : (
                     <span className="text-gray-400 animate-pulse text-sm">Loading...</span>
                   )}

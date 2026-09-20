@@ -16,7 +16,7 @@ function OrderBookSkeleton({ coin }) {
     <div className="grid grid-cols-2 gap-6 p-4 dark:bg-[#0d1117] text-white rounded-lg max-w-2xl mx-auto">
       {/* Asks */}
       <div>
-        <li className="flex justify-between text-black dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
+        <li className="flex justify-between text-white dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
           <span className="h-4 w-28 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></span>
           <span className="h-4 w-28 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></span>
         </li>
@@ -29,7 +29,7 @@ function OrderBookSkeleton({ coin }) {
 
       {/* Bids */}
       <div>
-        <li className="flex justify-between text-black dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
+        <li className="flex justify-between text-white dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
           <span className="h-4 w-28 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></span>
           <span className="h-4 w-28 bg-gray-300 dark:bg-gray-700 rounded animate-pulse"></span>
         </li>
@@ -102,7 +102,7 @@ function OrderBook({ coin }) {
   }, [coin, loading]);
 
   const HeadingRow = () => (
-    <li className="flex justify-between text-black dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
+    <li className="flex justify-between text-white dark:text-gray-400 text-sm border-b border-gray-700 pb-1 mb-1">
       <span className="text-left">Price (USDT)</span>
       <span className="text-right uppercase">Amount ({coin})</span>
     </li>

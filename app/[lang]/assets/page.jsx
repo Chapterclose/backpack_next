@@ -137,9 +137,9 @@ function AssetsPage() {
           
           <div className="relative flex flex-col items-center justify-center py-20 md:py-32 px-6 text-center">
             <div className="w-24 h-24 bg-gradient-to-br from-primary-200 to-primary rounded-full flex items-center justify-center mb-6 shadow-xl">
-              <BiWallet className="text-5xl text-black" />
+              <BiWallet className="text-5xl text-white" />
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
               Start Your Crypto Journey
             </h2>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-md">

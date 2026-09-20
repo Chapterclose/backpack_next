@@ -35,7 +35,7 @@ function StockChart({
   useEffect(() => {
     if (!chartRef.current || !coin) return;
 
-    const bgColor = resolvedTheme === "dark" ? "#161A1E" : "#ffffff";
+    const bgColor = "#161A1E";
     const textColor = resolvedTheme === "dark" ? "#848e9c" : "#848e9c";
     const lineColor = resolvedTheme === "dark" ? "#2b3139" : "#e9ecf2";
 
@@ -264,8 +264,8 @@ function StockChart({
     : 0;
 
   return (
-    <div className="relative dark:text-white bg-white dark:bg-[#161A1E] rounded-lg shadow-lg overflow-hidden">
-      <div className="absolute top-2 left-2 z-30 flex gap-1 bg-black/50 dark:bg-white/10 backdrop-blur-sm rounded px-1 py-1">
+    <div className="relative dark:text-white bg-[#161A1E] rounded-lg shadow-lg overflow-hidden">
+      <div className="absolute top-2 left-2 z-30 flex gap-1 bg-black/50 dark:bg-gray-800/10 backdrop-blur-sm rounded px-1 py-1">
         {INTERVALS.map((interval) => (
           <button
             key={interval.value}
@@ -293,7 +293,7 @@ function StockChart({
       <div ref={chartRef} className="relative h-[400px] w-full" />
 
       {stockChartLegendData && (
-        <div className="absolute bottom-2 left-2 z-20 flex flex-wrap gap-x-3 gap-y-1 text-xs bg-black/50 dark:bg-white/10 backdrop-blur-sm rounded px-2 py-1">
+        <div className="absolute bottom-2 left-2 z-20 flex flex-wrap gap-x-3 gap-y-1 text-xs bg-black/50 dark:bg-gray-800/10 backdrop-blur-sm rounded px-2 py-1">
           <div className="flex flex-col">
             <span className="text-gray-400">Close</span>
             <span style={{ color: candleColor }} className="font-semibold">

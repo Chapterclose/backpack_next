@@ -26,7 +26,7 @@ const HomeFaq = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 mb-4">
             <HiQuestionMarkCircle className="text-3xl text-primary" />
           </div>
-          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black dark:text-white">
+          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
             Frequently Asked Questions
           </h3>
           <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
@@ -42,8 +42,8 @@ const HomeFaq = () => {
               className={cn(
                 "group rounded-xl border transition-all duration-300",
                 activeCollapse === i
-                  ? "bg-white dark:bg-gray-800 border-primary/20 shadow-lg"
-                  : "bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-primary/10"
+                  ? "bg-gray-800 border-primary/20 shadow-lg"
+                  : "bg-gray-800/50 border-gray-700 hover:border-primary/10"
               )}
             >
               <div
@@ -55,7 +55,7 @@ const HomeFaq = () => {
                     <span className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-sm md:text-base font-bold text-primary">
                       {id}
                     </span>
-                    <h5 className="text-sm md:text-base lg:text-lg font-semibold text-black dark:text-white text-left">
+                    <h5 className="text-sm md:text-base lg:text-lg font-semibold text-white text-left">
                       {title}
                     </h5>
                   </div>

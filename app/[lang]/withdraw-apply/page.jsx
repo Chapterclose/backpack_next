@@ -51,6 +51,11 @@ function WithdrawApply() {
     // }
   }
 
+  // Default network type
+  const [networkType, setNetworkType] = useState(
+    coin?.toUpperCase() === "USDT" ? "USDT-TRC20" : coin?.toUpperCase() || ""
+  );
+
   // Set default wallet address when networkType changes
   useEffect(() => {
     if (networkType) {
@@ -93,10 +98,6 @@ function WithdrawApply() {
 
   const currentCoin = marketDataAssets.find((item) => item.name.toLowerCase() === coin);
 
-  // Default network type
-  const [networkType, setNetworkType] = useState(
-    coin?.toUpperCase() === "USDT" ? "USDT-TRC20" : coin?.toUpperCase() || ""
-  );
 
   useEffect(() => {
     if (coin) {
@@ -167,7 +168,7 @@ function WithdrawApply() {
   return (
     <div className="container py-[60px]">
       <div className="flex items-center justify-between mb-5">
-        <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-black mb-4 flex gap-x-3">
+        <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-white mb-4 flex gap-x-3">
           <button onClick={() => window.history.back()}>
             {" "}
             <ArrowLeft className="pt-1 cursor-pointer" />{" "}
@@ -185,11 +186,11 @@ function WithdrawApply() {
       </div>
 
       <div className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-lg py-5 px-2 lg:p-5">
-        <div className="border-b pb-10 mb-10 border-gray-200 dark:border-gray-700 text-center">
-          <h4 className="text-6xl mb-2 dark:text-white text-black font-semibold">
+        <div className="border-b pb-10 mb-10 border-gray-700 text-center">
+          <h4 className="text-6xl mb-2 dark:text-white text-white font-semibold">
             {AmountWithCommas(currentBalance || 0, coin)}
           </h4>
-          <p className="text-black dark:text-white font-medium">
+          <p className="text-white font-medium">
             Available Balance(<span className="uppercase">{coin}</span>)
           </p>
         </div>
@@ -223,7 +224,7 @@ function WithdrawApply() {
               className={`px-4 py-2 rounded-md border transition ${
                 networkType === "USDT-TRC20"
                   ? "bg-[#00B894] text-white border-[#00B894]"
-                  : "bg-white text-[#00B894] border-[#00B894]"
+                  : "bg-gray-800 text-[#00B894] border-[#00B894]"
               }`}
             >
               TRC20
@@ -233,7 +234,7 @@ function WithdrawApply() {
               className={`px-4 py-2 rounded-md border transition ${
                 networkType === "USDT-ERC20"
                   ? "bg-[#00B894] text-white border-[#00B894]"
-                  : "bg-white text-[#00B894] border-[#00B894]"
+                  : "bg-gray-800 text-[#00B894] border-[#00B894]"
               }`}
             >
               ERC20

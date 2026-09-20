@@ -18,7 +18,7 @@ function TradePageSkeleton() {
     <div className="container py-8 md:py-12 lg:py-16">
       <div className="space-y-6 md:space-y-8">
         {/* Price Display Skeleton */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 md:p-8 animate-pulse">
+        <div className="bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-700 p-6 md:p-8 animate-pulse">
           <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
           <div className="h-16 md:h-20 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
           <div className="grid grid-cols-3 gap-4">

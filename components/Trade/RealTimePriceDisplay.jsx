@@ -54,7 +54,7 @@ function RealTimePriceDisplay({
         <table className="w-full max-w-[140px]">
           <tbody>
             <tr>
-              <td className="text-left py-1 pr-2 text-black dark:text-white">
+              <td className="text-left py-1 pr-2 text-white">
                 <h4>High</h4>
               </td>
               <td className="text-right py-1 font-semibold">
@@ -62,7 +62,7 @@ function RealTimePriceDisplay({
               </td>
             </tr>
             <tr>
-              <td className="text-left py-1 pr-2 text-black dark:text-white">
+              <td className="text-left py-1 pr-2 text-white">
                 <h4>Low</h4>
               </td>
               <td className="text-right py-1 font-semibold">
@@ -70,7 +70,7 @@ function RealTimePriceDisplay({
               </td>
             </tr>
             <tr>
-              <td className="text-left py-1 pr-2 text-black dark:text-white">
+              <td className="text-left py-1 pr-2 text-white">
                 <h4>Vol</h4>
               </td>
               <td className="text-right py-1 font-semibold">

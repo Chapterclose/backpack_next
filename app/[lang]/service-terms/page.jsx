@@ -1,7 +1,7 @@
 function ServiceTerms() {
     return ( 
         <div className="container">
-            <div class="x-4 py-8 bg-white dark:bg-dark dark:text-white my-8">
+            <div class="x-4 py-8 bg-dark dark:text-white my-8">
         <h1 class="text-center">Backpack Exchange - Terms of Service</h1>
         <p class="text-center text-gray-500 mb-8 text-sm">Effective Date: July 31, 2025</p>
 

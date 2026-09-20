@@ -117,7 +117,7 @@ function RechargeApply() {
     <div className="container py-[60px]">
       {/* Heading */}
       <div className="flex items-center justify-between mb-5">
-        <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-black mb-4 flex gap-x-3">
+        <h4 className="text-xl lg:text-3xl font-semibold dark:text-white text-white mb-4 flex gap-x-3">
           <button onClick={() => window.history.back()}>
             <ArrowLeft className="pt-1 cursor-pointer" />
           </button>
@@ -141,7 +141,7 @@ function RechargeApply() {
             className={`px-4 py-2 rounded-md border transition ${
               networkType === "USDT-TRC20"
                 ? "bg-[#00B894] text-white border-[#00B894]"
-                : "bg-white text-[#00B894] border-[#00B894]"
+                : "bg-gray-800 text-[#00B894] border-[#00B894]"
             }`}
           >
             TRC20
@@ -151,7 +151,7 @@ function RechargeApply() {
             className={`px-4 py-2 rounded-md border transition ${
               networkType === "USDT-ERC20"
                 ? "bg-[#00B894] text-white border-[#00B894]"
-                : "bg-white text-[#00B894] border-[#00B894]"
+                : "bg-gray-800 text-[#00B894] border-[#00B894]"
             }`}
           >
             ERC20
@@ -161,7 +161,7 @@ function RechargeApply() {
 
       {/* QR Code */}
       {rechargeAddress && (
-        <div className="bg-white h-[200px] w-[200px] mx-auto p-1 rounded">
+        <div className="bg-gray-800 h-[200px] w-[200px] mx-auto p-1 rounded">
           <QRCode value={rechargeAddress} size={200} />
         </div>
       )}
@@ -171,7 +171,7 @@ function RechargeApply() {
         <h4 className="text-lg mb-2 block font-medium dark:text-white">
           Recharge Address ({networkType})
         </h4>
-        <div className="flex flex-col gap-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col gap-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-700">
           <p className="dark:text-white text-gray-900 text-[14px] lg:text-base tracking-wide break-all">
             {rechargeAddress}
           </p>

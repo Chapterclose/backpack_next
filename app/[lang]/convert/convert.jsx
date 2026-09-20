@@ -237,7 +237,7 @@ const ConvertPage = () => {
 
   return (
     <div className="flex justify-center items-center bg-gray-50 dark:bg-dark min-h-screen py-10 px-5 font-inter">
-      <div className="w-full max-w-xl bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full max-w-xl bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-gray-700">
         <Heading text={"Convert"} />
 
         {/* Available Balance Display */}
@@ -248,7 +248,7 @@ const ConvertPage = () => {
               maximumFractionDigits: 8,
             })}
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-400">
             Available balance ({fromCurrency})
           </p>
         </div>
@@ -258,7 +258,7 @@ const ConvertPage = () => {
           <div
             className={twMerge(
               "flex items-center justify-between px-4 py-3",
-              "border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm",
+              "border border-gray-600 rounded-lg shadow-sm",
               "bg-gray-100 dark:bg-gray-700"
             )}
           >
@@ -298,7 +298,7 @@ const ConvertPage = () => {
             </div>
           </div>
           {isFromDropdownOpen && (
-            <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
+            <div className="absolute z-10 w-full mt-2 bg-gray-700 rounded-xl shadow-lg border border-gray-600 py-2">
               {currencies
                 .filter((c) => c.name !== toCurrency)
                 .map((currency) => (
@@ -325,7 +325,7 @@ const ConvertPage = () => {
         <div className="flex justify-center my-4">
           <button
             onClick={handleSwap}
-            className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full border border-gray-300 dark:border-gray-600 shadow-md flex items-center justify-center hover:scale-110 active:scale-95"
+            className="w-12 h-12 bg-gray-800 rounded-full border border-gray-600 shadow-md flex items-center justify-center hover:scale-110 active:scale-95"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -349,7 +349,7 @@ const ConvertPage = () => {
           <div
             className={twMerge(
               "flex items-center justify-between px-4 py-3",
-              "border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm",
+              "border border-gray-600 rounded-lg shadow-sm",
               "bg-gray-100 dark:bg-gray-700"
             )}
           >
@@ -374,7 +374,7 @@ const ConvertPage = () => {
             </div>
           </div>
           {isToDropdownOpen && (
-            <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 py-2">
+            <div className="absolute z-10 w-full mt-2 bg-gray-700 rounded-xl shadow-lg border border-gray-600 py-2">
               {currencies
                 .filter((c) => c.name !== fromCurrency)
                 .map((currency) => (
@@ -398,7 +398,7 @@ const ConvertPage = () => {
         </div>
 
         {/* Exchange Rate Display */}
-        <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="mt-6 text-center text-sm text-gray-400">
           Today's exchange rate: 1 {fromCurrency} ={" "}
           {exchangeRates[fromCurrency]?.[toCurrency] > 0
             ? exchangeRates[fromCurrency][toCurrency].toFixed(8)

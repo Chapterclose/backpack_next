@@ -11,7 +11,7 @@ export default function BinanceMarkets() {
   return (
     <div className="container py-[20px] lg:pt-[40px] lg:pb-[80px]">
       <MarketSlide />
-      <h2 className="text-4xl lg:text-6xl font-semibold mb-8 text-black dark:text-white">
+      <h2 className="text-4xl lg:text-6xl font-semibold mb-8 text-white">
         Crypto Currencies
       </h2>
       <MarketTable ss={0} se={25} />
