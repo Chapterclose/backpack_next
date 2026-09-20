@@ -28,13 +28,7 @@ function WithdrawApply() {
   const [amountError, setAmountError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [addressError, setAddressError] = useState(""); // New state for address error
-  // Define default wallet addresses
-  const defaultAddresses = {
-    btc: "bc1qe8gf05j258tlla2jzqkwh8jma8szxk2nfp8k5a",
-    eth: "0x5B09c8F8D9C39d70e052B8c062A953f51ba75CB5",
-    "usdt-erc": "0x5B09c8F8D9C39d70e052B8c062A953f51ba75CB5",
-    "usdt-trc": "TEk3My3UGQh4FENTeB6jtKgASeR9eFaebj",
-  };
+
 
   let currentBalance = 0;
   console.log(AccountBalance)
@@ -56,20 +50,9 @@ function WithdrawApply() {
     coin?.toUpperCase() === "USDT" ? "USDT-TRC20" : coin?.toUpperCase() || ""
   );
 
-  // Set default wallet address when networkType changes
+  // Clear wallet address when networkType changes
   useEffect(() => {
-    if (networkType) {
-      const key = networkType.toLowerCase();
-      if (key === "usdt-trc20") {
-        setWalletAddress(defaultAddresses["usdt-trc"]);
-      } else if (key === "usdt-erc20") {
-        setWalletAddress(defaultAddresses["usdt-erc"]);
-      } else if (defaultAddresses[key]) {
-        setWalletAddress(defaultAddresses[key]);
-      } else {
-        setWalletAddress("");
-      }
-    }
+    setWalletAddress("");
   }, [networkType]);
 
   useEffect(() => {
