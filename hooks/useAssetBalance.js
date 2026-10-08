@@ -1,6 +1,7 @@
 "use client";
 
 import { contextProvider } from "@/contexts/Context";
+import { subscribeMarketStreams } from "@/lib/marketStream";
 import UserStore from "@/store/UserStore";
 import { useContext, useEffect, useState } from "react";
 
@@ -19,30 +20,19 @@ export default function useAssetBalance() {
     GetAccountBalanceRequest();
   }, [GetAccountBalanceRequest]); // Depend on GetAccountBalanceRequest to avoid lint warnings.
 
-  // Effect to establish and manage the WebSocket connection for real-time prices.
+  // Effect to subscribe to the live BTC and ETH trade streams for real-time prices.
   useEffect(() => {
-    // The WebSocket URL for BTC and ETH trade streams.
-    const socket = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
-    );
-
-    // Listener for incoming WebSocket messages.
-    socket.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      const symbol = msg?.data?.s;
-      const price = parseFloat(msg?.data?.p);
+    // Returns the unsubscribe function, which runs when the component unmounts.
+    return subscribeMarketStreams(["btcusdt@trade", "ethusdt@trade"], (trade) => {
+      const symbol = trade?.s;
+      const price = parseFloat(trade?.p);
 
       if (symbol === "BTCUSDT") {
         setPrices((prev) => ({ ...prev, BTC: price }));
       } else if (symbol === "ETHUSDT") {
         setPrices((prev) => ({ ...prev, ETH: price }));
       }
-    };
-
-    // Cleanup function to close the WebSocket when the component unmounts.
-    return () => {
-      socket.close();
-    };
+    });
   }, []);
 
   // Effect to calculate the total balance whenever the account balance or prices change.

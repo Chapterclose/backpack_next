@@ -7,10 +7,11 @@ import RealTimePriceDisplay from "@/components/Trade/RealTimePriceDisplay";
 import StockChart from "@/components/Trade/StockChart";
 import { TradeConfirmationModal } from "@/components/Trade/TradeConfirmationModal";
 import { contextProvider } from "@/contexts/Context";
+import { subscribeMarketStreams } from "@/lib/marketStream";
 import TradeStore from "@/store/TradeStore";
 import UserStore from "@/store/UserStore";
 import { useSearchParams } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // ✅ Enhanced Skeleton loader
 function TradePageSkeleton() {
@@ -71,9 +72,6 @@ export default function TradePage() {
   const { OpenOrdersRequest, OrderHistoryRequest, orderHistory, openOrders } = TradeStore();
   const { GetAccountBalanceRequest, AccountBalance } = UserStore();
 
-  const wsRef = useRef(null);
-  const tickerReconnectTimeoutRef = useRef(null);
-
   // Set loading to false when account data is ready
   useEffect(() => {
     if (AccountBalance && orderHistory && openOrders) {
@@ -88,17 +86,16 @@ export default function TradePage() {
     GetAccountBalanceRequest();
   }, [OpenOrdersRequest, OrderHistoryRequest, GetAccountBalanceRequest]);
 
-  // Fetch initial ticker data via REST API immediately, then connect WebSocket
+  // Fetch initial ticker data via REST API immediately, then subscribe to live updates
   useEffect(() => {
     if (!coin) return;
 
     const symbol = `${coin}USDT`;
-    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
 
     // Fetch initial ticker data via REST API
     const fetchInitialTicker = async () => {
       try {
-        const response = await fetch(`${binanceUrl}/api/v3/ticker/24hr?symbol=${symbol}`);
+        const response = await fetch(`/api/v3/ticker/24hr?symbol=${symbol}`);
         const data = await response.json();
         
         setCurrentPrice(parseFloat(data.lastPrice || data.c || 0).toFixed(2));
@@ -115,71 +112,35 @@ export default function TradePage() {
 
     fetchInitialTicker();
 
-    // Then connect WebSocket for real-time updates
-    const connectWebSocket = () => {
-      if (wsRef.current) {
-        if (tickerReconnectTimeoutRef.current) {
-          clearTimeout(tickerReconnectTimeoutRef.current);
-          tickerReconnectTimeoutRef.current = null;
-        }
-        wsRef.current.close();
-      }
-
-      wsRef.current = new WebSocket(
-        `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coin}usdt@ticker`
-      );
-      wsRef.current.onopen = () => {
-        console.log("Binance Ticker WebSocket Connected");
-        setError(null);
-      };
-      wsRef.current.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        setCurrentPrice(parseFloat(message.c).toFixed(2));
-        setPriceChangePercentage(parseFloat(message.P).toFixed(2));
-        setHighPrice(parseFloat(message.h).toFixed(2));
-        setLowPrice(parseFloat(message.l).toFixed(2));
-        setVolume(parseFloat(message.v));
-        setTickerLoading(false);
-      };
-      wsRef.current.onerror = (event) => {
-        console.error("Binance Ticker WebSocket Error:", event);
-        setError("Ticker connection error.");
-      };
-      wsRef.current.onclose = () => {
-        console.log("Binance Ticker WebSocket Disconnected");
-      };
-    };
-
-    connectWebSocket();
-    return () => {
-      if (wsRef.current) wsRef.current.close();
-    };
+    // Then subscribe to the live ticker stream for real-time updates
+    return subscribeMarketStreams([`${coin}usdt@ticker`], (message) => {
+      setCurrentPrice(parseFloat(message.c).toFixed(2));
+      setPriceChangePercentage(parseFloat(message.P).toFixed(2));
+      setHighPrice(parseFloat(message.h).toFixed(2));
+      setLowPrice(parseFloat(message.l).toFixed(2));
+      setVolume(parseFloat(message.v));
+      setTickerLoading(false);
+      setError(null);
+    });
   }, [coin]);
 
   // Update balances in USD
   useEffect(() => {
-    const socket = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
-    );
-
     let lastPriceUpdate = 0;
-    socket.onmessage = (event) => {
+    return subscribeMarketStreams(["btcusdt@trade", "ethusdt@trade"], (trade) => {
       const now = Date.now();
       if (now - lastPriceUpdate < 500) return; // Throttle to 500ms
       lastPriceUpdate = now;
-      
-      const msg = JSON.parse(event.data);
-      const symbol = msg?.data?.s;
-      const price = parseFloat(msg?.data?.p);
+
+      const symbol = trade?.s;
+      const price = parseFloat(trade?.p);
 
       if (symbol === "BTCUSDT") {
         setPrices((prev) => ({ ...prev, BTC: price }));
       } else if (symbol === "ETHUSDT") {
         setPrices((prev) => ({ ...prev, ETH: price }));
       }
-    };
-
-    return () => socket.close();
+    });
   }, []);
   
   useEffect(() => {

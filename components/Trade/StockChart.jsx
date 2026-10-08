@@ -1,5 +1,6 @@
 "use client";
 
+import { subscribeMarketStreams } from "@/lib/marketStream";
 import { createChart } from "lightweight-charts";
 import { useTheme } from "next-themes";
 import React, { useEffect, useRef, useState } from "react";
@@ -24,8 +25,6 @@ function StockChart({
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const mainSeriesRef = useRef(null);
-  const wsRef = useRef(null);
-  const tradeWsRef = useRef(null);
   const [selectedInterval, setSelectedInterval] = useState("1m");
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -96,8 +95,6 @@ function StockChart({
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      if (wsRef.current) wsRef.current.close();
-      if (tradeWsRef.current) tradeWsRef.current.close();
       chart.remove();
       chartInstanceRef.current = null;
       mainSeriesRef.current = null;
@@ -111,24 +108,6 @@ function StockChart({
     if (!interval) return;
 
     const coinname = `${coin}usdt`;
-    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
-    const wsUrl = process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL;
-
-    if (!binanceUrl || !wsUrl) {
-      console.error("Environment variables not set");
-      return;
-    }
-
-    if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-    }
-
-    if (tradeWsRef.current) {
-      tradeWsRef.current.close();
-      tradeWsRef.current = null;
-    }
-
     setIsConnected(false);
     setIsLoading(true);
     if (onLoadingChange) onLoadingChange(true);
@@ -136,7 +115,7 @@ function StockChart({
 
     // Fetch real data
     fetch(
-      `${binanceUrl}/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${selectedInterval}&limit=${
+      `/api/v3/klines?symbol=${coinname.toUpperCase()}&interval=${selectedInterval}&limit=${
         interval.limit
       }`
     )
@@ -175,17 +154,10 @@ function StockChart({
         if (onLoadingChange) onLoadingChange(false);
       });
 
-    const ws = new WebSocket(`${wsUrl}/ws/${coinname}@kline_${selectedInterval}`);
-
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setIsConnected(true);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
+    const unsubscribeKline = subscribeMarketStreams(
+      [`${coinname}@kline_${selectedInterval}`],
+      (message) => {
+        setIsConnected(true);
         if (message.k && mainSeriesRef.current) {
           const candle = message.k;
           const newCandleData = {
@@ -202,57 +174,40 @@ function StockChart({
 
           // chartInstanceRef.current.timeScale().scrollToRealTime();
         }
-      } catch (err) {
-        console.error("WS parse error:", err);
       }
-    };
+    );
 
-    ws.onerror = () => {
-      setIsConnected(false);
-    };
-
-    ws.onclose = () => {
-      setIsConnected(false);
-    };
-
+    let unsubscribeTrade = null;
     if (selectedInterval === "1m") {
-      const tradeWs = new WebSocket(`${wsUrl}/ws/${coinname}@trade`);
-      tradeWsRef.current = tradeWs;
-
       let lastTradeUpdate = 0;
-      tradeWs.onmessage = (event) => {
+      unsubscribeTrade = subscribeMarketStreams([`${coinname}@trade`], (message) => {
         const now = Date.now();
         if (now - lastTradeUpdate < 50) return; // Throttle to 50ms
         lastTradeUpdate = now;
 
-        try {
-          const message = JSON.parse(event.data);
-          if (message.p && mainSeriesRef.current && currentCandleRef.current) {
-            const tradePrice = parseFloat(message.p);
-            const currentTime = Math.floor(Date.now() / 1000 / 60) * 60;
+        if (message.p && mainSeriesRef.current && currentCandleRef.current) {
+          const tradePrice = parseFloat(message.p);
+          const currentTime = Math.floor(Date.now() / 1000 / 60) * 60;
 
-            if (currentCandleRef.current.time === currentTime) {
-              const updatedCandle = {
-                ...currentCandleRef.current,
-                close: tradePrice,
-                high: Math.max(currentCandleRef.current.high, tradePrice),
-                low: Math.min(currentCandleRef.current.low, tradePrice),
-              };
+          if (currentCandleRef.current.time === currentTime) {
+            const updatedCandle = {
+              ...currentCandleRef.current,
+              close: tradePrice,
+              high: Math.max(currentCandleRef.current.high, tradePrice),
+              low: Math.min(currentCandleRef.current.low, tradePrice),
+            };
 
-              currentCandleRef.current = updatedCandle;
-              setCurrentCandleData(updatedCandle);
-              mainSeriesRef.current.update(updatedCandle);
-            }
+            currentCandleRef.current = updatedCandle;
+            setCurrentCandleData(updatedCandle);
+            mainSeriesRef.current.update(updatedCandle);
           }
-        } catch (err) {
-          console.error("Trade WS error:", err);
         }
-      };
+      });
     }
 
     return () => {
-      if (wsRef.current) wsRef.current.close();
-      if (tradeWsRef.current) tradeWsRef.current.close();
+      unsubscribeKline();
+      if (unsubscribeTrade) unsubscribeTrade();
     };
   }, [selectedInterval, coin, setCurrentCandleData]);
 

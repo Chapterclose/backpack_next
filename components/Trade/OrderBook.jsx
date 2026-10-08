@@ -1,5 +1,6 @@
 "use client";
 
+import { subscribeMarketStreams } from "@/lib/marketStream";
 import { useEffect, useState } from "react";
 import React from "react";
 
@@ -52,13 +53,12 @@ function OrderBook({ coin }) {
     if (!coin) return;
 
     const symbol = `${coin}usdt`.toUpperCase();
-    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
 
-    // Fetch initial order book snapshot from REST API (faster than waiting for WebSocket)
+    // Fetch initial order book snapshot from REST API (faster than waiting for the live stream)
     const fetchInitialData = async () => {
       try {
         const response = await fetch(
-          `${binanceUrl}/api/v3/depth?symbol=${symbol}&limit=20`
+          `/api/v3/depth?symbol=${symbol}&limit=20`
         );
         const data = await response.json();
         
@@ -69,36 +69,24 @@ function OrderBook({ coin }) {
         }
       } catch (error) {
         console.error("Error fetching order book:", error);
-        // Continue to WebSocket even if API fails
+        // Continue to the live stream even if API fails
       }
     };
 
     fetchInitialData();
 
-    // Then connect WebSocket for real-time updates
+    // Then subscribe to the live depth stream for real-time updates
     let lastUpdate = 0;
-    const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/ws/${coin}usdt@depth20@100ms`
-    );
-
-    ws.onmessage = (event) => {
+    return subscribeMarketStreams([`${coin}usdt@depth20@100ms`], (data) => {
       const now = Date.now();
       if (now - lastUpdate < 200) return; // Throttle to 200ms
       lastUpdate = now;
-      
-      const data = JSON.parse(event.data);
 
       setAsks(data?.asks?.slice(0, 10) || []);
       setBids(data?.bids?.slice(0, 10) || []);
 
       if (loading) setLoading(false);
-    };
-
-    ws.onerror = (event) => {
-      console.error("OrderBook WebSocket Error:", event);
-    };
-
-    return () => ws.close();
+    });
   }, [coin, loading]);
 
   const HeadingRow = () => (

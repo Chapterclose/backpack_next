@@ -4,6 +4,7 @@ import AccountSummary from "@/components/assets/AccountSummary";
 import AssetDetails from "@/components/assets/AssetDetails";
 import Button from "@/components/Form/Button";
 import { contextProvider } from "@/contexts/Context";
+import { subscribeMarketStreams } from "@/lib/marketStream";
 import UserStore from "@/store/UserStore";
 import { useContext, useEffect, useState } from "react";
 import { BiWallet } from "react-icons/bi";
@@ -40,16 +41,15 @@ function AssetsPage() {
     GetAccountBalanceRequest();
   }, [GetAccountBalanceRequest]);
 
-  // Fetch initial BTC/ETH prices via REST API immediately (much faster than waiting for WebSocket)
+  // Fetch initial BTC/ETH prices via REST API immediately (much faster than waiting for the live stream)
   useEffect(() => {
-    const binanceUrl = process.env.NEXT_PUBLIC_BINANCE_URL;
     
     const fetchInitialPrices = async () => {
       try {
         // Fetch both prices in parallel for faster loading
         const [btcResponse, ethResponse] = await Promise.all([
-          fetch(`${binanceUrl}/api/v3/ticker/price?symbol=BTCUSDT`),
-          fetch(`${binanceUrl}/api/v3/ticker/price?symbol=ETHUSDT`)
+          fetch(`/api/v3/ticker/price?symbol=BTCUSDT`),
+          fetch(`/api/v3/ticker/price?symbol=ETHUSDT`)
         ]);
 
         const btcData = await btcResponse.json();
@@ -62,39 +62,28 @@ function AssetsPage() {
         });
       } catch (error) {
         console.error("Error fetching initial prices:", error);
-        // Continue with WebSocket fallback
+        // Continue with the live stream as a fallback
       }
     };
 
     fetchInitialPrices();
 
-    // Then connect WebSocket for real-time updates
-    const socket = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade`
-    );
-
+    // Then subscribe to the live stream for real-time updates
     let lastUpdate = 0;
-    socket.onmessage = (event) => {
+    return subscribeMarketStreams(["btcusdt@trade", "ethusdt@trade"], (trade) => {
       const now = Date.now();
       if (now - lastUpdate < 500) return; // Throttle to 500ms
       lastUpdate = now;
-      
-      const msg = JSON.parse(event.data);
-      const symbol = msg?.data?.s;
-      const price = parseFloat(msg?.data?.p);
+
+      const symbol = trade?.s;
+      const price = parseFloat(trade?.p);
 
       if (symbol === "BTCUSDT") {
         setPrices((prev) => ({ ...prev, BTC: price }));
       } else if (symbol === "ETHUSDT") {
         setPrices((prev) => ({ ...prev, ETH: price }));
       }
-    };
-
-    socket.onerror = (error) => {
-      console.error("Price WebSocket Error:", error);
-    };
-
-    return () => socket.close();
+    });
   }, []);
 
   // Calculate balance immediately when AccountBalance or prices change

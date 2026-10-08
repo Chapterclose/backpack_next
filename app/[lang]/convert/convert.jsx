@@ -5,6 +5,7 @@ import ethImg from "@/assets/markets/2.png";
 import usdImg from "@/assets/markets/usdt.png";
 import Heading from "@/components/common/Heading";
 import Button from "@/components/Form/Button";
+import { subscribeMarketStreams } from "@/lib/marketStream";
 import UserStore from "@/store/UserStore";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -55,31 +56,19 @@ const ConvertPage = () => {
     BTC: AccountBalance?.BTC?.available || "0",
   };
 
-  // WebSocket live prices with reconnection logic
-  // WebSocket live prices with reconnection logic
+  // Live prices (the shared market stream reconnects on its own)
   useEffect(() => {
-    let ws = null;
-    const connectWebSocket = () => {
-      ws = new WebSocket(
-        `${process.env.NEXT_PUBLIC_BINANCE_WEBSOCKET_URL}/stream?streams=btcusdt@trade/ethusdt@trade/ethbtc@trade`
-      );
-
-      ws.onopen = () => {
-        console.log("WebSocket connected");
-      };
-
-      ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        if (!msg.data || !msg.stream) return;
-
-        const price = parseFloat(msg.data.p);
+    return subscribeMarketStreams(
+      ["btcusdt@trade", "ethusdt@trade", "ethbtc@trade"],
+      (trade, stream) => {
+        const price = parseFloat(trade.p);
 
         setIsLoading(false);
 
         setExchangeRates((prev) => {
           const updated = { ...prev };
 
-          switch (msg.stream) {
+          switch (stream) {
             case "btcusdt@trade":
               updated.BTC.USDT = price;
               updated.USDT.BTC = 1 / price;
@@ -96,14 +85,8 @@ const ConvertPage = () => {
 
           return updated;
         });
-      };
-
-      ws.onclose = () => setTimeout(connectWebSocket, 3000);
-      ws.onerror = (err) => ws.close();
-    };
-
-    connectWebSocket();
-    return () => ws?.close();
+      }
+    );
   }, []);
 
   // Conversion calculation
